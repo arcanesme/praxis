@@ -9,6 +9,7 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
 
+from praxis_cli.constants import COMMAND_FILES
 from praxis_cli.utils.config import CONFIG_FILE, load_config
 from praxis_cli.utils.project import find_project_root, get_context_dir, get_commands_dir
 
@@ -92,17 +93,9 @@ def doctor():
 
     # Command files
     commands_dir = get_commands_dir(root)
-    expected_commands = [
-        "setup.md", "new-track.md", "implement.md", "review.md", "status.md",
-        "verify.md", "commit-push-pr.md", "simplify.md", "sync-context.md", "deploy-preview.md",
-    ]
-    commands_ok = True
-    for cmd in expected_commands:
-        if not (commands_dir / cmd).exists():
-            commands_ok = False
-            break
+    commands_ok = all((commands_dir / cmd).exists() for cmd in COMMAND_FILES)
     checks.append(("All command files present", commands_ok, "Run: praxis init --force"))
-    _print_check(f"Commands ({len(expected_commands)} files)", commands_ok)
+    _print_check(f"Commands ({len(COMMAND_FILES)} files)", commands_ok)
 
     console.print()
 
@@ -165,7 +158,7 @@ def doctor():
         command = check.get("command", "")
         tool_bin = command.split()[0] if command else ""
         found = shutil.which(tool_bin) is not None if tool_bin else False
-        label = f"{check.get('tool', name)} ({command})"
+        label = f"{name} ({command})"
         checks.append((label, found, f"Install {tool_bin} or update config"))
         _print_check(label, found)
 

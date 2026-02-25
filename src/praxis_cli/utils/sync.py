@@ -4,6 +4,11 @@ import json
 import shutil
 from pathlib import Path
 
+from praxis_cli.constants import (
+    COMMAND_FILES,
+    SLASH_COMMANDS,
+    build_global_rules,
+)
 from praxis_cli.utils.config import load_config
 
 
@@ -27,7 +32,6 @@ def _build_claude_hooks(cfg: dict) -> dict:
         if not check.get("enabled") or not check.get("command"):
             continue
 
-        tool = check.get("tool", name)
         hooks.append({
             "type": "command",
             "command": check["command"],
@@ -54,25 +58,13 @@ def sync_claude_code(root: Path) -> list[str]:
     generated = []
     cfg = load_config()
 
-    # CLAUDE.md
-    rules = []
-    if cfg.get("global", {}).get("always_ask_questions", True):
-        rules.append(
-            "- Always ask clarifying questions before building specs, plans, or deliverables. Never assume."
-        )
-    if cfg.get("global", {}).get("include_recommendations", True):
-        rules.append("- Include a recommendation in every set of options presented.")
-
-    commands_list = [
-        "/setup", "/new-track", "/implement", "/review", "/status",
-        "/verify", "/commit-push-pr", "/simplify", "/sync-context", "/deploy-preview",
-    ]
+    rules = build_global_rules(cfg)
 
     claude_md = "# Project Instructions\n\n"
     claude_md += "Read and follow the PRAXIS Protocol defined in PRAXIS.md.\n"
     claude_md += "All specs, plans, and context live in the praxis/ directory.\n\n"
     claude_md += "## PRAXIS Commands\n"
-    for cmd in commands_list:
+    for cmd in SLASH_COMMANDS:
         claude_md += f"- {cmd}\n"
     claude_md += "\n## Global Rules\n"
     claude_md += "- Never write code without an approved spec and plan.\n"
@@ -136,26 +128,13 @@ def sync_openai_codex(root: Path) -> list[str]:
     cfg = load_config()
     generated = []
 
-    rules = []
-    if cfg.get("global", {}).get("always_ask_questions", True):
-        rules.append(
-            "- Always ask clarifying questions before building specs, plans, or deliverables. Never assume."
-        )
-    if cfg.get("global", {}).get("include_recommendations", True):
-        rules.append("- Include a recommendation in every set of options presented.")
+    rules = build_global_rules(cfg)
 
-    command_map = {
-        "praxis setup": "praxis/commands/setup.md",
-        "praxis new-track": "praxis/commands/new-track.md",
-        "praxis implement": "praxis/commands/implement.md",
-        "praxis review": "praxis/commands/review.md",
-        "praxis status": "praxis/commands/status.md",
-        "praxis verify": "praxis/commands/verify.md",
-        'praxis commit" or "praxis pr': "praxis/commands/commit-push-pr.md",
-        "praxis simplify": "praxis/commands/simplify.md",
-        "praxis sync": "praxis/commands/sync-context.md",
-        "praxis deploy": "praxis/commands/deploy-preview.md",
-    }
+    # Build command map from COMMAND_FILES
+    command_map = {}
+    for f in COMMAND_FILES:
+        name = f.removesuffix(".md")
+        command_map[f"praxis {name}"] = f"praxis/commands/{f}"
 
     agents_md = "# Project Instructions\n\n"
     agents_md += "Read and follow the PRAXIS Protocol defined in PRAXIS.md.\n"
@@ -183,20 +162,17 @@ def sync_global_claude() -> Path:
     claude_dir = Path.home() / ".claude"
     claude_dir.mkdir(parents=True, exist_ok=True)
 
-    rules = ["## Requirements Gathering"]
-    if cfg.get("global", {}).get("always_ask_questions", True):
-        rules.append(
-            "Always ask clarifying questions before building specs, plans, deliverables, or any non-trivial output."
-        )
-        rules.append("Never assume scope, format, audience, or priorities — gather requirements first.")
-    if cfg.get("global", {}).get("include_recommendations", True):
-        rules.append("Present options as structured choices when the decision is bounded (2-4 options).")
-        rules.append("Always include a recommendation in each option presented.")
-    rules.append("Use open-ended questions only when the answer is truly freeform.")
+    rules = build_global_rules(cfg)
 
     content = "# Global Rules\n\n"
-    content += "\n".join(rules)
-    content += "\n\n## PRAXIS Protocol\n"
+    content += "## Requirements Gathering\n"
+    for rule in rules:
+        content += f"{rule}\n"
+    if cfg.get("global", {}).get("always_ask_questions", True):
+        content += "- Never assume scope, format, audience, or priorities — gather requirements first.\n"
+        content += "- Present options as structured choices when the decision is bounded (2-4 options).\n"
+    content += "- Use open-ended questions only when the answer is truly freeform.\n"
+    content += "\n## PRAXIS Protocol\n"
     content += "If a project contains a PRAXIS.md file, read and follow it.\n"
     content += "All praxis commands are defined in praxis/commands/ — read the corresponding file when invoked.\n"
 

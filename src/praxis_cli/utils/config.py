@@ -25,15 +25,14 @@ DEFAULT_CONFIG: dict[str, Any] = {
         "openai_codex": True,
     },
     "defaults": {
-        "verification_mode": "quick",
         "phase_gate": True,
     },
     "verification": {
-        "formatter": {"enabled": False, "tool": "", "command": ""},
-        "linter": {"enabled": False, "tool": "", "command": ""},
-        "type_checker": {"enabled": False, "tool": "", "command": ""},
-        "security_scanner": {"enabled": False, "tool": "", "command": ""},
-        "tests": {"enabled": False, "runner": "", "command": "", "coverage": False},
+        "formatter": {"enabled": False, "command": ""},
+        "linter": {"enabled": False, "command": ""},
+        "type_checker": {"enabled": False, "command": ""},
+        "security_scanner": {"enabled": False, "command": ""},
+        "tests": {"enabled": False, "command": ""},
     },
 }
 

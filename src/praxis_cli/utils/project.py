@@ -4,24 +4,14 @@ from pathlib import Path
 
 
 def find_project_root(start: Path | None = None) -> Path | None:
-    """Walk up from start (or cwd) looking for PRAXIS.md or .git."""
+    """Walk up from start (or cwd) looking for PRAXIS.md."""
     current = start or Path.cwd()
     for parent in [current, *current.parents]:
         if (parent / "PRAXIS.md").exists():
             return parent
-        if (parent / ".git").exists():
-            return parent
         if parent == parent.parent:
             break
     return None
-
-
-def is_praxis_project(path: Path | None = None) -> bool:
-    """Check if the given path (or cwd) is a PRAXIS project."""
-    root = find_project_root(path)
-    if root is None:
-        return False
-    return (root / "PRAXIS.md").exists()
 
 
 def get_praxis_dir(root: Path) -> Path:

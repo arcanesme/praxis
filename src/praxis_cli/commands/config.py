@@ -172,17 +172,12 @@ def _interactive_config():
             default=current.get("enabled", False),
         )
         if enabled:
-            tool = click.prompt(
-                f"    Tool ({examples})",
-                default=current.get("tool") or "",
-            )
             command = click.prompt(
-                f"    Command to run",
+                f"    Command to run (e.g. {examples})",
                 default=current.get("command") or "",
             )
             cfg["verification"][check_name] = {
                 "enabled": True,
-                "tool": tool,
                 "command": command,
             }
         else:

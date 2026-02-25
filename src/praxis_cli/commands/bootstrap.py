@@ -6,7 +6,7 @@ import click
 from rich.console import Console
 from rich.panel import Panel
 
-from praxis_cli.utils.project import find_project_root, is_praxis_project
+from praxis_cli.utils.project import find_project_root
 from praxis_cli.utils.sync import sync_all
 
 console = Console()
@@ -24,7 +24,7 @@ def bootstrap(claude: bool, codex: bool):
     Run this after updating PRAXIS.md or praxis/commands/.
     """
     root = find_project_root()
-    if root is None or not is_praxis_project():
+    if root is None:
         console.print("[red]❌ Not in a PRAXIS project.[/red] Run 'praxis init' first.")
         raise SystemExit(1)
 
