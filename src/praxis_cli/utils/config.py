@@ -21,7 +21,6 @@ DEFAULT_CONFIG: dict[str, Any] = {
     },
     "tools": {
         "claude_code": True,
-        "gemini_cli": True,
         "openai_codex": True,
     },
     "defaults": {

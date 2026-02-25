@@ -86,55 +86,6 @@ def sync_claude_code(root: Path) -> list[str]:
     return generated
 
 
-def sync_gemini_cli(root: Path) -> list[str]:
-    """Generate GEMINI.md for Gemini CLI."""
-    cfg = load_config()
-    generated = []
-
-    rules = []
-    if cfg.get("global", {}).get("always_ask_questions", True):
-        rules.append(
-            "- Always ask clarifying questions before building specs, plans, or deliverables. Never assume."
-        )
-    if cfg.get("global", {}).get("include_recommendations", True):
-        rules.append("- Include a recommendation in every set of options presented.")
-
-    command_map = {
-        "praxis setup": "praxis/commands/setup.md",
-        "praxis new-track": "praxis/commands/new-track.md",
-        "praxis implement": "praxis/commands/implement.md",
-        "praxis review": "praxis/commands/review.md",
-        "praxis status": "praxis/commands/status.md",
-        "praxis verify": "praxis/commands/verify.md",
-        'praxis commit" or "praxis pr': "praxis/commands/commit-push-pr.md",
-        "praxis simplify": "praxis/commands/simplify.md",
-        "praxis sync": "praxis/commands/sync-context.md",
-        "praxis deploy": "praxis/commands/deploy-preview.md",
-    }
-
-    gemini_md = "# Project Instructions\n\n"
-    gemini_md += "Read and follow the PRAXIS Protocol defined in PRAXIS.md.\n"
-    gemini_md += "All specs, plans, and context live in the praxis/ directory.\n\n"
-    gemini_md += "## PRAXIS Commands\n"
-    gemini_md += "When I say one of the following, read the corresponding file and follow it exactly:\n\n"
-    for trigger, path in command_map.items():
-        gemini_md += f'- "{trigger}" → {path}\n'
-    gemini_md += "\n## Global Rules\n"
-    gemini_md += "- Never write code without an approved spec and plan.\n"
-    gemini_md += "- Stop at phase checkpoints for human review.\n"
-    gemini_md += "- Run verify at every checkpoint and before PRs.\n"
-    gemini_md += "- Read praxis/context/ before starting any task.\n"
-    for rule in rules:
-        gemini_md += f"{rule}\n"
-    gemini_md += "\n## Important\n"
-    gemini_md += "Do NOT use Gemini CLI's built-in Plan Mode. PRAXIS manages its own planning lifecycle.\n"
-
-    (root / "GEMINI.md").write_text(gemini_md)
-    generated.append("GEMINI.md")
-
-    return generated
-
-
 def sync_openai_codex(root: Path) -> list[str]:
     """Generate AGENTS.md for OpenAI Codex."""
     cfg = load_config()
@@ -276,8 +227,6 @@ def sync_all(root: Path) -> dict[str, list[str]]:
 
     if cfg.get("tools", {}).get("claude_code", True):
         results["Claude Code"] = sync_claude_code(root)
-    if cfg.get("tools", {}).get("gemini_cli", True):
-        results["Gemini CLI"] = sync_gemini_cli(root)
     if cfg.get("tools", {}).get("openai_codex", True):
         results["OpenAI Codex"] = sync_openai_codex(root)
 

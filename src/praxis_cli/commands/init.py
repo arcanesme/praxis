@@ -33,7 +33,7 @@ def init(force: bool, skip_bootstrap: bool):
     """Initialize PRAXIS protocol in the current project.
 
     Creates PRAXIS.md, praxis/ directory with commands and verification config,
-    then generates tool-specific files (CLAUDE.md, GEMINI.md, AGENTS.md).
+    then generates tool-specific files (CLAUDE.md, AGENTS.md).
     """
     root = Path.cwd()
 

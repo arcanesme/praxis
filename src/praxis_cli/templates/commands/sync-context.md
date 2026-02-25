@@ -10,7 +10,7 @@ Generate a portable context summary at `praxis/tracks/{track-name}/sync.md`:
 exported: {YYYY-MM-DD HH:MM}
 track: {track-name}
 type: {type}
-instance: {claude|gemini|codex}
+instance: {claude|codex}
 ---
 
 # Sync: {Track Title}

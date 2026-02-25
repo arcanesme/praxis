@@ -1,7 +1,7 @@
 # PRAXIS Protocol v2
 
 > Disciplined action. Theory without action is idle; action without theory is reckless.
-> This file is the single source of truth. All AI tools (Claude Code, Gemini CLI, OpenAI Codex) follow this protocol.
+> This file is the single source of truth. All AI tools (Claude Code, OpenAI Codex) follow this protocol.
 
 ---
 
@@ -25,7 +25,7 @@
 ```
 project-root/
 ├── PRAXIS.md               # This file — protocol rules (source of truth)
-├── bootstrap.sh             # Generates CLAUDE.md, GEMINI.md, AGENTS.md
+├── bootstrap.sh             # Generates CLAUDE.md, AGENTS.md
 ├── praxis/
 │   ├── context/             # Project-level context
 │   │   ├── product.md       # What, who, why
@@ -51,7 +51,6 @@ project-root/
 │           └── review.md
 ├── .claude/commands/        # (generated) Claude Code slash commands
 ├── CLAUDE.md                # (generated) Claude Code instructions
-├── GEMINI.md                # (generated) Gemini CLI instructions
 └── AGENTS.md                # (generated) OpenAI Codex instructions
 ```
 
@@ -92,7 +91,7 @@ project-root/
 
 ## Parallel Execution
 
-Multiple AI instances (Claude Code, Gemini CLI, Codex) can work simultaneously. Work is divided flexibly — you assign each instance its task.
+Multiple AI instances (Claude Code, Codex) can work simultaneously. Work is divided flexibly — you assign each instance its task.
 
 ### Rules for parallel work:
 - Each instance reads `praxis/context/` and the relevant track before starting

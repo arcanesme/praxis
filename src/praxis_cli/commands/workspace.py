@@ -28,7 +28,7 @@ def create(force: bool):
     """Interactively create a workspace with system instructions, skills, agents, and knowledge files.
 
     Generates everything needed for Claude.ai Projects, Claude Code,
-    Gemini CLI, and OpenAI Codex — from a single interactive session.
+    and OpenAI Codex — from a single interactive session.
     """
     root = find_project_root()
     if root is None:

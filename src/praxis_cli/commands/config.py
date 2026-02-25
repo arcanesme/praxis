@@ -133,10 +133,6 @@ def _interactive_config():
         "  Enable Claude Code?",
         default=cfg.get("tools", {}).get("claude_code", True),
     )
-    cfg["tools"]["gemini_cli"] = click.confirm(
-        "  Enable Gemini CLI?",
-        default=cfg.get("tools", {}).get("gemini_cli", True),
-    )
     cfg["tools"]["openai_codex"] = click.confirm(
         "  Enable OpenAI Codex?",
         default=cfg.get("tools", {}).get("openai_codex", True),
@@ -172,6 +168,6 @@ def _sync_global():
         path = sync_global_claude()
         console.print(f"  ✅ {path}")
 
-    # Future: sync to ~/.gemini/ and ~/.codex/ when they support global configs
+    # Future: sync to ~/.codex/ when it supports global configs
 
     console.print("[green]✅ Global sync complete.[/green]")

@@ -20,7 +20,7 @@ def cli():
     """PRAXIS — Disciplined action protocol for AI-assisted development.
 
     Scaffolds, configures, and validates the PRAXIS protocol across any project
-    and any AI coding tool (Claude Code, Gemini CLI, OpenAI Codex).
+    and any AI coding tool (Claude Code, OpenAI Codex).
     """
     pass
 
