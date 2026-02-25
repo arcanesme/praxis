@@ -62,7 +62,7 @@ def verify(full: bool, check_name: str | None):
 
     # Determine which checks to run
     if check_name:
-        if check_name not in verification:
+        if check_name not in CHECK_LABELS:
             console.print(f"[red]Unknown check: {check_name}[/red]")
             console.print(f"Available: {', '.join(CHECK_LABELS.keys())}")
             raise SystemExit(1)
