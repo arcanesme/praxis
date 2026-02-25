@@ -8,20 +8,11 @@ import click
 from rich.console import Console
 from rich.panel import Panel
 
+from praxis_cli.constants import CHECK_LABELS, QUICK_CHECKS
 from praxis_cli.utils.config import load_config
-from praxis_cli.utils.project import find_project_root, is_praxis_project
+from praxis_cli.utils.project import find_project_root
 
 console = Console()
-
-QUICK_CHECKS = {"formatter", "linter"}
-
-CHECK_LABELS = {
-    "formatter": "Formatter",
-    "linter": "Linter",
-    "type_checker": "Type Check",
-    "security_scanner": "Security",
-    "tests": "Tests",
-}
 
 
 @click.command()
@@ -41,7 +32,7 @@ def verify(full: bool, check_name: str | None):
       praxis verify --check linter
     """
     root = find_project_root()
-    if root is None or not is_praxis_project():
+    if root is None:
         console.print("[red]Not in a PRAXIS project.[/red] Run 'praxis init' first.")
         raise SystemExit(1)
 
@@ -49,13 +40,12 @@ def verify(full: bool, check_name: str | None):
     verification = cfg.get("verification", {})
 
     # Determine mode
-    default_mode = cfg.get("defaults", {}).get("verification_mode", "quick")
     if full:
         mode = "full"
     elif check_name:
         mode = "single"
     else:
-        mode = default_mode
+        mode = "quick"
 
     console.print(Panel(f"🏛  PRAXIS Verify — {mode} mode", style="bold blue"))
     console.print()

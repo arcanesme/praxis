@@ -23,7 +23,7 @@ def test_no_hooks_when_verification_missing():
 def test_hooks_for_enabled_formatter():
     cfg = {
         "verification": {
-            "formatter": {"enabled": True, "tool": "prettier", "command": "npx prettier --write ."},
+            "formatter": {"enabled": True, "command": "npx prettier --write ."},
             "linter": {"enabled": False},
         }
     }
@@ -40,8 +40,8 @@ def test_hooks_for_enabled_formatter():
 def test_hooks_for_multiple_checks():
     cfg = {
         "verification": {
-            "formatter": {"enabled": True, "tool": "black", "command": "black ."},
-            "linter": {"enabled": True, "tool": "ruff", "command": "ruff check ."},
+            "formatter": {"enabled": True, "command": "black ."},
+            "linter": {"enabled": True, "command": "ruff check ."},
             "type_checker": {"enabled": True, "tool": "mypy", "command": "mypy src/"},
             "security_scanner": {"enabled": False},
         }
@@ -59,7 +59,7 @@ def test_tests_excluded_from_hooks():
     """Tests are too slow for per-edit hooks — they should be excluded."""
     cfg = {
         "verification": {
-            "formatter": {"enabled": True, "tool": "black", "command": "black ."},
+            "formatter": {"enabled": True, "command": "black ."},
             "tests": {"enabled": True, "runner": "pytest", "command": "pytest"},
         }
     }
@@ -74,7 +74,7 @@ def test_skips_enabled_but_no_command():
     cfg = {
         "verification": {
             "formatter": {"enabled": True, "tool": "prettier", "command": None},
-            "linter": {"enabled": True, "tool": "ruff", "command": "ruff check ."},
+            "linter": {"enabled": True, "command": "ruff check ."},
         }
     }
     result = _build_claude_hooks(cfg)
@@ -86,7 +86,7 @@ def test_skips_enabled_but_no_command():
 def test_hook_timeout():
     cfg = {
         "verification": {
-            "formatter": {"enabled": True, "tool": "black", "command": "black ."},
+            "formatter": {"enabled": True, "command": "black ."},
         }
     }
     result = _build_claude_hooks(cfg)

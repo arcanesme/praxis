@@ -7,7 +7,7 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
 
-from praxis_cli.utils.project import find_project_root, is_praxis_project, list_tracks
+from praxis_cli.utils.project import find_project_root, list_tracks
 
 console = Console()
 
@@ -20,7 +20,7 @@ def status():
     task counts, and suggested next actions.
     """
     root = find_project_root()
-    if root is None or not is_praxis_project():
+    if root is None:
         console.print("[red]❌ Not in a PRAXIS project.[/red] Run 'praxis init' first.")
         raise SystemExit(1)
 
