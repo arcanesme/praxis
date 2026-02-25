@@ -171,68 +171,8 @@ def sync_openai_codex(root: Path) -> list[str]:
     agents_md += "- Read praxis/context/ before starting any task.\n"
     for rule in rules:
         agents_md += f"{rule}\n"
-    agents_md += "\n## PR Review Role\n"
-    agents_md += "When triggered by a GitHub Action on a PR, act as a code reviewer:\n"
-    agents_md += "1. Read PRAXIS.md and praxis/context/ for project standards\n"
-    agents_md += "2. Read praxis/verification.md for check requirements\n"
-    agents_md += "3. If the PR references a PRAXIS track, read the track's spec.md\n"
-    agents_md += "4. Review for: spec compliance, guideline adherence, security, code quality\n"
-    agents_md += "5. Post review comments with actionable feedback\n"
-
     (root / "AGENTS.md").write_text(agents_md)
     generated.append("AGENTS.md")
-
-    return generated
-
-
-def sync_github_action(root: Path) -> list[str]:
-    """Generate GitHub Action for Codex PR reviews."""
-    generated = []
-
-    workflows_dir = root / ".github" / "workflows"
-    workflows_dir.mkdir(parents=True, exist_ok=True)
-
-    action_yml = """name: PRAXIS PR Review (Codex)
-
-on:
-  pull_request:
-    types: [opened, synchronize, reopened]
-
-permissions:
-  contents: read
-  pull-requests: write
-
-jobs:
-  codex-review:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Run Codex PR Review
-        uses: openai/codex-github-action@v1
-        with:
-          openai_api_key: ${{ secrets.OPENAI_API_KEY }}
-          model: "codex-5.3"
-          instructions: |
-            You are a code reviewer following the PRAXIS protocol.
-            Read PRAXIS.md and praxis/context/ for project standards.
-            Read praxis/verification.md for check requirements.
-            If the PR description references a PRAXIS track, read the track's spec.md and plan.md.
-
-            Review for:
-            1. Spec compliance
-            2. Guideline adherence (praxis/context/guidelines.md)
-            3. Security — hardcoded secrets, unsafe inputs, PII exposure
-            4. Code quality — complexity, duplication, naming, dead code
-            5. Simplification opportunities
-
-            Post actionable review comments. Be specific about file and line.
-            End with an overall assessment: APPROVE, REQUEST_CHANGES, or COMMENT.
-"""
-
-    (workflows_dir / "praxis-pr-review.yml").write_text(action_yml)
-    generated.append(".github/workflows/praxis-pr-review.yml")
 
     return generated
 
@@ -274,7 +214,5 @@ def sync_all(root: Path) -> dict[str, list[str]]:
         results["Claude Code"] = sync_claude_code(root)
     if cfg.get("tools", {}).get("openai_codex", True):
         results["OpenAI Codex"] = sync_openai_codex(root)
-
-    results["GitHub Action"] = sync_github_action(root)
 
     return results

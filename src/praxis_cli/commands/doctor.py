@@ -144,11 +144,6 @@ def doctor():
         checks.append(("AGENTS.md", agents_md, "Run: praxis bootstrap"))
         _print_check("AGENTS.md", agents_md)
 
-    # GitHub Action
-    gh_action = (root / ".github" / "workflows" / "praxis-pr-review.yml").exists()
-    checks.append(("GitHub Action for PR reviews", gh_action, "Run: praxis bootstrap"))
-    _print_check("GitHub Action", gh_action)
-
     console.print()
 
     # ── Verification tools ─────────────────────────

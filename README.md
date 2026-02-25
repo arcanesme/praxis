@@ -61,7 +61,6 @@ Then open your AI tool and run:
 **`praxis init`** scaffolds the full structure and generates tool-specific instruction files:
 - `CLAUDE.md` + `.claude/commands/` + `.claude/settings.json` for Claude Code
 - `AGENTS.md` for OpenAI Codex
-- `.github/workflows/praxis-pr-review.yml` for automated Codex PR reviews
 
 **`praxis config`** sets global preferences that sync across all tools:
 - Always ask clarifying questions before building
@@ -90,8 +89,7 @@ your-project/
 ├── .claude/
 │   ├── commands/               ← Generated slash commands
 │   └── settings.json           ← Generated hooks (auto-format, lint after edits)
-├── AGENTS.md                   ← Generated
-└── .github/workflows/          ← Generated (Codex PR reviews)
+└── AGENTS.md                   ← Generated
 ```
 
 ## License
