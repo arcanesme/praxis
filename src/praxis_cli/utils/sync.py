@@ -1,5 +1,6 @@
 """Sync PRAXIS config to tool-specific instruction files."""
 
+import json
 import shutil
 from pathlib import Path
 
@@ -50,6 +51,37 @@ def sync_claude_code(root: Path) -> list[str]:
         for cmd_file in commands_src.glob("*.md"):
             shutil.copy2(cmd_file, commands_dst / cmd_file.name)
         generated.append(".claude/commands/")
+
+    # .claude/settings.json hooks (verification automation)
+    settings_path = root / ".claude" / "settings.json"
+    settings_path.parent.mkdir(parents=True, exist_ok=True)
+    settings = {
+        "hooks": {
+            "PostToolUse": [
+                {
+                    "matcher": "Write|Edit|MultiEdit",
+                    "hooks": [
+                        {
+                            "type": "command",
+                            "command": "praxis verify --mode quick",
+                        }
+                    ],
+                }
+            ],
+            "Stop": [
+                {
+                    "hooks": [
+                        {
+                            "type": "command",
+                            "command": "praxis verify --mode full",
+                        }
+                    ]
+                }
+            ],
+        }
+    }
+    settings_path.write_text(json.dumps(settings, indent=2) + "\n")
+    generated.append(".claude/settings.json")
 
     return generated
 

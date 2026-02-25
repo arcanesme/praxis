@@ -114,10 +114,17 @@ def doctor():
     if cfg.get("tools", {}).get("claude_code", True):
         claude_md = (root / "CLAUDE.md").exists()
         claude_cmds = (root / ".claude" / "commands").exists()
+        claude_settings = root / ".claude" / "settings.json"
+        claude_hooks = False
+        if claude_settings.exists():
+            content = claude_settings.read_text(encoding="utf-8")
+            claude_hooks = "praxis verify --mode quick" in content and "praxis verify --mode full" in content
         checks.append(("CLAUDE.md", claude_md, "Run: praxis bootstrap"))
         checks.append((".claude/commands/", claude_cmds, "Run: praxis bootstrap"))
+        checks.append((".claude/settings.json hooks", claude_hooks, "Run: praxis bootstrap"))
         _print_check("CLAUDE.md", claude_md)
         _print_check(".claude/commands/", claude_cmds)
+        _print_check(".claude/settings.json hooks", claude_hooks)
 
     # Gemini CLI
     if cfg.get("tools", {}).get("gemini_cli", True):
