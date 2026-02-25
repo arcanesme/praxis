@@ -31,6 +31,7 @@ def _build_claude_hooks(cfg: dict) -> dict:
         hooks.append({
             "type": "command",
             "command": check["command"],
+            "label": tool,
             "timeout": 30,
         })
 

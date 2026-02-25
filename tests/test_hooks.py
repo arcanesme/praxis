@@ -92,3 +92,17 @@ def test_hook_timeout():
     result = _build_claude_hooks(cfg)
     hook = result["hooks"]["PostToolUse"][0]["hooks"][0]
     assert hook["timeout"] == 30
+
+
+def test_hook_label_uses_tool_field():
+    cfg = {
+        "verification": {
+            "formatter": {"enabled": True, "tool": "prettier", "command": "npx prettier --write ."},
+            "linter": {"enabled": True, "command": "ruff check ."},
+        }
+    }
+    result = _build_claude_hooks(cfg)
+    hooks = result["hooks"]["PostToolUse"][0]["hooks"]
+    labels = {h["label"] for h in hooks}
+    assert "prettier" in labels
+    assert "linter" in labels
