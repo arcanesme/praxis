@@ -22,7 +22,7 @@ _MODE_TO_CHECKS = {
 
 
 def _coerce_value(raw: str):
-    value = raw.strip().strip('"').strip("'")
+    value = _strip_inline_comment(raw).strip().strip('"').strip("'")
     lowered = value.lower()
     if lowered in {"true", "yes"}:
         return True
@@ -31,6 +31,29 @@ def _coerce_value(raw: str):
     if lowered in {"null", "none", ""}:
         return None
     return value
+
+
+def _strip_inline_comment(raw: str) -> str:
+    """Strip YAML-style inline comments while preserving quoted '#'."""
+    in_single = False
+    in_double = False
+    escaped = False
+
+    for index, char in enumerate(raw):
+        if char == "\\" and in_double and not escaped:
+            escaped = True
+            continue
+
+        if char == "'" and not in_double and not escaped:
+            in_single = not in_single
+        elif char == '"' and not in_single and not escaped:
+            in_double = not in_double
+        elif char == "#" and not in_single and not in_double:
+            return raw[:index]
+
+        escaped = False
+
+    return raw
 
 
 def _parse_verification_config(path: Path) -> dict[str, dict]:
