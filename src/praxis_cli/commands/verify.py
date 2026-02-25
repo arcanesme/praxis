@@ -41,6 +41,39 @@ def _parse_verification_config(path: Path) -> dict[str, dict]:
     for heading, block in pattern.findall(content):
         key = heading.strip().lower().replace(" ", "_")
         parsed: dict[str, object] = {}
+        if heading.strip().lower() == "custom checks":
+            custom_checks: list[dict[str, str]] = []
+            current_check: dict[str, str] | None = None
+            for line in block.splitlines():
+                stripped = line.strip()
+                if not stripped or stripped.startswith("#"):
+                    continue
+
+                if stripped.startswith("- "):
+                    if current_check and current_check.get("command"):
+                        custom_checks.append(current_check)
+                    current_check = {}
+                    entry = stripped[2:].strip()
+                    if entry and ":" in entry:
+                        k, _, v = entry.partition(":")
+                        parsed_value = _coerce_value(v)
+                        if parsed_value is not None:
+                            current_check[k.strip()] = str(parsed_value)
+                    continue
+
+                if current_check is not None and ":" in stripped:
+                    k, _, v = stripped.partition(":")
+                    parsed_value = _coerce_value(v)
+                    if parsed_value is not None:
+                        current_check[k.strip()] = str(parsed_value)
+
+            if current_check and current_check.get("command"):
+                custom_checks.append(current_check)
+
+            parsed["checks"] = custom_checks
+            checks[key] = parsed
+            continue
+
         for line in block.splitlines():
             stripped = line.strip()
             if not stripped or stripped.startswith("#") or ":" not in stripped:
@@ -59,6 +92,34 @@ def _normalize_check_name(name: str) -> str:
         "custom_checks": "custom_checks",
     }
     return mapping.get(name, name)
+
+
+def _collect_runnable_checks(checks: dict[str, dict], allowed_checks: set[str]) -> list[tuple[str, str]]:
+    runnable: list[tuple[str, str]] = []
+    for raw_name, check_cfg in checks.items():
+        normalized = _normalize_check_name(raw_name)
+        if normalized not in allowed_checks:
+            continue
+
+        if normalized == "custom_checks":
+            for custom_check in check_cfg.get("checks", []):
+                if not isinstance(custom_check, dict):
+                    continue
+                command = custom_check.get("command")
+                if not command:
+                    continue
+                name = custom_check.get("name") or "custom_check"
+                runnable.append((str(name), str(command)))
+            continue
+
+        if not check_cfg.get("enabled"):
+            continue
+
+        command = check_cfg.get("command")
+        if command:
+            runnable.append((normalized, str(command)))
+
+    return runnable
 
 
 @click.command()
@@ -82,16 +143,7 @@ def verify(mode: str | None):
     allowed_checks = _MODE_TO_CHECKS.get(effective_mode, _MODE_TO_CHECKS["quick"])
 
     checks = _parse_verification_config(verification_file)
-    runnable = []
-    for raw_name, check_cfg in checks.items():
-        normalized = _normalize_check_name(raw_name)
-        if normalized not in allowed_checks:
-            continue
-        if not check_cfg.get("enabled"):
-            continue
-        command = check_cfg.get("command")
-        if command:
-            runnable.append((normalized, str(command)))
+    runnable = _collect_runnable_checks(checks, allowed_checks)
 
     if not runnable:
         console.print(f"[yellow]⚠ No enabled checks found for mode '{effective_mode}'.[/yellow]")
