@@ -1,0 +1,69 @@
+# {Project Name}
+<!-- MAP: This file is ~60 lines. If you're adding explanation, it belongs in ~/.claude/rules/ -->
+
+## Overview
+{one-line description}
+
+## Global Rules
+Inherits execution engine from `~/.claude/CLAUDE.md`.
+Phases (SPEC → PLAN → IMPLEMENT → VALIDATE → REPAIR → COMMIT → LOG → REPEAT),
+self-review protocol, and code quality standards apply without exception.
+
+## Identity
+- **Type**: {type}
+- **Git profile**: {identity_profile}
+- **SSH key**: {ssh_key}
+- **Email**: {identity_email}
+- **includeIf path**: {repo_root}
+
+If `git config user.email` does not return `{identity_email}`, STOP before any commit.
+
+## Vault Project
+- **Vault path**: {vault_path}
+- **Project index**: `{vault_path}/_index.md`
+
+Code lives here. Knowledge, decisions, and plans live in the vault.
+
+| Purpose | Location |
+|---------|----------|
+| Project metadata | `{vault_path}/_index.md` |
+| Execution plans | `{vault_path}/plans/` |
+| Execution state | `{vault_path}/status.md` |
+| Machine-readable state | `{vault_path}/claude-progress.json` |
+| Agent learnings | `{vault_path}/notes/learnings.md` |
+| Specs & decisions | `{vault_path}/specs/` |
+
+## Tech Stack
+- {stack_item_1}
+- {stack_item_2}
+- {stack_item_3}
+
+## Commands
+```bash
+dev:    # fill in as project develops
+test:   # fill in as project develops
+lint:   # fill in as project develops
+build:  # fill in as project develops
+```
+
+## Conventions
+- **Commits**: conventional commits (feat:, fix:, docs:, refactor:, test:, chore:)
+- **Branches**: `{type}/{description}` (e.g., `feat/add-auth`, `fix/nsg-rule`)
+- **Plans**: `{vault_path}/plans/YYYY-MM-DD_[task-slug].md`
+- **Learnings**: `{vault_path}/notes/learnings.md` using [LEARN:tag] schema
+
+## Project-Specific Rules
+<!-- Add rules discovered during development -->
+
+## After Compaction — Bootstrap Sequence
+
+**Step 1** — Read this file top to bottom first.
+**Step 2** — Active task? → read active plan. No task? → read status.md.
+**Step 3** — Load stack rules only if the current task touches them.
+
+## Compact Preservation
+When compacting, always preserve:
+- Active plan path
+- Current milestone
+- Last 3 decisions and rationale
+- Any STOP conditions or blockers

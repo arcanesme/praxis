@@ -1,0 +1,14 @@
+{
+  "project": "project-slug",
+  "display_name": "Project Name",
+  "created": "YYYY-MM-DD",
+  "type": "Work",
+  "identity": "identity-profile",
+  "repo_root": "~/path/to/repo",
+  "vault_path": "~/path/to/vault/project",
+  "stack": ["item-1", "item-2"],
+  "milestones": [],
+  "features": [],
+  "last_session": null,
+  "sessions": []
+}

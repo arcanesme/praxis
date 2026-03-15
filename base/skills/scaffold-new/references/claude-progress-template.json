@@ -1,0 +1,14 @@
+{
+  "project": "{slug}",
+  "display_name": "{Project Name}",
+  "created": "{YYYY-MM-DD}",
+  "type": "{type}",
+  "identity": "{identity_profile}",
+  "repo_root": "{repo_root}",
+  "vault_path": "{vault_path}",
+  "stack": ["{stack_item_1}", "{stack_item_2}", "{stack_item_3}"],
+  "milestones": [],
+  "features": [],
+  "last_session": null,
+  "sessions": []
+}
