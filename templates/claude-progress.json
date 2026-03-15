@@ -1,0 +1,13 @@
+{
+  "project": "{project-name}",
+  "created": "{date}",
+  "last_session": null,
+  "sessions": [],
+  "active_tracks": [],
+  "completed_tracks": [],
+  "learnings_count": 0,
+  "verification": {
+    "last_run": null,
+    "result": null
+  }
+}
