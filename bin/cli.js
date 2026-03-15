@@ -123,6 +123,8 @@ function parseFlags(args) {
       flags.vault = args[++i];
     } else if (arg === '--perplexity-key' && args[i + 1]) {
       flags.perplexityKey = args[++i];
+    } else if (arg === '--org' && args[i + 1]) {
+      flags.org = args[++i];
     } else if (arg === '--no-mcp') {
       flags.noMcp = true;
     } else if (arg === '--yes' || arg === '-y') {
@@ -135,6 +137,7 @@ function parseFlags(args) {
   // Env var fallbacks
   if (!flags.vault) flags.vault = process.env.PRAXIS_VAULT_PATH || '';
   if (!flags.perplexityKey) flags.perplexityKey = process.env.PERPLEXITY_API_KEY || '';
+  if (!flags.org) flags.org = process.env.AZURE_DEVOPS_ORG || '';
   return flags;
 }
 
@@ -343,7 +346,11 @@ async function cmdKit(flags) {
     }
     console.log(`Installing kit: ${kitName} \u2026`);
     try {
-      execSync(`bash "${kitInstall}"`, { stdio: 'inherit' });
+      // Build extra args for kit install scripts
+      const extraArgs = [];
+      if (flags.org) extraArgs.push('--org', flags.org);
+      const argsStr = extraArgs.length > 0 ? ' ' + extraArgs.map(a => `"${a}"`).join(' ') : '';
+      execSync(`bash "${kitInstall}"${argsStr}`, { stdio: 'inherit' });
     } catch (err) {
       log('\u26A0', `Kit install failed: ${kitName}`);
       process.exit(1);
@@ -415,6 +422,7 @@ Usage:
 Options:
   --vault <path>            Obsidian vault path (or PRAXIS_VAULT_PATH env var)
   --perplexity-key <key>    Perplexity API key (or PERPLEXITY_API_KEY env var)
+  --org <name>              Azure DevOps org (or AZURE_DEVOPS_ORG env var, for kit install azure)
   --no-mcp                  Skip MCP server registration
   --yes, -y                 Skip confirmation prompts
   --help, -h                Show this help

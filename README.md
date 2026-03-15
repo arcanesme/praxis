@@ -252,6 +252,27 @@ npx praxis-harness kit install web-designer
 claude mcp add 21st-magic npx -- -y @21st-dev/magic@latest
 ```
 
+### Azure
+
+**Activate:** `/kit:azure`
+
+Provides Azure infrastructure and cloud operations tooling:
+
+- **Rules:** IaC lifecycle (Bicep-first), deployment patterns (blue/green, canary, ring-based), cost management, monitoring/observability, incident response, networking, identity/access
+- **Commands:** `/az-deploy` (validate → what-if → deploy with rollback plan), `/az-review` (security/cost/reliability/naming audit)
+- **MCP:** `azure-devops` (Microsoft official — work items, PRs, builds, wikis), `azure-mcp` (resource management)
+- **Commit prefix:** `[az]` for all commits while active
+
+**MCP setup:**
+```bash
+npx praxis-harness kit install azure
+# or manually:
+claude mcp add azure-devops --scope user -- npx -y @azure-devops/mcp YOUR_ORG
+claude mcp add azure-mcp --scope user -- npx -y azure-mcp
+```
+
+Azure DevOps MCP requires Node.js >= 20 and triggers browser-based auth on first use. Azure Resource MCP uses your local `az login` credentials.
+
 ---
 
 ## MCP Servers
@@ -260,6 +281,8 @@ claude mcp add 21st-magic npx -- -y @21st-dev/magic@latest
 |--------|---------|---------------|
 | `perplexity` | Deep research — current docs, best practices, troubleshooting | `install` command |
 | `21st-magic` | UI component generation (web-designer kit only) | `kit install web-designer` |
+| `azure-devops` | Azure DevOps: work items, PRs, builds, wikis | `kit install azure` |
+| `azure-mcp` | Azure resource management: subscriptions, groups, deployments | `kit install azure` |
 
 **Perplexity usage** (from `rules/deep-research.md`):
 - Use for info beyond Claude's training cutoff, best practices research, troubleshooting

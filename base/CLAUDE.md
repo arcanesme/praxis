@@ -57,6 +57,7 @@ GSD → Superpowers → Ralph
 | Kit | Activation | Purpose |
 |-----|-----------|---------|
 | `web-designer` | `/kit:web-designer` | Design system, components, a11y, responsive |
+| `azure` | `/kit:azure` | Azure infrastructure, DevOps, Bicep/ARM, cloud ops |
 
 Use `/kit:off` to deactivate the current kit.
 
@@ -92,6 +93,8 @@ Use `/kit:off` to deactivate the current kit.
 |--------|---------|---------------|
 | `perplexity` | Deep research — current docs, best practices, troubleshooting | `install.sh` |
 | `21st-magic` | UI component generation (web-designer kit only) | `kits/web-designer/install.sh` |
+| `azure-devops` | Azure DevOps: work items, PRs, builds, wikis (azure kit) | `kits/azure/install.sh` |
+| `azure-mcp` | Azure resource management: subscriptions, groups, deployments (azure kit) | `kits/azure/install.sh` |
 
 See `rules/deep-research.md` for when and how to use Perplexity.
 
