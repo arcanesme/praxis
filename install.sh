@@ -6,6 +6,10 @@ set -euo pipefail
 #  Clone repo → run this → start working
 #  macOS and Linux. Installs all dependencies, links into ~/.claude/,
 #  configures vault path, installs kits.
+#
+#  Install paths:
+#    npx: npx praxis-harness → clones to ~/.praxis → runs this script
+#    manual: git clone ... && cd praxis && bash install.sh
 # ════════════════════════════════════════════════════════════════
 
 PRAXIS_DIR="$(cd "$(dirname "$0")" && pwd)"
