@@ -32,7 +32,7 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 # ─── CLAUDE.md symlink ───
 echo ""
 echo "Core:"
-check "[[ -L '$CLAUDE_DIR/CLAUDE.md' ]]" "CLAUDE.md is a symlink"
+check "[[ -e '$CLAUDE_DIR/CLAUDE.md' ]]" "CLAUDE.md installed"
 
 # ─── Rules symlinks ───
 echo ""
@@ -41,7 +41,7 @@ if [[ -d "$PRAXIS_DIR/base/rules" ]]; then
   for rule in "$PRAXIS_DIR"/base/rules/*.md; do
     [[ -f "$rule" ]] || continue
     fname=$(basename "$rule")
-    check "[[ -L '$CLAUDE_DIR/rules/$fname' ]]" "rules/$fname linked"
+    check "[[ -e '$CLAUDE_DIR/rules/$fname' ]]" "rules/$fname installed"
   done
 fi
 
@@ -52,7 +52,7 @@ if [[ -d "$PRAXIS_DIR/base/commands" ]]; then
   for cmd in "$PRAXIS_DIR"/base/commands/*.md; do
     [[ -f "$cmd" ]] || continue
     fname=$(basename "$cmd")
-    check "[[ -L '$CLAUDE_DIR/commands/$fname' ]]" "commands/$fname linked"
+    check "[[ -e '$CLAUDE_DIR/commands/$fname' ]]" "commands/$fname installed"
   done
 fi
 
@@ -63,14 +63,14 @@ if [[ -d "$PRAXIS_DIR/base/skills" ]]; then
   for skill_dir in "$PRAXIS_DIR"/base/skills/*/; do
     [[ -d "$skill_dir" ]] || continue
     skill_name=$(basename "$skill_dir")
-    check "[[ -L '$CLAUDE_DIR/skills/$skill_name' ]]" "skills/$skill_name linked"
+    check "[[ -e '$CLAUDE_DIR/skills/$skill_name' ]]" "skills/$skill_name installed"
   done
 fi
 
 # ─── Kits symlink ───
 echo ""
 echo "Kits:"
-check "[[ -L '$CLAUDE_DIR/kits' ]]" "kits directory symlinked"
+check "[[ -e '$CLAUDE_DIR/kits' ]]" "kits directory installed"
 
 # ─── Config ───
 echo ""
@@ -96,7 +96,7 @@ check "command -v node" "node available"
 check "command -v claude" "claude available"
 check "command -v jq" "jq available"
 
-# ─── Broken symlinks ───
+# ─── Broken symlinks (relevant for git-clone/symlink installs) ───
 echo ""
 echo "Symlink integrity:"
 BROKEN=0
