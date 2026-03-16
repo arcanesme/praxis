@@ -4,7 +4,7 @@ set -euo pipefail
 # ════════════════════════════════════════════════════════════════
 #  Praxis — Full Bootstrap
 #  Clone repo → run this → start working
-#  macOS only. Installs all dependencies, links into ~/.claude/,
+#  macOS and Linux. Installs all dependencies, links into ~/.claude/,
 #  configures vault path, installs kits.
 # ════════════════════════════════════════════════════════════════
 
@@ -42,26 +42,57 @@ echo ""
 # ═══════════════════════════════════════════
 step "Phase 1: Prerequisites"
 
-if [[ "$(uname)" != "Darwin" ]]; then
-  fail "This installer supports macOS only."
-  exit 1
-fi
-ok "macOS detected"
+# ─── Platform detection ───
+detect_platform() {
+  case "$(uname -s)" in
+    Darwin)
+      PLATFORM="darwin"
+      PKG_INSTALL="brew install"
+      NODE_PKG="node"
+      ;;
+    Linux)
+      PLATFORM="linux"
+      if command -v apt-get &>/dev/null; then
+        PKG_INSTALL="sudo apt-get install -y"
+        NODE_PKG="nodejs"
+      elif command -v dnf &>/dev/null; then
+        PKG_INSTALL="sudo dnf install -y"
+        NODE_PKG="nodejs"
+      elif command -v yum &>/dev/null; then
+        PKG_INSTALL="sudo yum install -y"
+        NODE_PKG="nodejs"
+      else
+        fail "Linux detected but no supported package manager found (apt-get, dnf, yum)."
+        exit 1
+      fi
+      ;;
+    *)
+      fail "Unsupported platform: $(uname -s). Praxis supports macOS and Linux."
+      exit 1
+      ;;
+  esac
+}
 
-if ! command -v brew &>/dev/null; then
-  echo "  Installing Homebrew..."
-  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-  if [[ -f /opt/homebrew/bin/brew ]]; then
-    eval "$(/opt/homebrew/bin/brew shellenv)"
+detect_platform
+ok "$PLATFORM detected"
+
+# ─── Homebrew (macOS only) ───
+if [[ "$PLATFORM" == "darwin" ]]; then
+  if ! command -v brew &>/dev/null; then
+    echo "  Installing Homebrew..."
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    if [[ -f /opt/homebrew/bin/brew ]]; then
+      eval "$(/opt/homebrew/bin/brew shellenv)"
+    fi
+    ok "Homebrew installed"
+  else
+    ok "Homebrew found"
   fi
-  ok "Homebrew installed"
-else
-  ok "Homebrew found"
 fi
 
 if ! command -v jq &>/dev/null; then
   echo "  Installing jq..."
-  brew install jq
+  $PKG_INSTALL jq
   ok "jq installed"
 else
   ok "jq found"
@@ -69,7 +100,7 @@ fi
 
 if ! command -v node &>/dev/null; then
   echo "  Installing Node.js..."
-  brew install node
+  $PKG_INSTALL $NODE_PKG
   ok "Node.js installed"
 else
   NODE_VERSION=$(node -v)
@@ -120,11 +151,15 @@ if [[ -z "$VAULT_PATH" ]]; then
   echo ""
 
   DETECTED=""
-  for CANDIDATE in \
-    "$HOME/Documents/Obsidian" \
-    "$HOME/Obsidian" \
-    "$HOME/Library/Mobile Documents/iCloud~md~obsidian/Documents" \
-    "$HOME/Documents/Vault"; do
+  CANDIDATES=(
+    "$HOME/Documents/Obsidian"
+    "$HOME/Obsidian"
+    "$HOME/Documents/Vault"
+  )
+  if [[ "$PLATFORM" == "darwin" ]]; then
+    CANDIDATES+=("$HOME/Library/Mobile Documents/iCloud~md~obsidian/Documents")
+  fi
+  for CANDIDATE in "${CANDIDATES[@]}"; do
     if [[ -d "$CANDIDATE" ]]; then
       DETECTED="$CANDIDATE"
       break
@@ -224,6 +259,13 @@ if npx get-shit-done-cc --claude --global 2>>"$LOG_FILE"; then
 else
   warn "GSD auto-install failed. Install manually:"
   echo "    npx get-shit-done-cc --claude --global"
+fi
+
+if ! command -v qmd &>/dev/null; then
+  echo "  Installing qmd..."
+  npm install -g @anthropic-ai/qmd 2>>"$LOG_FILE" && ok "qmd installed" || warn "qmd install failed. Install manually: npm install -g @anthropic-ai/qmd"
+else
+  ok "qmd found"
 fi
 
 mkdir -p "$HOME/bin"
@@ -340,6 +382,7 @@ verify "[[ -d '$VAULT_PATH' ]]"                      "Vault directory accessible
 verify "command -v claude"                           "Claude Code CLI available"
 verify "command -v node"                             "Node.js available"
 verify "command -v jq"                               "jq available"
+verify "command -v qmd"                              "qmd available"
 
 echo ""
 echo -e "  Checks: ${BOLD}$PASS/$TOTAL passed${NC}"
