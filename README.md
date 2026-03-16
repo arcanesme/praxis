@@ -17,24 +17,28 @@ Praxis gives Claude Code a three-layer operating system:
 ## Quick start
 
 ```bash
-git clone https://github.com/arcanesme/praxis.git
-cd praxis
-chmod +x install.sh
-./install.sh
+npx praxis-harness
 ```
 
-The installer will:
-- Check and install prerequisites (Node.js, jq, Claude Code CLI, qmd)
-- Prompt for your Obsidian vault path
-- Symlink the base layer into `~/.claude/`
-- Install GSD
-- Offer to install available kit dependencies
-- Run a health check to verify integrity
-- Print manual steps for plugins that require a Claude Code session
+One command. Clones the repo to `~/.praxis`, installs prerequisites, symlinks into `~/.claude/`, runs health check. Node.js 18+ must be installed first.
+
+**Subsequent commands:**
+```bash
+npx praxis-harness update      # pull latest + re-link
+npx praxis-harness health      # verify install integrity
+npx praxis-harness uninstall   # remove symlinks from ~/.claude/
+```
+
+**Alternative: manual install**
+```bash
+git clone https://github.com/arcanesme/praxis.git
+cd praxis
+bash install.sh
+```
 
 Verify install:
 ```bash
-bash scripts/health-check.sh
+npx praxis-harness health
 ```
 
 ## After install
@@ -139,20 +143,18 @@ Skills that touch the vault read from `~/.claude/praxis.config.json`:
 ## Updating
 
 ```bash
-bash scripts/update.sh
+npx praxis-harness update
 ```
 
-Pulls latest, re-runs install to pick up new symlinks, runs health check and content lint.
+Or manually: `bash scripts/update.sh` from the repo directory. Pulls latest, re-runs install to pick up new symlinks, runs health check and content lint.
 
 ## Uninstalling
 
 ```bash
-cd /path/to/praxis
-chmod +x uninstall.sh
-./uninstall.sh
+npx praxis-harness uninstall
 ```
 
-Removes all symlinks from `~/.claude/`. Does not delete the repo, vault templates, or installed plugins.
+Or manually: `bash uninstall.sh` from the repo directory. Removes all symlinks from `~/.claude/`. Does not delete the repo, vault templates, or installed plugins.
 
 ## Requirements
 
