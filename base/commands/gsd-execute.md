@@ -20,15 +20,26 @@ Load ONLY rules relevant to files being touched in this milestone:
 
 Do NOT load all rules. Context is scarce — spend it on implementation, not instructions.
 
+**Step 2b — Declare file group**
+Before implementing the current milestone, declare the file group:
+- Format: `Milestone: {name} | Files: {list, max 5} | Off-limits: everything else`
+- Write the file-group declaration to the plan file under the milestone entry.
+- File groups can include globs (e.g., `src/components/*.tsx`).
+
 **Step 3 — Implement current milestone**
 - One milestone at a time. Keep diffs scoped.
 - Do not expand scope without explicit user approval.
 - Use extended thinking for tasks touching >3 files or requiring architectural decisions.
+- Before writing to or editing any file: check if it is in the declared file group.
+- If a required change is discovered in an off-limits file: STOP.
+  Surface as a new milestone candidate. Do not expand current milestone.
+- Milestone diff must touch ONLY declared files. Undeclared file change = scope violation.
 
 **Step 4 — Milestone completion**
 When the milestone is complete:
 1. Write a brief summary to the active plan file under the milestone entry
-2. Prompt: "Milestone complete. Run `/gsd:verify` to validate."
+2. Confirm actual diff matches declared file group before prompting `/gsd:verify`.
+3. Prompt: "Milestone complete. Run `/gsd:verify` to validate."
 
 **Step 5 — Ralph handoff trigger**
 If remaining milestones >5 and all are independent (no cross-milestone reasoning):
