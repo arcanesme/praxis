@@ -87,6 +87,33 @@ Default to GSD. Use Ralph only when stories are clearly independent and well-sco
 3. Re-bootstrap from project CLAUDE.md — the files contain everything needed
 4. The vault drives work. Conversation is the interface, not the record.
 
+## Context Brackets — Conventions (WARN on violation)
+
+Adapt behavior based on estimated remaining context. Detect bracket by
+conversation length heuristic (not token count — we cannot read session JSONL).
+
+### FRESH (early session, <30% of typical session length)
+- Batch aggressively — minimize round trips
+- Lean output — trust that recent context is available
+- Load full plan context if needed — budget is high
+
+### MODERATE (mid-session, ~30-60%)
+- Re-read key requirements before implementation decisions
+- Reinforce constraint awareness — re-state SPEC if drifting
+- Prefer concise output — save context for implementation
+
+### DEPLETED (late session, >60%)
+- Checkpoint progress to vault files before continuing
+- Write milestone summaries proactively (don't wait for verify)
+- Suggest `/session-retro` + `/clear` if remaining work is substantial
+- Prepare handoff: ensure status.md and plan file capture all state
+
+### CRITICAL (after compaction or context warning)
+- Use DEPLETED rules
+- STOP new work. Complete current milestone only.
+- Write all state to vault immediately
+- Suggest new session for remaining milestones
+
 ---
 
 ## Verification Commands
