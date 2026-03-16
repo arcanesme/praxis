@@ -8,6 +8,8 @@ source: agent
 
 current_plan:
 last_updated: YYYY-MM-DD
+last_session:
+loop_position: IDLE
 
 ## What
 <!-- Facts only. What exists, what was done, what failed. -->
@@ -22,4 +24,4 @@ last_updated: YYYY-MM-DD
 <!-- Active blockers with owner if known -->
 
 ## Test Debt
-<!-- Modules or features lacking test coverage — logged here, not ignored -->
+<!-- Modules or features lacking test coverage -->

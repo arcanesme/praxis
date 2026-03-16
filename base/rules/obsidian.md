@@ -54,7 +54,7 @@ Never ask "should I save this?" for the above categories — just save it.
 | File | Contains | Does NOT contain |
 |------|---------|-----------------|
 | `_index.md` | Project metadata: repo, stack, goals, links | Session state, plans, decisions |
-| `status.md` | Execution state: What/So What/Now What | Historical completed work |
+| `status.md` | Execution state: What/So What/Now What. **Max 100 lines.** Archive resolved items to `notes/`. | Historical completed work, session transcripts |
 | `tasks.md` | Active/Backlog/Blocked/Completed task lists | Specs, decisions, research |
 | `plans/` | Dated work plans with milestones and steps | Completed archives |
 | `specs/` | ADRs, technical specs, risk register, proposals | In-progress drafts |
@@ -86,6 +86,20 @@ When "let's work on X" or "plan out Y":
 4. At session end: run `/session-retro`
 
 **The vault drives work. Conversation is the interface, not the record.**
+
+### Status digest discipline
+- status.md must stay under 100 lines. If it exceeds this: archive resolved
+  What/So What/Now What sections to `notes/{date}_status-archive.md` and trim.
+- Required fields at top (always present):
+  ```
+  current_plan: {path or "none"}
+  last_updated: {YYYY-MM-DD}
+  last_session: {ISO timestamp}
+  loop_position: DISCUSS | PLAN | EXECUTE | VERIFY | IDLE
+  ```
+- loop_position tracks where in the GSD cycle the project currently sits.
+  Update at every phase transition.
+- A status.md older than 14 days is stale. vault-gc flags these.
 
 ---
 
