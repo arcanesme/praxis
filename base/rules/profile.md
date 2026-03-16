@@ -21,7 +21,7 @@ To see current project state: run /standup.
 - Writes for two audiences: technical implementers and non-technical stakeholders.
 - Communication style: direct, structured, What/So What/Now What.
 - Deliverables over discussion — prefers concrete output to long explanations.
-- Vault-first: decisions, specs, and plans live in Obsidian, not in conversation.
+- Vault-first: decisions, specs, and plans live in the vault, not in conversation.
 - Git identity is project-specific — always verify before committing.
 
 ## What Claude Should Always Remember

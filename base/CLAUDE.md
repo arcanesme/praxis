@@ -38,10 +38,11 @@ If cannot fix in 3 attempts: STOP. Report What / So What / Now What.
 **Before writing any templated file:** Scan for unreplaced `{placeholder}` patterns. Zero must remain.
 
 ## Vault Configuration
-Vault path is machine-specific. Read from `~/.claude/praxis.config.json`:
+Vault path and backend are machine-specific. Read from `~/.claude/praxis.config.json`:
 ```json
-{ "vault_path": "/path/to/obsidian/vault" }
+{ "vault_path": "/path/to/vault", "vault_backend": "obsidian" }
 ```
+Supported backends: `obsidian` (default), `logseq`, `plain`, `custom`.
 If config file is missing: tell the user to run `praxis/install.sh`.
 All `{vault_path}` references in rules and skills resolve from this config.
 
@@ -57,10 +58,10 @@ Context is volatile. Files are permanent. Act accordingly.
 | Learnings | `{vault_path}/notes/learnings.md` |
 
 ## Vault Protocol
-- ALWAYS run `qmd search "<query>" -n 5` before reading vault files.
-- Run `qmd update` after EVERY vault file write.
-- Never run `qmd embed` mid-session — it runs at SessionEnd via hook.
-- Use `[[wikilinks]]` for all internal vault references.
+- ALWAYS run a vault search before reading vault files (see vault.md backend table).
+- Run a vault update after EVERY vault file write (obsidian/logseq: `qmd update`; plain/custom: no-op).
+- Never run `qmd embed` mid-session [obsidian/logseq only] — it runs at SessionEnd via hook.
+- Link format: obsidian → `[[wikilinks]]`; logseq/plain/custom → standard markdown links.
 - Detect project from CWD matching `local_path` in `_index.md`.
 
 ## After Compaction — Bootstrap
@@ -84,7 +85,7 @@ Context is volatile. Files are permanent. Act accordingly.
 - Hardcode secrets or credentials
 - Commit with wrong git identity
 - Write a file with unreplaced {placeholders}
-- Run `qmd embed` mid-session
+- Run `qmd embed` mid-session [obsidian/logseq only]
 
 ## AI-Kit Registry
 Kits activate via `/kit:<n>` slash command. Kits are idempotent — double-activate is a no-op.
@@ -108,7 +109,7 @@ Kit manifests live in `~/.claude/kits/<name>/KIT.md`.
 | `~/.claude/rules/git-workflow.md` | Commits, branches, identity verification |
 | `~/.claude/rules/security.md` | Secrets, credentials, auth patterns |
 | `~/.claude/rules/communication.md` | Client writing, no AI attribution |
-| `~/.claude/rules/obsidian.md` | Vault as second brain — auto-save, search-before-read |
+| `~/.claude/rules/vault.md` | Second brain integration — obsidian, logseq, or plain markdown |
 | `~/.claude/rules/architecture.md` | ADR format, What/So What/Now What, risk docs |
 | `~/.claude/rules/context-management.md` | GSD/Ralph anti-rot, context reset protocol |
 

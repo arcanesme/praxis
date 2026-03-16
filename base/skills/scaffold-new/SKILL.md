@@ -2,7 +2,7 @@
 name: scaffold-new
 disable-model-invocation: true
 description: Scaffold a brand new project into the full harness. Invoke with /scaffold-new only.
-  Creates repo CLAUDE.md, Obsidian vault subtree, git identity verification, gitignore,
+  Creates repo CLAUDE.md, vault subtree, git identity verification, gitignore,
   pre-commit hook, and Project Registry entry. Side-effect skill — never auto-triggers.
 ---
 
@@ -104,12 +104,15 @@ Write to `{vault_path}/claude-progress.json`.
 
 ---
 
-## Phase 4 — QMD Re-Index
+## Phase 4 — Vault Re-Index
 
+If `vault_backend` is `obsidian` or `logseq`:
 ```bash
 unset BUN_INSTALL && qmd update
 ```
 On failure: warn, do not block.
+
+If `vault_backend` is `plain` or `custom`: skip this phase (no indexing needed).
 
 ---
 
@@ -135,15 +138,16 @@ If no: skip silently.
 ## Phase 6 — Update Project Registry
 
 Append to vault CLAUDE.md Project Registry table and agenda.md.
-Run `qmd update` after writes.
+Run a vault update after writes (obsidian/logseq: `qmd update`; plain/custom: no-op).
 
 ---
 
 ## Phase 7 — Confirm & Open Vault
 
-```bash
-open "obsidian://open?vault=Obsidian"
-```
+Open the vault in the user's app (backend-conditional):
+- `obsidian` → `open "obsidian://open?vault=Obsidian"`
+- `logseq` → `open "logseq://graph/{vault_name}"`
+- `plain` / `custom` → print vault path for user to open manually
 
 Print summary table with all created files and bootstrap sequence.
 
@@ -156,7 +160,7 @@ Print summary table with all created files and bootstrap sequence.
 - [ ] Phase 2: `{repo_root}/CLAUDE.md` — zero unreplaced placeholders
 - [ ] Phase 3: Vault subtree created
 - [ ] Phase 3.5: `claude-progress.json` created
-- [ ] Phase 4: `qmd update` run
+- [ ] Phase 4: Vault re-index (qmd update or skip for plain/custom)
 - [ ] Phase 5: Git identity verified
 - [ ] Phase 5.5: Hook decision made
 - [ ] Phase 6: Registry and agenda updated

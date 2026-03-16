@@ -1,7 +1,19 @@
-# Obsidian — Second Brain Integration
+# Vault — Second Brain Integration
 <!-- Universal — loads every session. Defines how Claude interacts with the vault. -->
 
 ---
+
+## Backend Detection
+Read `vault_backend` from `~/.claude/praxis.config.json`. Defaults to `"obsidian"` if absent.
+
+| Backend | Search command | Update after write | Link format | Embed |
+|---------|---------------|-------------------|-------------|-------|
+| `obsidian` | `unset BUN_INSTALL && qmd search "{query}" -n 5` | `unset BUN_INSTALL && qmd update` | `[[wikilinks]]` | SessionEnd hook |
+| `logseq` | `unset BUN_INSTALL && qmd search "{query}" -n 5` | `unset BUN_INSTALL && qmd update` | standard markdown links | SessionEnd hook |
+| `plain` | `rg -l "{query}" {vault_path} --glob "*.md" \| head -5` | no-op | standard markdown links | n/a |
+| `custom` | `rg -l "{query}" {vault_path} --glob "*.md" \| head -5` | no-op | standard markdown links | n/a |
+
+All commands below use the backend table above. When a step says "vault search" or "vault update", substitute the correct command for the active backend.
 
 ## Vault Location
 Read vault_path from `~/.claude/praxis.config.json`.
@@ -21,7 +33,7 @@ This is entropy. The vault prevents it.
 ## Invariants — BLOCK on violation
 
 ### Search before reading
-- ALWAYS run `unset BUN_INSTALL && qmd search "{query}" -n 5` before reading vault files.
+- ALWAYS run a vault search before reading vault files.
 - Never navigate to a vault file by path alone — you may read a stale or superseded version.
 
 ### Auto-save these to vault without being asked
@@ -34,11 +46,12 @@ This is entropy. The vault prevents it.
 
 Never ask "should I save this?" for the above categories — just save it.
 
-### qmd update after every write
-- Run `unset BUN_INSTALL && qmd update` after EVERY vault file write. No exceptions.
+### Vault update after every write
+- Run a vault update after EVERY vault file write. No exceptions.
 - Do not batch — run after each write, not once at the end.
+- For `plain` and `custom` backends: no update command needed (files are read directly).
 
-### Never run qmd embed mid-session
+### Never run qmd embed mid-session [obsidian/logseq only]
 - `qmd embed` is the vector re-index. Slow. Runs at SessionEnd via hook.
 
 ---
@@ -62,7 +75,7 @@ Never ask "should I save this?" for the above categories — just save it.
 | `notes/learnings.md` | [LEARN:tag] entries, patterns, corrections | General meeting notes |
 
 ### Writing format for vault files
-Every vault file must have Obsidian-compatible frontmatter:
+Every vault file must have YAML frontmatter:
 ```yaml
 ---
 tags: [type, project-slug]
@@ -71,7 +84,9 @@ source: agent | human | meeting
 ---
 ```
 
-Use `[[wikilinks]]` for all internal vault references — never relative paths.
+Link format depends on backend:
+- `obsidian` → use `[[wikilinks]]` for all internal vault references
+- `logseq`, `plain`, `custom` → use standard markdown links
 
 ### Bootstrap templates
 If `status.md`, `tasks.md`, or `_index.md` are missing from a project vault directory,
@@ -116,5 +131,5 @@ Every time something works better than expected, log why.
 ---
 
 ## Removal Condition
-Permanent. Remove only if the Obsidian vault is replaced by a different
-knowledge management system entirely.
+Permanent. Remove only if persistent vault state is replaced by
+a different mechanism entirely.

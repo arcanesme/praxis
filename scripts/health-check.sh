@@ -88,10 +88,18 @@ if [[ -f "$CONFIG_FILE" ]]; then
   fi
 fi
 
-# ─── Required tools ───
+# ─── Required tools (conditional on backend) ───
 echo ""
 echo "Tools:"
-check "command -v qmd" "qmd available"
+VAULT_BACKEND=""
+if [[ -f "$CONFIG_FILE" ]]; then
+  VAULT_BACKEND=$(jq -r '.vault_backend // "obsidian"' "$CONFIG_FILE" 2>/dev/null)
+fi
+if [[ "$VAULT_BACKEND" == "obsidian" || "$VAULT_BACKEND" == "logseq" ]]; then
+  check "command -v qmd" "qmd available"
+else
+  check "command -v rg" "ripgrep available"
+fi
 check "command -v node" "node available"
 check "command -v claude" "claude available"
 check "command -v jq" "jq available"

@@ -90,7 +90,7 @@ Before adding any new package:
   rewrite the code to be self-describing instead.
 - Update docs and comments when changing logic. Stale comments actively mislead.
 - Code is primary documentation — clear naming, types, docstrings.
-- Obsidian-compatible frontmatter on all markdown files:
+- YAML frontmatter on all markdown files:
   ```yaml
   ---
   created: YYYY-MM-DD
