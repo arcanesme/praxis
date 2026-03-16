@@ -1,0 +1,6 @@
+.git/
+.github/
+.install.log
+*.log
+docs/
+.DS_Store
