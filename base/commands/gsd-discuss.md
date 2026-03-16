@@ -35,5 +35,19 @@ Output a 1-paragraph problem framing that includes:
 - What gap or need the user described
 - Recommendation: proceed to `/gsd:plan-phase` or write a `/spec` first
 
+**Step 5b — Scope guard**
+- Problem framing (Step 5 output) must not exceed 200 words. If the problem
+  requires more to frame: it is too large. Split into sub-problems and run
+  `/gsd:discuss` on each separately.
+- After framing: explicitly list what is NOT being decided in this discuss phase.
+- Never output implementation code, pseudocode, or file-level changes during discuss.
+  This phase produces a problem statement, not a solution.
+- If the framing implies >5 milestones or >3 file groups: flag as scope explosion
+  risk and recommend splitting before `/gsd:plan-phase`.
+
 **Step 6 — Handoff**
 End with: "Run `/gsd:plan-phase` to continue, or `/spec` if this needs a design spec first."
+
+**Rules:**
+- Problem framing is a paragraph, not a design doc.
+- If scope exceeds 5 milestones: recommend splitting into multiple GSD passes.
