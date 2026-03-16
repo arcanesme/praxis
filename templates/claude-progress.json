@@ -9,6 +9,16 @@
   "stack": ["item-1", "item-2"],
   "milestones": [],
   "features": [],
+  "ralph_state": {
+    "mode": "idle",
+    "prd_path": null,
+    "current_story": null,
+    "completed_stories": [],
+    "blocked_stories": [],
+    "learnings": [],
+    "last_iteration": null,
+    "session_count": 0
+  },
   "last_session": null,
   "sessions": []
 }
