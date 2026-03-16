@@ -24,6 +24,7 @@ tags: [plan, {project-slug}]
 date: {YYYY-MM-DD}
 status: active
 target: {date or open}
+execution_type: execute | tdd | research
 source: agent
 ---
 # Plan: {title}
@@ -37,7 +38,8 @@ Why this work is happening now.
 ## Milestones
 - [ ] {milestone 1} — {date}
 - [ ] {milestone 2} — {date} | depends_on: milestone 1
-- [ ] {milestone 3} — {date} | depends_on: milestone 1, milestone 2
+- [ ] {milestone 3} — {date} | depends_on: milestone 2 | checkpoint: decision
+- [ ] {milestone 4} — {date} | checkpoint: human-verify
 
 ## Steps
 ### {Milestone 1}
@@ -47,6 +49,11 @@ Why this work is happening now.
 ## Done When
 - [ ] {specific verifiable check}
 
+## Boundaries
+<!-- Required. Files/systems that MUST NOT change during this plan. -->
+<!-- Override requires explicit "OVERRIDE: {reason}" from user. -->
+- DO NOT CHANGE: {file or system list}
+
 ## Blockers
 <!-- Known blockers at plan creation time -->
 
@@ -54,13 +61,23 @@ Why this work is happening now.
 <!-- Updated by session-retro -->
 ```
 
-**Step 3b — Dependency validation**
+Checkpoint types:
+- `checkpoint: decision` — user must confirm a choice before proceeding
+- `checkpoint: human-verify` — user must validate output before proceeding
+- No annotation = autonomous (default)
+
+**Step 3b — Dependency and boundary validation**
 After building the milestone list:
 - Scan for circular dependencies (topological sort). If cycle detected:
   report the cycle and ask user to break it.
 - Validate that every `depends_on:` reference exists in the milestone list.
 - If user provided milestones out of order: reorder and note the change.
 - Milestones with no `depends_on:` are independent — this is valid.
+- Validate Boundaries: if user did not specify any, ask:
+  "What files or systems should NOT be touched during this plan?"
+  Empty boundaries are valid only if explicitly confirmed.
+- Validate checkpoints: milestones with architectural decisions or user-facing output
+  should be annotated as `checkpoint: decision` or `checkpoint: human-verify`.
 
 **Step 4 — Write and wire**
 - Write to: `{vault_path}/plans/{YYYY-MM-DD}_{kebab-title}.md`
