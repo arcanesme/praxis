@@ -94,24 +94,91 @@ async function install() {
     ok('kits installed');
   }
 
-  // Vault path config
+  // Orphan cleanup: obsidian.md renamed to vault.md
+  const legacyObsidian = path.join(CLAUDE_DIR, 'rules', 'obsidian.md');
+  if (fs.existsSync(legacyObsidian)) {
+    fs.unlinkSync(legacyObsidian);
+    ok('Removed legacy obsidian.md (renamed to vault.md)');
+  }
+
+  // Vault configuration
   if (!fs.existsSync(CONFIG_FILE)) {
     header('Vault configuration');
     const readline = require('readline/promises');
     const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
-    const vaultPath = await rl.question('  Obsidian vault path (or press Enter to skip): ');
+
+    console.log('');
+    console.log('  Choose a vault backend:');
+    console.log('    [1] Obsidian (default)');
+    console.log('    [2] Logseq');
+    console.log('    [3] Plain markdown (~/.praxis-vault)');
+    console.log('    [4] Custom path');
+    console.log('');
+    const backendChoice = await rl.question('  Choice [1]: ');
+    const choice = (backendChoice || '1').trim();
+
+    let vaultBackend = 'obsidian';
+    let vaultPath = '';
+
+    switch (choice) {
+      case '1':
+        vaultBackend = 'obsidian';
+        vaultPath = await rl.question('  Obsidian vault path: ');
+        break;
+      case '2':
+        vaultBackend = 'logseq';
+        vaultPath = await rl.question('  Logseq vault path: ');
+        break;
+      case '3':
+        vaultBackend = 'plain';
+        vaultPath = path.join(os.homedir(), '.praxis-vault');
+        fs.mkdirSync(vaultPath, { recursive: true });
+        ok('Created ' + vaultPath);
+        break;
+      case '4':
+        vaultBackend = 'custom';
+        vaultPath = await rl.question('  Vault path: ');
+        break;
+      default:
+        vaultBackend = 'obsidian';
+        vaultPath = await rl.question('  Vault path: ');
+        break;
+    }
     rl.close();
 
-    const config = { vault_path: vaultPath || '', repo_path: PKG_DIR };
+    if (vaultPath) {
+      vaultPath = vaultPath.replace(/^~/, os.homedir());
+    }
+
+    const config = {
+      version: '1.1.0',
+      vault_path: vaultPath || '',
+      vault_backend: vaultBackend,
+      repo_path: PKG_DIR
+    };
     fs.writeFileSync(CONFIG_FILE, JSON.stringify(config, null, 2) + '\n');
     ok('praxis.config.json written');
   } else {
     dim('praxis.config.json already exists — skipping');
   }
 
-  // Tool checks
+  // Tool checks (conditional on backend)
   header('Tool check');
-  for (const tool of ['node', 'claude', 'jq', 'qmd']) {
+  let vaultBackendForCheck = 'obsidian';
+  if (fs.existsSync(CONFIG_FILE)) {
+    try {
+      const cfg = JSON.parse(fs.readFileSync(CONFIG_FILE, 'utf8'));
+      vaultBackendForCheck = cfg.vault_backend || 'obsidian';
+    } catch {}
+  }
+
+  const baseTools = ['node', 'claude', 'jq'];
+  if (vaultBackendForCheck === 'obsidian' || vaultBackendForCheck === 'logseq') {
+    baseTools.push('qmd');
+  } else {
+    baseTools.push('rg');
+  }
+  for (const tool of baseTools) {
     if (toolExists(tool)) {
       ok(tool + ' available');
     } else {
@@ -195,9 +262,22 @@ function health() {
     } catch { total++; fail('praxis.config.json is invalid JSON'); }
   }
 
-  // Tools
+  // Tools (conditional on backend)
   console.log('\nTools:');
-  for (const tool of ['node', 'claude', 'jq', 'qmd']) {
+  let healthBackend = 'obsidian';
+  if (fs.existsSync(CONFIG_FILE)) {
+    try {
+      const cfg = JSON.parse(fs.readFileSync(CONFIG_FILE, 'utf8'));
+      healthBackend = cfg.vault_backend || 'obsidian';
+    } catch {}
+  }
+  const healthTools = ['node', 'claude', 'jq'];
+  if (healthBackend === 'obsidian' || healthBackend === 'logseq') {
+    healthTools.push('qmd');
+  } else {
+    healthTools.push('rg');
+  }
+  for (const tool of healthTools) {
     check(toolExists(tool), tool + ' available');
   }
 
@@ -228,6 +308,9 @@ function uninstall() {
       const target = path.join(CLAUDE_DIR, 'rules', f);
       if (fs.existsSync(target)) fs.unlinkSync(target);
     }
+    // Also remove legacy obsidian.md if present
+    const legacyRule = path.join(CLAUDE_DIR, 'rules', 'obsidian.md');
+    if (fs.existsSync(legacyRule)) fs.unlinkSync(legacyRule);
     ok('rules removed');
   }
 
