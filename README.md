@@ -24,12 +24,18 @@ chmod +x install.sh
 ```
 
 The installer will:
-- Check and install prerequisites (Homebrew, Node.js, jq, Claude Code CLI)
+- Check and install prerequisites (Node.js, jq, Claude Code CLI, qmd)
 - Prompt for your Obsidian vault path
 - Symlink the base layer into `~/.claude/`
 - Install GSD
 - Offer to install available kit dependencies
+- Run a health check to verify integrity
 - Print manual steps for plugins that require a Claude Code session
+
+Verify install:
+```bash
+bash scripts/health-check.sh
+```
 
 ## After install
 
@@ -43,6 +49,50 @@ Open Claude Code and run:
 ```
 
 Verify with `/help` — you should see GSD, Superpowers, and Praxis commands.
+
+## Workflow
+
+The standard GSD workflow for feature development:
+
+```
+/standup           → orient (reads status.md, surfaces stale state)
+/gsd:discuss       → frame the problem (SPEC questions, scope guard)
+/gsd:plan-phase    → plan milestones (with dependency ordering)
+/gsd:execute       → implement one milestone at a time (file-group isolation)
+/gsd:verify        → validate (test/lint/typecheck/build, self-review)
+/session-retro     → capture learnings, update vault
+```
+
+For pure bugfixes: `/debug` (test-first debugging, skips GSD).
+For code review: `/review` (launches subagent review at any time).
+
+## Commands
+
+| Command | Purpose |
+|---------|---------|
+| `gsd-discuss` | Frame the problem, SPEC questions, scope guard |
+| `gsd-execute` | Implement one milestone with file-group isolation |
+| `gsd-verify` | Validate milestone (test/lint/build), self-review |
+| `ralph` | Autonomous multi-story execution from a PRD |
+| `plan` | Create a dated work plan with milestone dependencies |
+| `spec` | Create a structured spec or ADR with conflict detection |
+| `standup` | Session-start orientation from vault state |
+| `risk` | Add a risk register entry to the vault |
+| `kit` | Activate/deactivate an AI-Kit |
+| `review` | Manual code review via subagent |
+| `debug` | Structured test-first debugging |
+| `context-reset` | Reload context from vault without clearing session |
+
+## Ralph
+
+Ralph is the autonomous execution mode for multi-story work. Use it when you have >5 independent stories that don't require human checkpoints.
+
+1. Write a PRD using `/prd-writer` (structured story format with file groups and estimates)
+2. Run `/ralph` to begin autonomous execution
+3. Each story runs in a fresh context with its own verify cycle
+4. Blocked stories are recorded and skipped — reported at run end
+
+Ralph is not a replacement for GSD — it runs GSD internally per story. Use GSD for work that needs cross-story reasoning or architectural decisions.
 
 ## Architecture
 
@@ -69,6 +119,7 @@ Verify with `/help` — you should see GSD, Superpowers, and Praxis commands.
 | Kit | Activate | What it does |
 |-----|----------|-------------|
 | web-designer | `/kit:web-designer` | Design system init → component build → accessibility audit → production lint |
+| infrastructure | `/kit:infrastructure` | Terraform plan → apply → drift detection → compliance check |
 
 More kits coming. See `docs/creating-a-kit.md` to build your own.
 
@@ -88,12 +139,10 @@ Skills that touch the vault read from `~/.claude/praxis.config.json`:
 ## Updating
 
 ```bash
-cd /path/to/praxis
-git pull
-./install.sh
+bash scripts/update.sh
 ```
 
-Symlinked files update automatically on `git pull`. New files need a re-run of `install.sh` to create symlinks.
+Pulls latest, re-runs install to pick up new symlinks, runs health check and content lint.
 
 ## Uninstalling
 
@@ -107,7 +156,7 @@ Removes all symlinks from `~/.claude/`. Does not delete the repo, vault template
 
 ## Requirements
 
-- macOS
+- macOS or Linux
 - Claude Code CLI
 - Node.js 18+
 - Obsidian (optional, for vault integration)
