@@ -64,6 +64,18 @@ Context is volatile. Files are permanent. Act accordingly.
 - Link format: obsidian → `[[wikilinks]]`; logseq/plain/custom → standard markdown links.
 - Detect project from CWD matching `local_path` in `_index.md`.
 
+## MCP Servers
+Registered via `claude mcp add`. Persist globally across sessions.
+
+| Server | Purpose | API Key |
+|--------|---------|---------|
+| context7 | Live library/API docs | None |
+| perplexity | AI web search | `PERPLEXITY_API_KEY` |
+| github | Repo operations, PRs, issues | `GITHUB_PERSONAL_ACCESS_TOKEN` |
+
+Check: `claude mcp list` | Manage: `bash scripts/onboard-mcp.sh [server|all]`
+Missing servers are non-blocking — features degrade gracefully.
+
 ## After Compaction — Bootstrap
 1. Read project CLAUDE.md (always first)
 2. Check `claude-progress.json` — if `.ralph_state.current_story` is set: read it NOW, it is authoritative
