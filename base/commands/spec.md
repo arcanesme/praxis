@@ -16,6 +16,22 @@ Ask the following in a single message:
 - Type: ADR (architecture decision) / PLAN (work plan) / RISK (risk register entry) / SPEC (technical spec)
 - Is there an existing related spec in `specs/`? (run `unset BUN_INSTALL && qmd search "{topic}" -n 3` first)
 
+**Step 2b — Cross-spec conflict check**
+After the vault search from Step 2, check for conflicts with accepted ADRs:
+- Run: `unset BUN_INSTALL && qmd search "{topic}" -n 10`
+- For each result with `status: accepted` or `status: proposed`:
+  - Compare the decision direction. Does the new spec contradict an accepted decision?
+- If conflict detected, present:
+  ```
+  This conflicts with {spec-path} (accepted {date}).
+  Options:
+  1. Supersede — update existing ADR status to 'superseded', link to this one
+  2. Extend — amend the existing ADR instead of creating a new one
+  3. Proceed with awareness — document the tension in ## Consequences
+  ```
+- Never silently create a spec that contradicts an accepted ADR.
+- If no conflicts: proceed silently.
+
 **Step 3 — Answer the four SPEC questions**
 - **WHAT**: Concrete deliverable
 - **DONE-WHEN**: Specific checks that prove completion
