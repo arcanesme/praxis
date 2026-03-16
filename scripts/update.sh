@@ -70,5 +70,11 @@ if [[ -f "$REPO_PATH/scripts/health-check.sh" ]]; then
   bash "$REPO_PATH/scripts/health-check.sh" || echo "  ⚠ Health check had failures"
 fi
 
+if [[ -f "$REPO_PATH/scripts/lint-harness.sh" ]]; then
+  echo ""
+  echo "Running content lint..."
+  bash "$REPO_PATH/scripts/lint-harness.sh" "$REPO_PATH" || echo "  ⚠ Lint had failures"
+fi
+
 echo ""
 echo "✓ Praxis updated"
