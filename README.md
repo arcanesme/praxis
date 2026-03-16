@@ -2,7 +2,7 @@
 
 > *"Philosophy must be practiced, not just studied."* — Musonius Rufus
 
-A layered harness for [Claude Code](https://docs.anthropic.com/en/docs/claude-code). Universal workflow discipline + domain-specific AI-Kits + Obsidian vault integration.
+A layered harness for [Claude Code](https://docs.anthropic.com/en/docs/claude-code). Universal workflow discipline + domain-specific AI-Kits + persistent vault integration.
 
 ## What it does
 
@@ -84,7 +84,7 @@ For technical research: `/discover` (structured options evaluation before decisi
 
 Key additions in this version:
 - **context-management** — context brackets (FRESH/MODERATE/DEPLETED/CRITICAL) adapt behavior to session stage
-- **obsidian** — status digest discipline (100-line cap, loop_position tracking)
+- **vault** — multi-backend vault integration (obsidian, logseq, plain, custom)
 
 ## Ralph
 
@@ -110,6 +110,9 @@ Ralph is not a replacement for GSD — it runs GSD internally per story. Use GSD
 │  Universal base (always loaded)        │
 │  GSD → Superpowers → Ralph             │
 ├────────────────────────────────────────┤
+│  Vault layer                           │
+│  obsidian | logseq | plain | custom    │
+├────────────────────────────────────────┤
 │  Claude Code                           │
 │  ~/.claude/ + plugins + subagents      │
 └────────────────────────────────────────┘
@@ -126,18 +129,29 @@ Ralph is not a replacement for GSD — it runs GSD internally per story. Use GSD
 
 More kits coming. See `docs/creating-a-kit.md` to build your own.
 
-## Obsidian integration
+## Vault integration
 
-Praxis integrates with an Obsidian vault for persistent project state, session learnings, and architecture decisions. The vault path is configured per machine during install — no hardcoded paths.
+Praxis integrates with a persistent vault for project state, session learnings, and architecture decisions. Four backends are supported:
 
-Skills that touch the vault read from `~/.claude/praxis.config.json`:
+| Backend | Description | Search tool |
+|---------|-------------|-------------|
+| `obsidian` | Obsidian vault (default) | qmd |
+| `logseq` | Logseq graph | qmd |
+| `plain` | Plain markdown directory (`~/.praxis-vault`) | ripgrep |
+| `custom` | Any directory you choose | ripgrep |
+
+The backend and vault path are configured per machine during install:
 
 ```json
 {
   "vault_path": "/Users/you/Documents/Obsidian",
+  "vault_backend": "obsidian",
   "repo_path": "/Users/you/repos/praxis"
 }
 ```
+
+- **obsidian/logseq**: requires [qmd](https://npmjs.com/package/@anthropic-ai/qmd) (installed automatically)
+- **plain/custom**: uses ripgrep for vault search — no extra dependencies
 
 ## Updating
 
@@ -170,7 +184,7 @@ The git-clone + `install.sh` path uses symlinks instead of copies, so edits in t
 - macOS or Linux
 - Claude Code CLI
 - Node.js 18+
-- Obsidian (optional, for vault integration)
+- Obsidian, Logseq, or a plain markdown directory (optional, for vault integration)
 
 ## License
 
