@@ -20,25 +20,13 @@ Praxis gives Claude Code a three-layer operating system:
 npx praxis-harness
 ```
 
-One command. Clones the repo to `~/.praxis`, installs prerequisites, symlinks into `~/.claude/`, runs health check. Node.js 18+ must be installed first.
+One command. Copies rules, commands, skills, and kits directly into `~/.claude/`. Node.js 18+ must be installed first.
 
 **Subsequent commands:**
 ```bash
-npx praxis-harness update      # pull latest + re-link
+npx praxis-harness update      # re-copy from latest npm version
 npx praxis-harness health      # verify install integrity
-npx praxis-harness uninstall   # remove symlinks from ~/.claude/
-```
-
-**Alternative: manual install**
-```bash
-git clone https://github.com/arcanesme/praxis.git
-cd praxis
-bash install.sh
-```
-
-Verify install:
-```bash
-npx praxis-harness health
+npx praxis-harness uninstall   # remove Praxis-owned files from ~/.claude/
 ```
 
 ## After install
@@ -61,31 +49,42 @@ The standard GSD workflow for feature development:
 ```
 /standup           → orient (reads status.md, surfaces stale state)
 /gsd:discuss       → frame the problem (SPEC questions, scope guard)
-/gsd:plan-phase    → plan milestones (with dependency ordering)
+/discover          → research options with confidence levels (before /spec)
+/gsd:plan-phase    → plan milestones (with dependency ordering + boundaries)
 /gsd:execute       → implement one milestone at a time (file-group isolation)
-/gsd:verify        → validate (test/lint/typecheck/build, self-review)
+/gsd:verify        → validate (test/lint/typecheck/build, self-review, UNIFY)
 /session-retro     → capture learnings, update vault
 ```
 
 For pure bugfixes: `/debug` (test-first debugging, skips GSD).
 For code review: `/review` (launches subagent review at any time).
+For technical research: `/discover` (structured options evaluation before decisions).
 
 ## Commands
 
 | Command | Purpose |
 |---------|---------|
 | `gsd-discuss` | Frame the problem, SPEC questions, scope guard |
-| `gsd-execute` | Implement one milestone with file-group isolation |
-| `gsd-verify` | Validate milestone (test/lint/build), self-review |
+| `gsd-execute` | Implement one milestone with file-group isolation + boundary enforcement |
+| `gsd-verify` | Validate milestone (test/lint/build), self-review, UNIFY phase summary |
 | `ralph` | Autonomous multi-story execution from a PRD |
-| `plan` | Create a dated work plan with milestone dependencies |
+| `plan` | Create a dated work plan with milestone dependencies + checkpoints |
 | `spec` | Create a structured spec or ADR with conflict detection |
+| `discover` | Structured technical discovery with confidence-rated options |
 | `standup` | Session-start orientation from vault state |
 | `risk` | Add a risk register entry to the vault |
 | `kit` | Activate/deactivate an AI-Kit |
 | `review` | Manual code review via subagent |
 | `debug` | Structured test-first debugging |
 | `context-reset` | Reload context from vault without clearing session |
+
+## Rules
+
+15 rules across universal and scoped categories. Universal rules load every session. Scoped rules load only when matching file patterns are detected.
+
+Key additions in this version:
+- **context-management** — context brackets (FRESH/MODERATE/DEPLETED/CRITICAL) adapt behavior to session stage
+- **obsidian** — status digest discipline (100-line cap, loop_position tracking)
 
 ## Ralph
 
@@ -146,7 +145,7 @@ Skills that touch the vault read from `~/.claude/praxis.config.json`:
 npx praxis-harness update
 ```
 
-Or manually: `bash scripts/update.sh` from the repo directory. Pulls latest, re-runs install to pick up new symlinks, runs health check and content lint.
+Re-copies all files from the latest npm package version. Config file is preserved.
 
 ## Uninstalling
 
@@ -154,7 +153,17 @@ Or manually: `bash scripts/update.sh` from the repo directory. Pulls latest, re-
 npx praxis-harness uninstall
 ```
 
-Or manually: `bash uninstall.sh` from the repo directory. Removes all symlinks from `~/.claude/`. Does not delete the repo, vault templates, or installed plugins.
+Removes all Praxis-owned files from `~/.claude/`. Does not delete config, vault templates, or installed plugins.
+
+## Development
+
+```bash
+git clone https://github.com/arcanesme/praxis.git
+cd praxis
+bash install.sh
+```
+
+The git-clone + `install.sh` path uses symlinks instead of copies, so edits in the repo are immediately reflected.
 
 ## Requirements
 
