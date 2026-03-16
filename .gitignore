@@ -10,6 +10,7 @@ settings.json
 # Plugin caches
 plugins/
 node_modules/
+package-lock.json
 
 # OS
 .DS_Store
