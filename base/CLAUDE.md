@@ -65,9 +65,10 @@ Context is volatile. Files are permanent. Act accordingly.
 
 ## After Compaction — Bootstrap
 1. Read project CLAUDE.md (always first)
-2. Active task? → read active plan ONLY
-   No active task? → read `status.md`, check `claude-progress.json`
-3. Load rules only for what the current task touches:
+2. Check `claude-progress.json` — if `.ralph_state.current_story` is set: read it NOW, it is authoritative
+3. Active task? → read active plan current milestone only
+   No active task? → read `status.md`
+4. Load rules only for what the current task touches:
    - Terraform/Azure → `~/.claude/rules/terraform.md`
    - GitHub Actions → `~/.claude/rules/github-actions.md`
    - PowerShell scripts → `~/.claude/rules/powershell.md`
@@ -108,6 +109,7 @@ Kit manifests live in `~/.claude/kits/<name>/KIT.md`.
 | `~/.claude/rules/communication.md` | Client writing, no AI attribution |
 | `~/.claude/rules/obsidian.md` | Vault as second brain — auto-save, search-before-read |
 | `~/.claude/rules/architecture.md` | ADR format, What/So What/Now What, risk docs |
+| `~/.claude/rules/context-management.md` | GSD/Ralph anti-rot, context reset protocol |
 
 ### Scoped — load only when paths match
 | File | Loads when |
