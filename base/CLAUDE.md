@@ -71,6 +71,7 @@ Use `/kit:off` to deactivate the current kit.
 | `/plan` | Generate checkable milestone plan (requires approved spec) |
 | `/standup` | Yesterday / Today / Blockers from claude-progress.json |
 | `/risk` | Risk register for current task |
+| `/context-reset` | Checkpoint state to disk and prepare for fresh context |
 | `/kit:<name>` | Activate an AI-Kit |
 
 ---
@@ -118,3 +119,18 @@ Skills read `vault_path` from this file at runtime. Never hardcode vault paths.
 
 - **/session-retro is not optional.** Every session ends with it. This is how the harness compounds.
 - **Self-reported state is a risk.** Verify against actual files before trusting any description of state.
+- **Files are the memory, not the conversation.** See `rules/context-management.md` for the full anti-rot protocol.
+
+---
+
+## After Compaction
+
+When the system compresses conversation history, immediately re-anchor:
+
+1. Read `claude-progress.json` for current project state
+2. Read the active spec and plan (if any)
+3. Re-read `rules/context-management.md` for the anti-rot contract
+4. State what phase you're in and what the current objective is
+5. Ask for confirmation before continuing work
+
+If Ralph mode was active, `claude-progress.json` is the **sole source of truth** — never rely on compressed conversation history.

@@ -103,7 +103,7 @@ These eight rules are always enforced:
 
 ## Rules
 
-Praxis includes 14 rule files that shape Claude's behavior. **Universal rules** are always active. **Path-scoped rules** load only when Claude touches matching files.
+Praxis includes 15 rule files that shape Claude's behavior. **Universal rules** are always active. **Path-scoped rules** load only when Claude touches matching files.
 
 ### Universal Rules
 
@@ -111,6 +111,7 @@ Praxis includes 14 rule files that shape Claude's behavior. **Universal rules** 
 |------|-----------------|
 | **profile** | Identity as senior engineer, direct/concise tone, bias toward action |
 | **execution-loop** | Stop-and-fix gates, phase verification, single-reply intake |
+| **context-management** | Context rot prevention: GSD phase discipline, Ralph story sizing, compaction recovery |
 | **coding** | Code style conventions, testing requirements, error handling, dependency management |
 | **code-quality** | Simplicity, YAGNI, no over-engineering, delete dead code |
 | **git-workflow** | Imperative commits (≤72 chars), short-lived branches, human controls git |
@@ -173,6 +174,16 @@ Generates a risk table for the current task:
 |------|----------|----------|------------|
 
 Categories: Technical, Security, Schedule, Operational. Every HIGH risk gets a concrete mitigation.
+
+### `/context-reset` — Context Checkpoint
+
+The escape hatch when context rot is visible (repeated instructions, forgotten constraints, spec violations).
+
+1. Writes current milestone + last 3 decisions to vault as `context-checkpoint.md`
+2. Updates `claude-progress.json` with current state
+3. Outputs a bootstrap block to paste into a fresh session after `/clear`
+
+The bootstrap block contains everything a new session needs: active spec, current plan phase, key constraints, and the checkpoint file path.
 
 ### `/kit:<name>` — Kit Activation
 
@@ -339,6 +350,44 @@ Machine-specific config at `~/.claude/praxis.config.json`:
 ```
 
 Skills read `vault_path` at runtime. Never hardcode vault paths.
+
+---
+
+## Context Management
+
+Praxis uses two complementary strategies to prevent context rot — the degradation in Claude's adherence as the context window fills.
+
+### GSD (Intra-Session)
+
+Controls drift *within* a session through phase-scoped context loading:
+
+- Load only what the current phase needs — don't preload everything
+- Write phase summaries to disk at every boundary (the handoff is files, not conversation)
+- Re-read files instead of relying on recall from earlier in the conversation
+- Confirm key constraints at every phase gate before proceeding
+
+### Ralph Loop (Inter-Session)
+
+Eliminates drift *between* sessions by starting fresh:
+
+- Each story spawns a new context with only `claude-progress.json` + git as shared state
+- Stories must be right-sized: 1 component, 1 migration, 1 endpoint (completable in a single window)
+- No conversation history carried forward — the agent re-reads the spec and codebase each time
+- Use for >5 independent stories, overnight runs, or when GSD performance has degraded
+
+### When to Switch
+
+| Signal | Action |
+|--------|--------|
+| Repeating instructions already given | Run `/context-reset`, switch to Ralph |
+| Contradicting earlier decisions | Re-read spec and plan, re-state constraints |
+| Forgetting constraints from the spec | Re-read the spec file, confirm at next gate |
+| >5 independent stories remaining | Switch to Ralph loop |
+| Single complex task requiring reasoning | Stay in GSD |
+
+### After Compaction
+
+When the system compresses conversation history, Claude automatically re-anchors by reading `claude-progress.json`, the active spec/plan, and `rules/context-management.md` before continuing.
 
 ---
 

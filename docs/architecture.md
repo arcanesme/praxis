@@ -24,8 +24,8 @@ Praxis is a layered harness for Claude Code that turns AI-assisted development i
 Always active. Installed via `install.sh` which symlinks into `~/.claude/`.
 
 - **CLAUDE.md** — Global identity, core rules, kit registry
-- **rules/** — 9 universal + 4 path-scoped rules
-- **commands/** — `/spec`, `/plan`, `/standup`, `/risk`, `/kit`
+- **rules/** — 11 universal + 4 path-scoped rules
+- **commands/** — `/spec`, `/plan`, `/standup`, `/risk`, `/context-reset`, `/kit`
 - **skills/** — `/scaffold-new`, `/scaffold-exist`, `/pre-commit-lint`, `/session-retro`, `/vault-gc`
 
 ### Layer 2: AI-Kits
@@ -89,6 +89,25 @@ This file is gitignored and machine-specific. Skills read it at runtime.
 ## Skills
 
 All skills use `disable-model-invocation: true` — invoked via slash command only, never by the model autonomously.
+
+## Context Management
+
+Praxis prevents context rot through two complementary strategies defined in `rules/context-management.md`:
+
+- **GSD (intra-session)** — Phase-scoped context loading. Each phase loads only what it needs; summaries written to disk at boundaries. Files are the memory, not the conversation.
+- **Ralph Loop (inter-session)** — Fresh-context-per-iteration. Each story spawns a new instance with `claude-progress.json` as the sole state bridge. No conversation history carried forward.
+
+### After Compaction
+
+When the system compresses conversation history, Claude re-anchors by reading `claude-progress.json`, the active spec/plan, and the context management rule. The `/context-reset` command provides a manual escape hatch: it checkpoints state to disk and outputs a bootstrap block for a fresh session.
+
+### State Bridge
+
+`claude-progress.json` is the authoritative state file for both modes:
+- GSD writes phase summaries and updates tracks
+- Ralph reads it at iteration start, writes it at iteration end
+- `/session-retro` updates it at end of every session
+- After compaction, it is the first file re-read
 
 ## Obsidian Integration
 

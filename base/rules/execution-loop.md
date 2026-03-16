@@ -36,3 +36,7 @@ Never trust a description of file state. Always verify against actual files:
 - Check file existence with glob/find
 - Read file contents to confirm structure
 - Run tests to confirm behavior
+
+## Context Rot
+
+See `rules/context-management.md` for the full anti-rot protocol: GSD phase discipline, Ralph story sizing, compaction recovery. The short version: **files are the memory, not the conversation.** Write state to disk at every phase boundary. Re-read files instead of relying on recall. Use `/context-reset` when drift is visible.
