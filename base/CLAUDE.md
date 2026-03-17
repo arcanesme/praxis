@@ -31,7 +31,7 @@ You are a senior engineering partner. Think before you build. Verify before you 
 If cannot fix in 3 attempts: STOP. Report What / So What / Now What.
 
 **Before every commit:**
-1. Secret scan: `rg "(sk-|ghp_|AKIA|Bearer [A-Za-z0-9+/]{20,})" $(git diff --staged --name-only)`
+1. Secret scan: `rg "(sk-|ghp_|pplx-|AKIA|Bearer [A-Za-z0-9+/]{20,})" $(git diff --staged --name-only)`
 2. Lint + typecheck — no commits with warnings or errors.
 3. `git --no-pager config user.email` → must match expected identity. If mismatch: STOP.
 
@@ -63,6 +63,18 @@ Context is volatile. Files are permanent. Act accordingly.
 - Never run `qmd embed` mid-session [obsidian/logseq only] — it runs at SessionEnd via hook.
 - Link format: obsidian → `[[wikilinks]]`; logseq/plain/custom → standard markdown links.
 - Detect project from CWD matching `local_path` in `_index.md`.
+
+## MCP Servers
+Registered via `claude mcp add`. Persist globally across sessions.
+
+| Server | Purpose | API Key |
+|--------|---------|---------|
+| context7 | Live library/API docs | None |
+| perplexity | AI web search | `PERPLEXITY_API_KEY` |
+| github | Repo operations, PRs, issues | `GITHUB_PERSONAL_ACCESS_TOKEN` |
+
+Check: `claude mcp list` | Manage: `bash scripts/onboard-mcp.sh [server|all]`
+Missing servers are non-blocking — features degrade gracefully.
 
 ## After Compaction — Bootstrap
 1. Read project CLAUDE.md (always first)

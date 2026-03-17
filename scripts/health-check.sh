@@ -104,6 +104,25 @@ check "command -v node" "node available"
 check "command -v claude" "claude available"
 check "command -v jq" "jq available"
 
+# ─── MCP Servers (warn only) ───
+echo ""
+echo "MCP Servers:"
+if command -v claude &>/dev/null; then
+  MCP_LIST=$(claude mcp list 2>/dev/null || true)
+  for server in context7 perplexity github; do
+    TOTAL=$((TOTAL + 1))
+    if echo "$MCP_LIST" | grep -q "$server"; then
+      echo "  ✓ $server registered"
+      PASS=$((PASS + 1))
+    else
+      echo "  ⚠ $server not registered (optional)"
+      PASS=$((PASS + 1))  # optional = pass either way
+    fi
+  done
+else
+  echo "  ⚠ claude CLI not available — cannot check MCP servers"
+fi
+
 # ─── Broken symlinks (relevant for git-clone/symlink installs) ───
 echo ""
 echo "Symlink integrity:"

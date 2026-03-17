@@ -374,6 +374,32 @@ if [[ ":$PATH:" != *":$HOME/bin:"* ]]; then
 fi
 
 # ═══════════════════════════════════════════
+# Phase 4b: MCP Servers (optional)
+# ═══════════════════════════════════════════
+step "Phase 4b: MCP Servers (optional)"
+
+if [[ -f "$PRAXIS_DIR/scripts/onboard-mcp.sh" ]]; then
+  echo "  MCP servers extend Claude Code with external capabilities:"
+  echo "    • Context7    — live docs lookup (free, no API key)"
+  echo "    • Perplexity  — AI web search (requires API key)"
+  echo "    • GitHub      — repo operations (requires PAT)"
+  echo ""
+  read -p "  Set up MCP servers now? [Y/n] " SETUP_MCP
+  if [[ "${SETUP_MCP:-Y}" =~ ^[Yy]$ ]]; then
+    source "$PRAXIS_DIR/scripts/onboard-mcp.sh"
+    onboard_context7          # auto, no key needed
+    echo ""
+    read -p "  Set up Perplexity? [y/N] " DO_PPLX
+    [[ "${DO_PPLX:-N}" =~ ^[Yy]$ ]] && onboard_perplexity
+    echo ""
+    read -p "  Set up GitHub MCP? [y/N] " DO_GH
+    [[ "${DO_GH:-N}" =~ ^[Yy]$ ]] && onboard_github
+  else
+    echo "  Run later: bash $PRAXIS_DIR/scripts/onboard-mcp.sh all"
+  fi
+fi
+
+# ═══════════════════════════════════════════
 # Phase 5: Install Kit Dependencies
 # ═══════════════════════════════════════════
 step "Phase 5: Kit dependencies"
@@ -491,6 +517,22 @@ fi
 
 echo ""
 echo -e "  Checks: ${BOLD}$PASS/$TOTAL passed${NC}"
+
+# MCP status (warn only, not counted as failures)
+echo ""
+echo "  MCP Servers:"
+if command -v claude &>/dev/null; then
+  MCP_LIST=$(claude mcp list 2>/dev/null || true)
+  for srv in context7 perplexity github; do
+    if echo "$MCP_LIST" | grep -q "$srv"; then
+      ok "$srv MCP registered"
+    else
+      warn "$srv MCP — not configured (run: bash scripts/onboard-mcp.sh $srv)"
+    fi
+  done
+else
+  warn "claude CLI not available — cannot check MCP servers"
+fi
 
 if [[ -f "$PRAXIS_DIR/scripts/health-check.sh" ]]; then
   echo ""
