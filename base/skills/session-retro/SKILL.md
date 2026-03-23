@@ -4,7 +4,6 @@ disable-model-invocation: true
 description: End-of-session retrospective. Invoke manually with /session-retro only.
   Writes [LEARN:tag] entries, proposes rule updates, updates claude-progress.json,
   triggers vault-gc lightweight check. Side-effect skill — never auto-triggers.
-allowed-tools: Bash, Read, Write, Edit
 ---
 
 # session-retro Skill

@@ -43,9 +43,8 @@ permanent institutional memory. Don't wait for session-retro — fix the rule im
 If cannot fix in 3 attempts: STOP. Report What / So What / Now What.
 
 **Before every commit:**
-1. Secret scan: `rg "(sk-|ghp_|pplx-|AKIA|Bearer [A-Za-z0-9+/]{20,})" $(git diff --staged --name-only)`
-2. Lint + typecheck — no commits with warnings or errors.
-3. `git --no-pager config user.email` → must match expected identity. If mismatch: STOP.
+See `~/.claude/rules/git-workflow.md` § Pre-Commit Invariants. These are also enforced
+by hooks (secret-scan, identity-check) — see `~/.claude/settings.json`.
 
 **Before writing any templated file:** Scan for unreplaced `{placeholder}` patterns. Zero must remain.
 
@@ -92,11 +91,12 @@ Missing servers are non-blocking — features degrade gracefully.
 2. Active task? → read active plan current milestone only
    No active task? → read `status.md`
 4. Load rules only for what the current task touches:
-   - Terraform/Azure → `~/.claude/rules/terraform.md`
+   - Terraform/Azure → `~/.claude/rules/terraform.md`, `~/.claude/rules/azure.md`
    - GitHub Actions → `~/.claude/rules/github-actions.md`
    - PowerShell scripts → `~/.claude/rules/powershell.md`
    - Git operation → `~/.claude/rules/git-workflow.md`
-   - Security concern → `~/.claude/rules/security.md`
+   - Client-facing writing → auto-loaded by `communication-standards` skill
+   - Architecture/specs → auto-loaded by `architecture-patterns` skill
 
 ## Core Anti-Patterns (NEVER)
 - Silently swallow errors or use empty catch blocks
@@ -121,19 +121,15 @@ Kit manifests live in `~/.claude/kits/<name>/KIT.md`.
 
 ## Rules Registry — Load on Demand Only
 
-### Universal — always active
+### Universal — always active (6 rules)
 | File | Purpose |
 |------|---------|
-| `~/.claude/rules/profile.md` | Who the user is, active projects, identities |
+| `~/.claude/rules/profile.md` | Who the user is, identities, working style |
 | `~/.claude/rules/execution-loop.md` | SPEC/PLAN/VALIDATE loop enforcement |
-| `~/.claude/rules/coding.md` | Context7 mandate, error handling, no hardcodes |
-| `~/.claude/rules/code-quality.md` | Language-agnostic quality standards |
-| `~/.claude/rules/git-workflow.md` | Commits, branches, identity verification |
-| `~/.claude/rules/security.md` | Secrets, credentials, auth patterns |
-| `~/.claude/rules/communication.md` | Client writing, no AI attribution |
-| `~/.claude/rules/vault.md` | Second brain integration — Obsidian vault |
-| `~/.claude/rules/architecture.md` | ADR format, What/So What/Now What, risk docs |
-| `~/.claude/rules/context-management.md` | Context anti-rot, context reset protocol |
+| `~/.claude/rules/coding.md` | Code quality, security, complexity thresholds, Context7 mandate |
+| `~/.claude/rules/git-workflow.md` | Commits, branches, identity verification, pre-commit checks |
+| `~/.claude/rules/vault.md` | Second brain integration — vault backend, file purposes |
+| `~/.claude/rules/context-management.md` | Context anti-rot, phase scoping, context reset protocol |
 
 ### Scoped — load only when paths match
 | File | Loads when |
@@ -142,3 +138,9 @@ Kit manifests live in `~/.claude/kits/<name>/KIT.md`.
 | `~/.claude/rules/terraform.md` | `**/*.tf`, `**/*.tfvars` |
 | `~/.claude/rules/github-actions.md` | `.github/workflows/**` |
 | `~/.claude/rules/powershell.md` | `**/*.ps1`, `**/*.psm1` |
+
+### Auto-invocable skills (replace former universal rules)
+| Skill | Triggers when |
+|-------|--------------|
+| `communication-standards` | Writing client-facing docs, proposals, status reports, commits, PRs |
+| `architecture-patterns` | Writing ADRs, specs, system design, risk docs, blocker reports |

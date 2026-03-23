@@ -14,7 +14,7 @@ if [[ -z "$FILE_PATH" || ! -f "$FILE_PATH" ]]; then
 fi
 
 # Scan the file for secret patterns
-SECRET_PATTERN='(sk-[a-zA-Z0-9]{20,}|ghp_[a-zA-Z0-9]{36,}|pplx-[a-zA-Z0-9]{20,}|AKIA[0-9A-Z]{16}|Bearer [A-Za-z0-9+/]{20,})'
+SECRET_PATTERN='(sk-[a-zA-Z0-9]{20,}|ghp_[a-zA-Z0-9]{36,}|pplx-[a-zA-Z0-9]{20,}|AKIA[0-9A-Z]{16}|Bearer [A-Za-z0-9+/]{20,}|DefaultEndpointsProtocol|AccountKey=)'
 
 if rg -q "$SECRET_PATTERN" "$FILE_PATH" 2>/dev/null; then
   MATCHES=$(rg -n "$SECRET_PATTERN" "$FILE_PATH" 2>/dev/null | head -5)

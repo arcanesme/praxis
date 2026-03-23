@@ -223,44 +223,120 @@ fi
 ok "Vault: $VAULT_PATH (backend: $VAULT_BACKEND)"
 
 # ═══════════════════════════════════════════
+# Phase 2b: Identity Configuration
+# ═══════════════════════════════════════════
+step "Phase 2b: Identity configuration"
+
+# Read existing identity from config if available
+if [[ -f "$CONFIG_FILE" ]]; then
+  IDENTITY_NAME=$(jq -r '.identity.name // empty' "$CONFIG_FILE" 2>/dev/null)
+  IDENTITY_ROLE=$(jq -r '.identity.role // empty' "$CONFIG_FILE" 2>/dev/null)
+  IDENTITY_DOMAINS=$(jq -r '.identity.domains // empty' "$CONFIG_FILE" 2>/dev/null)
+  WORK_EMAIL=$(jq -r '.identity.work.email // empty' "$CONFIG_FILE" 2>/dev/null)
+  WORK_PATH_MATCH=$(jq -r '.identity.work.path_match // empty' "$CONFIG_FILE" 2>/dev/null)
+  WORK_GITCONFIG=$(jq -r '.identity.work.gitconfig // empty' "$CONFIG_FILE" 2>/dev/null)
+  WORK_SSH_KEY=$(jq -r '.identity.work.ssh_key // empty' "$CONFIG_FILE" 2>/dev/null)
+  PERSONAL_EMAIL=$(jq -r '.identity.personal.email // empty' "$CONFIG_FILE" 2>/dev/null)
+  PERSONAL_PATH_MATCH=$(jq -r '.identity.personal.path_match // empty' "$CONFIG_FILE" 2>/dev/null)
+  PERSONAL_GITCONFIG=$(jq -r '.identity.personal.gitconfig // empty' "$CONFIG_FILE" 2>/dev/null)
+  PERSONAL_SSH_KEY=$(jq -r '.identity.personal.ssh_key // empty' "$CONFIG_FILE" 2>/dev/null)
+fi
+
+if [[ -n "${IDENTITY_NAME:-}" ]]; then
+  echo -e "  Existing identity found: ${BOLD}$IDENTITY_NAME${NC}"
+  read -p "  Keep existing identity? [Y/n] " KEEP_IDENTITY
+  if [[ "${KEEP_IDENTITY:-Y}" =~ ^[Yy]$ ]]; then
+    ok "Identity preserved from existing config"
+  else
+    IDENTITY_NAME=""
+  fi
+fi
+
+if [[ -z "${IDENTITY_NAME:-}" ]]; then
+  echo ""
+  echo -e "  ${BOLD}Configure your identity${NC} (stored in ~/.claude/praxis.config.json — never committed)"
+  echo ""
+  read -p "  Your name: " IDENTITY_NAME
+  read -p "  Your role (e.g., Solutions Architect): " IDENTITY_ROLE
+  read -p "  Focus domains (e.g., cloud, security, DevOps): " IDENTITY_DOMAINS
+  echo ""
+  echo -e "  ${BOLD}Work identity${NC}"
+  read -p "  Work email: " WORK_EMAIL
+  read -p "  Work path match (e.g., Projects/Work): " WORK_PATH_MATCH
+  read -p "  Work gitconfig path [~/.gitconfig-work]: " WORK_GITCONFIG
+  WORK_GITCONFIG="${WORK_GITCONFIG:-~/.gitconfig-work}"
+  read -p "  Work SSH key [~/.ssh/id_ed25519_work]: " WORK_SSH_KEY
+  WORK_SSH_KEY="${WORK_SSH_KEY:-~/.ssh/id_ed25519_work}"
+  echo ""
+  echo -e "  ${BOLD}Personal identity${NC}"
+  read -p "  Personal email: " PERSONAL_EMAIL
+  read -p "  Personal path match (e.g., Projects/Personal): " PERSONAL_PATH_MATCH
+  read -p "  Personal gitconfig path [~/.gitconfig-personal]: " PERSONAL_GITCONFIG
+  PERSONAL_GITCONFIG="${PERSONAL_GITCONFIG:-~/.gitconfig-personal}"
+  read -p "  Personal SSH key [~/.ssh/id_ed25519]: " PERSONAL_SSH_KEY
+  PERSONAL_SSH_KEY="${PERSONAL_SSH_KEY:-~/.ssh/id_ed25519}"
+  ok "Identity configured"
+fi
+
+# Template generation function — substitutes {identity.*} placeholders from collected values
+generate_from_template() {
+  local template="$1"
+  local output="$2"
+  local content
+  content=$(cat "$template")
+
+  # Replace all identity placeholders
+  content="${content//\{identity.name\}/${IDENTITY_NAME:-Your Name}}"
+  content="${content//\{identity.role\}/${IDENTITY_ROLE:-Your Role}}"
+  content="${content//\{identity.domains\}/${IDENTITY_DOMAINS:-your domains}}"
+  content="${content//\{identity.work.email\}/${WORK_EMAIL:-you@company.com}}"
+  content="${content//\{identity.work.path_match\}/${WORK_PATH_MATCH:-Projects/Work}}"
+  content="${content//\{identity.work.gitconfig\}/${WORK_GITCONFIG:-~/.gitconfig-work}}"
+  content="${content//\{identity.work.ssh_key\}/${WORK_SSH_KEY:-~/.ssh/id_ed25519_work}}"
+  content="${content//\{identity.personal.email\}/${PERSONAL_EMAIL:-you@personal.com}}"
+  content="${content//\{identity.personal.path_match\}/${PERSONAL_PATH_MATCH:-Projects/Personal}}"
+  content="${content//\{identity.personal.gitconfig\}/${PERSONAL_GITCONFIG:-~/.gitconfig-personal}}"
+  content="${content//\{identity.personal.ssh_key\}/${PERSONAL_SSH_KEY:-~/.ssh/id_ed25519}}"
+
+  echo "$content" > "$output"
+}
+
+# ═══════════════════════════════════════════
 # Phase 3: Link Base Layer
 # ═══════════════════════════════════════════
 step "Phase 3: Linking base layer into ~/.claude/"
 
 mkdir -p "$CLAUDE_DIR"
 mkdir -p "$CLAUDE_DIR/rules"
-mkdir -p "$CLAUDE_DIR/commands"
 mkdir -p "$CLAUDE_DIR/skills"
 
 # CLAUDE.md
 ln -sf "$PRAXIS_DIR/base/CLAUDE.md" "$CLAUDE_DIR/CLAUDE.md"
 ok "CLAUDE.md linked"
 
-# Rules
+# Rules — symlink most, generate identity-bearing files from templates
 RULES_LINKED=0
+RULES_GENERATED=0
 if [[ -d "$PRAXIS_DIR/base/rules" ]]; then
   for rule in "$PRAXIS_DIR"/base/rules/*.md; do
     [[ -f "$rule" ]] || continue
     fname=$(basename "$rule")
-    ln -sf "$rule" "$CLAUDE_DIR/rules/$fname"
-    RULES_LINKED=$((RULES_LINKED + 1))
+    case "$fname" in
+      profile.md|git-workflow.md)
+        # Generate from template with identity values
+        generate_from_template "$rule" "$CLAUDE_DIR/rules/$fname"
+        RULES_GENERATED=$((RULES_GENERATED + 1))
+        ;;
+      *)
+        ln -sf "$rule" "$CLAUDE_DIR/rules/$fname"
+        RULES_LINKED=$((RULES_LINKED + 1))
+        ;;
+    esac
   done
 fi
-ok "$RULES_LINKED rules linked"
+ok "$RULES_LINKED rules linked, $RULES_GENERATED generated from templates"
 
-# Commands
-CMDS_LINKED=0
-if [[ -d "$PRAXIS_DIR/base/commands" ]]; then
-  for cmd in "$PRAXIS_DIR"/base/commands/*.md; do
-    [[ -f "$cmd" ]] || continue
-    fname=$(basename "$cmd")
-    ln -sf "$cmd" "$CLAUDE_DIR/commands/$fname"
-    CMDS_LINKED=$((CMDS_LINKED + 1))
-  done
-fi
-ok "$CMDS_LINKED commands linked"
-
-# Skills
+# Skills (commands are now consolidated into skills)
 SKILLS_LINKED=0
 if [[ -d "$PRAXIS_DIR/base/skills" ]]; then
   for skill_dir in "$PRAXIS_DIR"/base/skills/*/; do
@@ -289,11 +365,28 @@ if [[ -d "$PRAXIS_DIR/base/hooks" ]]; then
 fi
 ok "$HOOKS_LINKED hooks linked"
 
-# Orphan cleanup: obsidian.md renamed to vault.md
-if [[ -e "$CLAUDE_DIR/rules/obsidian.md" ]]; then
-  rm -f "$CLAUDE_DIR/rules/obsidian.md"
-  ok "Removed legacy obsidian.md (renamed to vault.md)"
+# Merge hook configuration into settings.json
+HOOKS_CONFIG="$PRAXIS_DIR/base/hooks/settings-hooks.json"
+SETTINGS_FILE="$CLAUDE_DIR/settings.json"
+if [[ -f "$HOOKS_CONFIG" ]]; then
+  if [[ -f "$SETTINGS_FILE" ]]; then
+    # Merge hooks key into existing settings (preserves other settings)
+    jq -s '.[0] * .[1]' "$SETTINGS_FILE" "$HOOKS_CONFIG" > "${SETTINGS_FILE}.tmp" \
+      && mv "${SETTINGS_FILE}.tmp" "$SETTINGS_FILE"
+    ok "Hook configuration merged into settings.json"
+  else
+    cp "$HOOKS_CONFIG" "$SETTINGS_FILE"
+    ok "Hook configuration created in settings.json"
+  fi
 fi
+
+# Orphan cleanup
+for orphan in obsidian.md code-quality.md security.md communication.md architecture.md; do
+  if [[ -e "$CLAUDE_DIR/rules/$orphan" ]]; then
+    rm -f "$CLAUDE_DIR/rules/$orphan"
+    ok "Removed legacy $orphan"
+  fi
+done
 
 # ═══════════════════════════════════════════
 # Phase 4: Install Universal Tools
@@ -409,22 +502,49 @@ step "Phase 7: Writing config"
 NOW=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 KITS_JSON=$(printf '%s\n' "${INSTALLED_KITS[@]:-}" | jq -R . | jq -s .)
 
+PRAXIS_VERSION=$(node -p "require('$PRAXIS_DIR/package.json').version" 2>/dev/null || echo "unknown")
+
+# Build identity JSON block
+IDENTITY_JSON=$(cat <<IEOF
+{
+  "name": "${IDENTITY_NAME:-}",
+  "role": "${IDENTITY_ROLE:-}",
+  "domains": "${IDENTITY_DOMAINS:-}",
+  "work": {
+    "email": "${WORK_EMAIL:-}",
+    "path_match": "${WORK_PATH_MATCH:-}",
+    "gitconfig": "${WORK_GITCONFIG:-}",
+    "ssh_key": "${WORK_SSH_KEY:-}"
+  },
+  "personal": {
+    "email": "${PERSONAL_EMAIL:-}",
+    "path_match": "${PERSONAL_PATH_MATCH:-}",
+    "gitconfig": "${PERSONAL_GITCONFIG:-}",
+    "ssh_key": "${PERSONAL_SSH_KEY:-}"
+  }
+}
+IEOF
+)
+
 if [[ -f "$CONFIG_FILE" ]]; then
   jq --arg vp "$VAULT_PATH" \
      --arg rp "$PRAXIS_DIR" \
      --arg vb "$VAULT_BACKEND" \
+     --arg ver "$PRAXIS_VERSION" \
      --arg now "$NOW" \
      --argjson kits "$KITS_JSON" \
-    '.vault_path = $vp | .vault_backend = $vb | .repo_path = $rp | .installed_kits = $kits | .updated_at = $now' \
+     --argjson identity "$IDENTITY_JSON" \
+    '.vault_path = $vp | .vault_backend = $vb | .repo_path = $rp | .version = $ver | .installed_kits = $kits | .identity = $identity | .updated_at = $now' \
     "$CONFIG_FILE" > "$CONFIG_FILE.tmp" && mv "$CONFIG_FILE.tmp" "$CONFIG_FILE"
 else
   cat > "$CONFIG_FILE" <<EOF
 {
-  "version": "1.1.0",
+  "version": "$PRAXIS_VERSION",
   "vault_path": "$VAULT_PATH",
   "vault_backend": "$VAULT_BACKEND",
   "repo_path": "$PRAXIS_DIR",
   "installed_kits": $KITS_JSON,
+  "identity": $IDENTITY_JSON,
   "installed_at": "$NOW",
   "updated_at": "$NOW"
 }
@@ -453,14 +573,17 @@ verify() {
 
 verify "[[ -L '$CLAUDE_DIR/CLAUDE.md' ]]"           "CLAUDE.md symlinked"
 verify "[[ -d '$CLAUDE_DIR/rules' ]]"                "Rules directory exists"
+verify "[[ -d '$CLAUDE_DIR/skills' ]]"               "Skills directory exists"
 verify "[[ -L '$CLAUDE_DIR/kits' ]]"                 "Kits directory symlinked"
+verify "[[ -d '$CLAUDE_DIR/hooks' ]]"                "Hooks directory exists"
+verify "[[ -f '$CLAUDE_DIR/settings.json' ]]"        "Settings with hooks configured"
 verify "[[ -f '$CONFIG_FILE' ]]"                     "Config file exists"
 verify "jq -e '.vault_path' '$CONFIG_FILE'"          "Vault path in config"
+verify "jq -e '.identity.name' '$CONFIG_FILE'"       "Identity configured"
 verify "[[ -d '$VAULT_PATH' ]]"                      "Vault directory accessible"
 verify "command -v claude"                           "Claude Code CLI available"
 verify "command -v node"                             "Node.js available"
 verify "command -v jq"                               "jq available"
-verify "command -v obsidian"                         "Obsidian CLI available"
 
 echo ""
 echo -e "  Checks: ${BOLD}$PASS/$TOTAL passed${NC}"
@@ -509,7 +632,10 @@ echo ""
 echo -e "  ${CYAN}# Verify everything loaded${NC}"
 echo "  /help"
 echo ""
-echo "  You should see Praxis commands (/discuss, /plan, /execute, /verify, /ship, /kit:*)."
+echo "  You should see Praxis skills (/discuss, /plan, /execute, /verify, /ship, /kit:*)."
 echo ""
 echo -e "${GREEN}${BOLD}  Then: /kit:list to see available kits.${NC}"
+echo ""
+echo -e "  ${YELLOW}Note:${NC} Identity is stored in ${BOLD}~/.claude/praxis.config.json${NC} (never committed)."
+echo "  Re-run install.sh to update identity or sync to a new machine."
 echo ""

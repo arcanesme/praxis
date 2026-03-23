@@ -2,12 +2,12 @@
 # Scope: All projects with git repos
 
 ## Identity — Invariants (BLOCK on violation)
-<!-- CUSTOMIZE: Replace with your git identities -->
-<!-- Example identity table: -->
-<!-- | Type | gitconfig | SSH Key | Email | includeIf Path | -->
-<!-- |------|-----------|---------|-------|----------------| -->
-<!-- | Work | ~/.gitconfig-work | ~/.ssh/id_ed25519_work | you@company.com | ~/Projects/Work/ | -->
-<!-- | Personal | ~/.gitconfig-personal | ~/.ssh/id_ed25519_personal | you@personal.com | ~/Projects/Personal/ | -->
+<!-- NOTE: This is a TEMPLATE. install.sh generates the real file with actual identities. -->
+
+| Type | gitconfig | SSH Key | Email | Path Match |
+|------|-----------|---------|-------|------------|
+| Work | {identity.work.gitconfig} | {identity.work.ssh_key} | {identity.work.email} | {identity.work.path_match} |
+| Personal | {identity.personal.gitconfig} | {identity.personal.ssh_key} | {identity.personal.email} | {identity.personal.path_match} |
 
 **Verification:** `git --no-pager config user.email`
 **On mismatch:** STOP. Report `expected: X, got: Y`. Do not commit.
@@ -32,7 +32,7 @@
 - Keep working tree clean — no untracked debris, no partial stages.
 
 ## Pre-Commit Invariants (BLOCK on violation)
-1. Secret scan staged files: `rg "(sk-|ghp_|pplx-|AKIA|Bearer [A-Za-z0-9+/]{20,})" $(git diff --staged --name-only)`
+1. Secret scan staged files: `rg "(sk-|ghp_|pplx-|AKIA|Bearer [A-Za-z0-9+/]{20,}|DefaultEndpointsProtocol|AccountKey=)" $(git diff --staged --name-only)`
 2. Confirm `git config user.email` matches expected identity for this repo path.
 3. Run stack linter (see terraform.md, github-actions.md as applicable).
 4. Run typecheck if applicable — no commits with type errors.

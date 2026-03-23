@@ -5,7 +5,6 @@ description: Detect code entropy in the current repo. Dead code, test debt, stal
   TODOs, oversized functions, commented-out blocks, unused deps. Two modes:
   lightweight (called by session-retro) and full audit (manual /code-gc).
   Never auto-deletes or auto-fixes. Side-effect skill — never auto-triggers.
-allowed-tools: Bash, Read, Write
 ---
 
 # code-gc Skill

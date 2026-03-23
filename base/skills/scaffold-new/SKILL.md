@@ -14,7 +14,6 @@ If config is missing: STOP. Tell user to run `praxis/install.sh`.
 
 ## Boundaries — Rules Loading
 - Do NOT load `git-workflow.md` — identity and init handled inline
-- Do NOT load `security.md` — not relevant during scaffolding
 - Do NOT load `terraform.md` or `github-actions.md` — no infra files touched
 
 ## Overview

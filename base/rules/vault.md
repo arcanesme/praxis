@@ -5,10 +5,19 @@
 
 ## Vault Backend
 
-Vault backend is Obsidian. Search: `obsidian search query="{query}" limit=5`
-Scope searches with `path=` filter: `obsidian search query="{query}" path="01_Projects" limit=5`
+Read `vault_backend` from `~/.claude/praxis.config.json`.
 
-**Note:** The Obsidian CLI requires Obsidian to be running. If Obsidian is not running, vault search will fail.
+| Backend | Search command | Requires |
+|---------|---------------|----------|
+| obsidian | `obsidian search query="{query}" limit=5` | Obsidian running |
+| ripgrep | `rg --files-with-matches "{query}" {vault_path}` | rg installed |
+
+Scope searches:
+- obsidian: `obsidian search query="{query}" path="01_Projects" limit=5`
+- ripgrep: `rg --files-with-matches "{query}" {vault_path}/01_Projects`
+
+If backend is `obsidian` and Obsidian is not running, vault search will fail.
+If backend is unset, default to `obsidian`.
 Use `[[wikilinks]]` for all internal vault references.
 
 ## Vault Location

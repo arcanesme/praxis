@@ -46,7 +46,7 @@ fi
 
 # ─── 2. Skill frontmatter ───
 echo ""
-echo "Skills (name:, disable-model-invocation:, description:):"
+echo "Skills (name:, description:):"
 if [[ -d "$REPO_PATH/base/skills" ]]; then
   for skill_dir in "$REPO_PATH"/base/skills/*/; do
     [[ -d "$skill_dir" ]] || continue
@@ -60,10 +60,14 @@ if [[ -d "$REPO_PATH/base/skills" ]]; then
     header=$(head -10 "$skill_file")
     missing=""
     echo "$header" | grep -q "^name:" || missing="$missing name:"
-    echo "$header" | grep -q "^disable-model-invocation:" || missing="$missing disable-model-invocation:"
     echo "$header" | grep -q "^description:" || missing="$missing description:"
     if [[ -z "$missing" ]]; then
-      ok "skills/$skill_name"
+      # Note auto-invocable skills (no disable-model-invocation)
+      if echo "$header" | grep -q "^disable-model-invocation:"; then
+        ok "skills/$skill_name"
+      else
+        ok "skills/$skill_name (auto-invocable)"
+      fi
     else
       error "skills/$skill_name SKILL.md missing:$missing"
     fi

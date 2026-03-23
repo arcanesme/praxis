@@ -5,7 +5,6 @@ description: End-to-end application verification. Launches a subagent to run the
   test suite, check build, verify runtime behavior, and confirm acceptance criteria.
   Use after implementation to catch integration issues that unit tests miss.
   Side-effect skill — never auto-triggers.
-allowed-tools: Bash, Read
 ---
 
 # verify-app Skill
