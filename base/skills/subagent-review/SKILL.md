@@ -3,7 +3,7 @@ name: subagent-review
 disable-model-invocation: true
 description: Reusable code review subagent. Accepts a diff, optional spec, and rules
   files. Launches a subagent with zero conversation history to review for bugs,
-  security, and convention violations. Called by /review and gsd-verify — never
+  security, and convention violations. Called by /review and verify — never
   invoked directly by users.
 allowed-tools: Bash, Read
 ---
@@ -22,12 +22,13 @@ diff and context; this skill launches the subagent and returns structured findin
 | spec_path | No | — | Path to the SPEC/plan for context |
 | rules_files | No | `CLAUDE.md`, `coding.md`, `security.md` | Rules files to load |
 
-## DONE-WHEN
+## Acceptance
 - [ ] Subagent launched with ONLY diff + spec + rules (zero conversation history)
 - [ ] Findings returned in structured format
 - [ ] Each finding rated Critical / Major / Minor
 
-## NON-GOALS
+## Boundaries
+Out of scope:
 - Does NOT fix findings — callers handle remediation
 - Does NOT write to vault — callers decide what to persist
 - Does NOT interact with the user — callers present findings
@@ -105,10 +106,10 @@ Return this structure to the caller. The caller decides:
 | Caller | Context |
 |--------|---------|
 | `/review` (commit 6) | Manual review trigger, writes summary to vault |
-| `gsd-verify` Step 5 | Post-milestone Self-Review Protocol |
+| `verify` Step 5 | Post-milestone Self-Review Protocol |
 | `execution-loop.md` | Self-Review Protocol description (future: replace inline with skill ref) |
 
-Note: `execution-loop.md` and `gsd-verify.md` still contain inline descriptions of the
+Note: `execution-loop.md` and `verify.md` still contain inline descriptions of the
 review pattern. Future cleanup can replace those with a reference to this skill. Both
 approaches produce identical behavior — the duplication is accepted for now.
 

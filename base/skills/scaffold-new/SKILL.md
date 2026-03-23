@@ -12,7 +12,7 @@ description: Scaffold a brand new project into the full harness. Invoke with /sc
 Read vault_path from `~/.claude/praxis.config.json` at the start of every invocation.
 If config is missing: STOP. Tell user to run `praxis/install.sh`.
 
-## NON-GOALS — Rules Loading
+## Boundaries — Rules Loading
 - Do NOT load `git-workflow.md` — identity and init handled inline
 - Do NOT load `security.md` — not relevant during scaffolding
 - Do NOT load `terraform.md` or `github-actions.md` — no infra files touched

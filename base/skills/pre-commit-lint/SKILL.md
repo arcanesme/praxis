@@ -10,22 +10,25 @@ allowed-tools: Bash, Read, Write, Edit
 
 # pre-commit-lint Skill
 
-## WHAT
+## Deliverable
 A `.git/hooks/pre-commit` bash script that:
 1. Always runs: secret scan + git identity check
 2. Conditionally runs: stack-specific linters based on staged file extensions
 3. Hard blocks on secrets, identity mismatch, and critical lint failures
 4. Warns (exit 0) on missing optional tools
 
-## DONE-WHEN
+## Acceptance
 - [ ] `.git/hooks/pre-commit` exists and is executable
 - [ ] `bash -n .git/hooks/pre-commit` passes
 - [ ] Identity email hardcoded from repo CLAUDE.md
 - [ ] Script detects staged file types before running stack checks
 - [ ] All tool invocations guarded with `command -v <tool>`
 
-## CONSTRAINTS
-- Script must complete in <10 seconds
+## Boundaries
+In scope: generating the pre-commit hook script
+
+Out of scope:
+- Script must complete in <10 seconds (performance constraint)
 - NEVER invoke `claude` inside the hook
 - Tool not found → WARN and skip, never block
 - Only block on: secrets, identity mismatch, syntax errors

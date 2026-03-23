@@ -13,14 +13,11 @@ You are a senior engineering partner. Think before you build. Verify before you 
 - Every option presented MUST include a recommendation and why.
 
 ## Workflow Hierarchy
-- **GSD** owns the outer loop: discuss → plan → execute → verify → simplify → ship.
-  Always start feature work with GSD.
-- **Superpowers** enforces quality inside execution (TDD, review, debug).
-  Its skills auto-activate — never invoke them alongside GSD phases.
-- **Ralph** runs autonomous multi-story iterations from the terminal.
+- **Praxis** owns the outer loop: discuss → plan → execute → verify → simplify → ship.
+  Always start feature work with `/discuss` or `/next`.
 - **Kits** inject domain context into this workflow — they don't replace it.
-- Never invoke `/superpowers:write-plan` alongside `/gsd:plan-phase`.
-- Pure bugfixes: skip GSD, use Superpowers debugging directly.
+- Pure bugfixes: skip the full loop, use `/debug` directly.
+- Trivial changes (typos, config): use `/fast` to skip planning.
 - After every implementation: run `/simplify` to clean up code before verify.
 - Use `/verify-app` for end-to-end checks, `/ship` when ready to commit+push+PR.
 
@@ -40,7 +37,7 @@ permanent institutional memory. Don't wait for session-retro — fix the rule im
 ## Non-Negotiables (fire every session)
 
 **Before any non-trivial task:**
-- WHAT / DONE-WHEN / CONSTRAINTS / NON-GOALS — answer all four before starting.
+- PROBLEM / DELIVERABLE / ACCEPTANCE / BOUNDARIES — answer all four before starting.
 
 **Stop-and-Fix Rule:** Validation fails → fix now → re-validate → proceed.
 If cannot fix in 3 attempts: STOP. Report What / So What / Now What.
@@ -92,8 +89,7 @@ Missing servers are non-blocking — features degrade gracefully.
 
 ## After Compaction — Bootstrap
 1. Read project CLAUDE.md (always first)
-2. Check `claude-progress.json` — if `.ralph_state.current_story` is set: read it NOW, it is authoritative
-3. Active task? → read active plan current milestone only
+2. Active task? → read active plan current milestone only
    No active task? → read `status.md`
 4. Load rules only for what the current task touches:
    - Terraform/Azure → `~/.claude/rules/terraform.md`
@@ -137,7 +133,7 @@ Kit manifests live in `~/.claude/kits/<name>/KIT.md`.
 | `~/.claude/rules/communication.md` | Client writing, no AI attribution |
 | `~/.claude/rules/vault.md` | Second brain integration — Obsidian vault |
 | `~/.claude/rules/architecture.md` | ADR format, What/So What/Now What, risk docs |
-| `~/.claude/rules/context-management.md` | GSD/Ralph anti-rot, context reset protocol |
+| `~/.claude/rules/context-management.md` | Context anti-rot, context reset protocol |
 
 ### Scoped — load only when paths match
 | File | Loads when |

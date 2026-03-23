@@ -7,15 +7,9 @@ You are generating a standup summary for the current project.
 **Step 1 — Load project state**
 Read vault_path from `~/.claude/praxis.config.json`. Then read in order (detect from CWD — do not ask):
 1. `{vault_path}/_index.md` → project name, stack, goals
-1b. `{vault_path}/claude-progress.json` → check `ralph_state`
 2. `{vault_path}/status.md` → current_plan, last_updated, What/So What/Now What
 3. `{vault_path}/tasks.md` → Active, Blocked sections
 4. If `current_plan` is set → read `{vault_path}/plans/{current_plan}` → Milestones, Blockers
-
-**Ralph state check:**
-- If `.ralph_state.current_story` is set: note "Ralph iteration active" for output
-- Use `completed_stories` count and `last_iteration` alongside `status.md`
-- If `status.md` last_updated is stale but `ralph_state.last_iteration` is recent: suppress stale warning
 
 **Step 2 — Output standup format**
 
@@ -29,10 +23,6 @@ Read vault_path from `~/.claude/praxis.config.json`. Then read in order (detect 
 
   IN PROGRESS
   {active plan name} — {next milestone}
-
-  RALPH STATUS
-  {current story if active, or "No Ralph iteration running"}
-  Completed: {n} stories | Last: {last_iteration}
 
   BLOCKED
   {blocker with owner if known}

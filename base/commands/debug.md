@@ -1,5 +1,5 @@
 ---
-description: Structured test-first debugging. Reproduce the bug, write a failing test, isolate root cause, fix, verify. Use for pure bugfixes — skips GSD phases.
+description: Structured test-first debugging. Reproduce the bug, write a failing test, isolate root cause, fix, verify. Use for pure bugfixes — skips the full loop.
 ---
 
 You are running structured debugging.
@@ -58,6 +58,6 @@ Before touching any implementation code:
 **Rules:**
 - Never fix without first reproducing.
 - Never say "fixed" without showing the test passing.
-- Skips GSD phases — for pure bugfixes only.
-- If the "bug" is actually a feature gap: redirect to `/gsd:discuss`.
-- If the fix touches >5 files: it is not a bugfix. Use GSD.
+- Skips the full loop — for pure bugfixes only.
+- If the "bug" is actually a feature gap: redirect to `/discuss`.
+- If the fix touches >5 files: it is not a bugfix. Use the full loop.

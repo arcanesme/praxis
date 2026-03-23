@@ -1,5 +1,5 @@
 ---
-description: Manual code review trigger. Launches a subagent to review a diff for bugs, security, and convention violations. Use independently of GSD phases.
+description: Manual code review trigger. Launches a subagent to review a diff for bugs, security, and convention violations. Use independently of Praxis phases.
 ---
 
 You are running a manual code review.
@@ -75,7 +75,7 @@ CLEAN
 - Vault indexing is automatic.
 
 **Rules:**
-- Works independently of GSD phases.
+- Works independently of Praxis phases.
 - Never skip the subagent — review must come from fresh context.
 - Subagent receives zero conversation history.
 - If no project CLAUDE.md exists: proceed with base rules only.

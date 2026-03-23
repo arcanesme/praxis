@@ -11,10 +11,10 @@ description: Scaffold an existing project into the full harness. Invoke with /sc
 ## Vault Path Resolution
 Read vault_path from `~/.claude/praxis.config.json`. If missing: STOP.
 
-## WHAT
+## Deliverable
 Bring an existing project into full harness compliance without disrupting active work.
 
-## DONE-WHEN
+## Acceptance
 - [ ] `{vault_path}/status.md` exists with correct structure
 - [ ] `{vault_path}/tasks.md` exists
 - [ ] `{vault_path}/claude-progress.json` exists
@@ -24,13 +24,14 @@ Bring an existing project into full harness compliance without disrupting active
 - [ ] Repo `CLAUDE.md` has bootstrap sequence
 - [ ] Project Registry row is accurate
 
-## CONSTRAINTS
-- NEVER delete existing vault content — only add missing files
-- NEVER overwrite without explicit user confirmation
-- Read `_index.md` to resolve metadata — do not ask for info already there
+## Boundaries
+In scope:
+- Add missing vault files and repo CLAUDE.md sections
+- Verify project registry accuracy
 
-## NON-GOALS
-- Does not reformat existing vault notes
+Out of scope:
+- Does not delete or reformat existing vault content
+- Does not overwrite without explicit user confirmation
 - Does not touch existing specs/, research/, notes/ content
 - Does not change git history or branch structure
 

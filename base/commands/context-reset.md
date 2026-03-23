@@ -52,7 +52,6 @@ Update `status.md` with current What / So What / Now What:
 **Step 5 — Update claude-progress.json**
 Write a session snapshot to `claude-progress.json`:
 - Update `last_session` with current date and a note about the context reset
-- If Ralph is active: preserve `ralph_state` exactly as-is
 
 **Step 6 — Instruct the user**
 Print:

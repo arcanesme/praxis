@@ -37,11 +37,6 @@ if [[ -f "$STATUS_FILE" ]]; then
   [[ -z "$LOOP_POSITION" ]] && LOOP_POSITION="unknown"
 fi
 
-RALPH_STORY="inactive"
-if [[ -f "$PROGRESS_FILE" ]]; then
-  RALPH_STORY=$(jq -r '.ralph_state.current_story // "inactive"' "$PROGRESS_FILE" 2>/dev/null)
-fi
-
 cat > "$CHECKPOINT_FILE" <<EOF
 ---
 tags: [checkpoint, compact]
@@ -60,11 +55,8 @@ $PWD
 ## Active Plan
 $CURRENT_PLAN
 
-## GSD Phase
+## Loop Position
 $LOOP_POSITION
-
-## Ralph State
-$RALPH_STORY
 
 ## Note
 This checkpoint was auto-written by the PreCompact hook.

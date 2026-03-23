@@ -1,11 +1,11 @@
 # Context Management — Rules
 # Scope: All projects, all sessions
-# Prevents context rot via GSD phase discipline and Ralph story sizing
+# Prevents context rot via phase discipline
 
-## GSD Phase Discipline — Invariants (BLOCK on violation)
+## Phase Discipline — Invariants (BLOCK on violation)
 
 ### Phase-scoped context loading
-- Load ONLY context required for the current GSD phase.
+- Load ONLY context required for the current phase.
   SPEC needs requirements and constraints — not implementation details.
   IMPLEMENT needs the plan and relevant source files — not research notes.
 - At the end of each phase: write a phase summary to the active plan file.
@@ -20,50 +20,6 @@
   PLAN → IMPLEMENT: the approved plan is the sole implementation guide.
   IMPLEMENT → VALIDATE: test output and lint output are the evidence.
 - Use subagents for exploration, research, and review to protect the main context.
-
-## Ralph Story Sizing — Invariants (BLOCK on violation)
-
-### Size constraint
-- Each Ralph PRD story must be completable in a single context window (~10k output tokens).
-- Right-sized stories: add one component, one migration, one service method,
-  one test suite, or one configuration change.
-- Too large: any story requiring >3 file groups or >1 architectural decision.
-  Split before execution.
-- Stories requiring cross-story reasoning belong in GSD, not Ralph.
-  Ralph stories must be independently verifiable.
-
-### State contract
-- `claude-progress.json` is the ONLY state bridge between Ralph iterations.
-- The `ralph_state` object is authoritative:
-  ```json
-  {
-    "mode": "idle | active",
-    "prd_path": null,
-    "completed_stories": [],
-    "current_story": null
-  }
-  ```
-- Ralph reads `ralph_state` at iteration start, writes at iteration end.
-- Never reference conversation history as source of truth in Ralph mode.
-
-## When to Use GSD vs Ralph — Conventions (WARN on violation)
-
-| Trigger | Use | Reason |
-|---------|-----|--------|
-| <5 stories, needs reasoning continuity | GSD | Decisions compound across stories |
-| Architectural decisions required | GSD | Context must persist through tradeoff analysis |
-| Exploratory or ambiguous scope | GSD | Needs human-in-the-loop at phase gates |
-| >5 independent stories | Ralph | Parallelizable, no cross-story dependencies |
-| Overnight/unattended execution | Ralph | Fresh context per story prevents drift |
-| Mechanical transformations (migrations, renames) | Ralph | Repetitive, well-scoped, low judgment |
-
-Default to GSD. Use Ralph only when stories are clearly independent and well-scoped.
-
-## Compaction Safety — Invariants (BLOCK on violation)
-
-### Ralph mid-run takes precedence
-- If `claude-progress.json` → `.ralph_state.current_story` is set, ALWAYS read it — even if an active plan exists.
-- Ralph mid-run state is authoritative over plan state. The story must complete or be explicitly blocked before plan-level work resumes.
 
 ## Subagent Discipline — Conventions (WARN on violation)
 
@@ -119,9 +75,6 @@ conversation length heuristic (not token count — we cannot read session JSONL)
 ## Verification Commands
 
 ```bash
-# Check that claude-progress.json has ralph_state field
-jq '.ralph_state' {vault_path}/claude-progress.json
-
 # Verify active plan file exists and has phase summaries
 ls -la {vault_path}/plans/
 

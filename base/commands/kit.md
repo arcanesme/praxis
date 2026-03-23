@@ -18,7 +18,7 @@ If `~/.claude/praxis.config.json` has `installed_kits`, cross-reference to show 
 
 1. Check if `~/.claude/kits/<name>/KIT.md` exists. If not: report "Kit not found. Run /kit:list."
 2. Read `KIT.md` manifest to get skills_chain, rules, and mcp_servers.
-3. **Idempotency check**: If this kit is already active in the current session, report "Kit already active" and do nothing. This is critical for Ralph integration where every iteration may re-activate.
+3. **Idempotency check**: If this kit is already active in the current session, report "Kit already active" and do nothing.
 4. Print the skills chain:
    ```
    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -44,7 +44,7 @@ If `~/.claude/praxis.config.json` has `installed_kits`, cross-reference to show 
 1. Report which kit is being deactivated.
 2. Unload kit-specific rules from the active context.
 3. Note: MCP servers persist globally — they are not unregistered on deactivation.
-4. Print: `✓ Kit deactivated. Universal base (GSD + Superpowers) still active.`
+4. Print: `✓ Kit deactivated. Praxis base workflow still active.`
 
 ## /kit:update <name>
 

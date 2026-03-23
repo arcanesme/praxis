@@ -101,7 +101,7 @@ When "let's work on X" or "plan out Y":
   last_session: {ISO timestamp}
   loop_position: DISCUSS | PLAN | EXECUTE | VERIFY | IDLE
   ```
-- loop_position tracks where in the GSD cycle the project currently sits.
+- loop_position tracks where in the Praxis cycle the project currently sits.
   Update at every phase transition.
 - A status.md older than 14 days is stale. vault-gc flags these.
 

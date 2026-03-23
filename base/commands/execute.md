@@ -2,13 +2,15 @@
 description: Implementation phase — loads scoped context and works one milestone at a time. Use after plan is approved.
 ---
 
-You are executing the GSD implementation phase.
+You are executing the implementation phase.
 
 **Step 1 — Load implementation context**
 - Read vault_path from `~/.claude/praxis.config.json`
 - Read `{vault_path}/status.md` → get `current_plan:`
-- Read the active plan file — focus on the CURRENT milestone only (not full plan)
-- If no active plan: STOP. Tell user to run `/gsd:discuss` first.
+- Read the active plan file:
+  - `## SPEC` section → PROBLEM, DELIVERABLE, ACCEPTANCE, BOUNDARIES (the contract)
+  - Current milestone steps and acceptance criteria only (not full plan)
+- If no active plan: STOP. Tell user to run `/discuss` first.
 
 **Step 2 — Load scoped rules**
 Load ONLY rules relevant to files being touched in this milestone:
@@ -45,14 +47,8 @@ When the milestone is complete:
 1. Write a brief summary to the active plan file under the milestone entry
 2. Confirm actual diff matches declared file group
 3. Output ONE recommendation — no menu, no alternatives:
-   `Next: /gsd:verify` followed by one sentence explaining why
-   Example: "Next: /gsd:verify — 3 files changed in declared group, tests and lint needed"
-
-**Step 5 — Ralph handoff trigger**
-If remaining milestones >5 and all are independent (no cross-milestone reasoning):
-- After `/gsd:verify` passes (not during Step 4), append:
-  "Also consider: /ralph — {n} independent milestones remaining"
-- Never surface Ralph before verify completes.
+   `Next: /verify` followed by one sentence explaining why
+   Example: "Next: /verify — 3 files changed in declared group, tests and lint needed"
 
 **Rules:**
 - Never skip a milestone or reorder without approval.

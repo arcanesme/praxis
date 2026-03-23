@@ -4,19 +4,36 @@ description: Create a dated work plan for the current project. Writes to vault p
 
 You are creating a work plan for the current project.
 
-**Step 1 — Detect project**
+**Step 1 — Detect project and read SPEC**
 - Read vault_path from `~/.claude/praxis.config.json`
 - Match CWD to `local_path` in vault `_index.md`
 - Read `status.md` — check if `current_plan:` is already set
 - If current_plan is set: warn. Ask if starting a new plan or updating the existing one.
 
-**Step 2 — Gather plan details**
-Ask in a single message:
-- What is the task or feature this plan covers?
-- What is the target completion date (or "open" if no deadline)?
-- Any known blockers or dependencies upfront?
+**Step 1b — Consume discuss output**
+Check the conversation for a SPEC block from `/discuss`:
+```
+SPEC
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PROBLEM:      ...
+DELIVERABLE:  ...
+ACCEPTANCE:   ...
+BOUNDARIES:
+  In:  ...
+  Out: ...
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
 
-**Step 3 — Build the plan**
+- If a SPEC block exists in conversation: use it as the plan's objective, acceptance criteria, and boundaries.
+  Do NOT re-ask what the task is.
+- If no SPEC block in conversation: check vault for `{vault_path}/plans/*-context.md` (most recent).
+  If found and recent (today): read it and use as the SPEC source.
+- If no SPEC block found anywhere (plan invoked directly): ask in a single message:
+  - What is the task or feature this plan covers?
+  - What is the target completion date (or "open" if no deadline)?
+  - Any known blockers or dependencies upfront?
+
+**Step 2 — Build the plan**
 
 ```markdown
 ---
@@ -31,6 +48,14 @@ source: agent
 
 ## Objective
 One sentence.
+
+## SPEC
+PROBLEM: {from SPEC block or user input}
+DELIVERABLE: {from SPEC block or user input}
+ACCEPTANCE: {from SPEC block or user input}
+BOUNDARIES:
+  In: {from SPEC block or user input}
+  Out: {from SPEC block or user input}
 
 ## Context
 Why this work is happening now.
@@ -66,7 +91,7 @@ Checkpoint types:
 - `checkpoint: human-verify` — user must validate output before proceeding
 - No annotation = autonomous (default)
 
-**Step 3b — Dependency and boundary validation**
+**Step 2b — Dependency and boundary validation**
 After building the milestone list:
 - Scan for circular dependencies (topological sort). If cycle detected:
   report the cycle and ask user to break it.
@@ -79,9 +104,9 @@ After building the milestone list:
 - Validate checkpoints: milestones with architectural decisions or user-facing output
   should be annotated as `checkpoint: decision` or `checkpoint: human-verify`.
 
-**Step 4 — Write and wire**
+**Step 3 — Write and wire**
 - Write to: `{vault_path}/plans/{YYYY-MM-DD}_{kebab-title}.md`
-- Update `status.md`: set `current_plan:`, update `last_updated`, update `## Now What`
+- Update `status.md`: set `current_plan:`, update `last_updated`, set `loop_position: PLAN`, update `## Now What`
 - Update `claude-progress.json` milestones array
 - Report:
 ```
@@ -89,3 +114,6 @@ After building the milestone list:
 ✓ status.md:      current_plan updated
 ✓ progress.json:  milestone added
 ```
+
+The plan file now contains the SPEC — `/execute` reads it directly.
+No information is lost at the discuss→plan→execute boundary.

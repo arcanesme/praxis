@@ -14,16 +14,17 @@ allowed-tools: Bash, Read
 Read vault_path from `~/.claude/praxis.config.json`.
 Detect current project by matching CWD to `local_path` in vault `_index.md`.
 
-## DONE-WHEN
+## Acceptance
 - [ ] Full test suite passes (not just changed tests)
 - [ ] Build succeeds with zero warnings
 - [ ] Lint passes with zero warnings
 - [ ] Typecheck passes (if applicable)
-- [ ] Acceptance criteria verified (from active plan done-when)
+- [ ] Acceptance criteria verified (from active plan)
 - [ ] No regressions detected in related functionality
 - [ ] Verification report written
 
-## NON-GOALS
+## Boundaries
+Out of scope:
 - Does not fix issues — reports them for the user to address
 - Does not modify code
 - Does not deploy or publish
@@ -148,8 +149,7 @@ Format each concern as:
 | Caller | When |
 |--------|------|
 | Manual `/verify-app` | After any implementation |
-| `/gsd:verify` | Can replace or complement Step 1 |
-| Ralph iteration | After story completion |
+| `/verify` | Can replace or complement Step 1 |
 
 ## Removal Condition
 Remove when CI/CD pipeline covers all verification steps and results are

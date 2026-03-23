@@ -1,8 +1,13 @@
 ---
-description: Create a structured spec or ADR for the current project. Writes directly to vault specs/ directory. Use for any significant decision, design, or work item that needs documentation before implementation.
+description: Create a structured spec or ADR for the current project. Writes to vault specs/ directory. Use for architecture decisions, technical designs, and risk documentation — NOT for task framing (use /discuss for that).
 ---
 
 You are creating a spec for the current project.
+
+**When to use /spec vs /discuss:**
+- `/discuss` frames a task — "what are we building and why?" Produces a SPEC block for `/plan`.
+- `/spec` documents a decision or design — "what did we decide and what are the consequences?"
+  Use for ADRs, technical specs, and risk entries that outlive the current task.
 
 **Step 1 — Identify project context**
 - Read vault_path from `~/.claude/praxis.config.json`
@@ -13,7 +18,7 @@ You are creating a spec for the current project.
 **Step 2 — Gather spec details**
 Ask the following in a single message:
 - What is this spec for? (one sentence)
-- Type: ADR (architecture decision) / PLAN (work plan) / RISK (risk register entry) / SPEC (technical spec)
+- Type: ADR (architecture decision) / RISK (risk register entry) / SPEC (technical spec)
 - Is there an existing related spec in `specs/`? (run `obsidian search query="{topic}" limit=3` first)
 
 **Step 2b — Cross-spec conflict check**
@@ -32,11 +37,12 @@ After the vault search from Step 2, check for conflicts with accepted ADRs:
 - Never silently create a spec that contradicts an accepted ADR.
 - If no conflicts: proceed silently.
 
-**Step 3 — Answer the four SPEC questions**
-- **WHAT**: Concrete deliverable
-- **DONE-WHEN**: Specific checks that prove completion
-- **CONSTRAINTS**: Performance, compatibility, compliance requirements
-- **NON-GOALS**: What this explicitly does NOT include
+**Step 3 — Capture the decision or design**
+For ADR: What was decided, what context drove it, what alternatives were considered.
+For SPEC: What is being built, what constraints apply, what the design looks like.
+For RISK: What the risk is, what triggers it, what mitigates it.
+
+Synthesize from the conversation — do not present a blank form to fill out.
 
 **Step 4 — Write the spec**
 

@@ -12,7 +12,7 @@ allowed-tools: Bash, Read, Write, Edit
 ## Vault Path Resolution
 Read vault_path from `~/.claude/praxis.config.json`. If missing: write to fallback location.
 
-## DONE-WHEN
+## Acceptance
 - [ ] Session summary written (3–5 bullets)
 - [ ] Violations and corrections extracted
 - [ ] [LEARN:tag] entries written to correct learnings.md
@@ -21,27 +21,11 @@ Read vault_path from `~/.claude/praxis.config.json`. If missing: write to fallba
 - [ ] vault-gc lightweight check triggered
 - [ ] `/clear` suggested if session had >2 corrections or scope drift
 
-## NON-GOALS
+## Boundaries
+Out of scope:
 - Does not write rules without user approval
 - Does not auto-close or modify open plan files
 - Does not run full vault-gc audit (lightweight only)
-
----
-
-## Ralph Integration
-When `claude-progress.json` → `ralph_state.mode == "active"`:
-- Run Phase 1 (summary) — required
-- Skip Phase 2 (violation extraction — no user corrections in Ralph)
-- Run Phase 3 (LEARN entries) — required
-- Skip Phase 4 (rule proposals — no user to approve)
-- Run Phase 5 (update claude-progress.json) — required
-  - Push `current_story` to `completed_stories`
-  - Set `current_story` to null
-  - Increment `session_count`
-  - Write `last_iteration` timestamp
-- Run Phase 6 (vault-gc lightweight) — required
-- Run Phase 7 (health) — write to `ralph_state`, always suggest `/clear`
-- Exit 0 always — never block a Ralph iteration
 
 ---
 

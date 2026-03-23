@@ -41,9 +41,9 @@ You are running a structured technical discovery.
   ---
   ```
 - Include all options evaluated, recommendation, and confidence
-- Report: "Discovery written. Run `/spec` to formalize as ADR, or `/gsd:discuss` to proceed."
+- Report: "Discovery written. Run `/spec` to formalize as ADR, or `/discuss` to proceed."
 
 **Rules:**
 - Discovery is research, not implementation. Zero code output.
 - If the question is already answered by an existing spec: point to it instead.
-- Fills the gap between `/gsd:discuss` (problem framing) and `/spec` (formal decision).
+- Fills the gap between `/discuss` (problem framing) and `/spec` (formal decision).

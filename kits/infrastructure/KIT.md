@@ -43,22 +43,9 @@ environments.
 
 ## Workflow Integration
 
-This kit operates WITHIN the universal base workflow:
-- **GSD** structures the work (discuss → plan → execute → verify)
-- **Superpowers** enforces TDD and code review during execution
+This kit operates WITHIN the Praxis workflow:
+- **Praxis** structures the work (discuss → plan → execute → verify → simplify → ship)
 - **This kit** adds infrastructure-specific rules and commands
-
-## Ralph Integration
-
-To persist this kit across Ralph iterations, add to project `CLAUDE.md`:
-
-```markdown
-## Active kit
-On session start, activate: /kit:infrastructure
-```
-
-Each Ralph iteration reads project CLAUDE.md and activates the kit automatically.
-The `/kit` command is idempotent — double-activation is a no-op.
 
 ## Prerequisites
 

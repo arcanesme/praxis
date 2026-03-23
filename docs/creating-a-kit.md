@@ -178,18 +178,6 @@ Example: `base/rules/terraform.md` loads whenever you touch `.tf` files.
 `/kit:infrastructure`. This separation prevents context bloat — domain rules
 don't consume tokens until the kit is activated.
 
-### Ralph Integration
-
-To persist kit activation across Ralph iterations, add to the project's CLAUDE.md:
-
-```markdown
-## Active kit
-On session start, activate: /kit:infrastructure
-```
-
-Each Ralph iteration reads the project CLAUDE.md and activates the kit via
-`/kit:infrastructure`. The command is idempotent — double-activation is a no-op.
-
 ### Teardown Pattern for Non-npm Kits
 
 The infrastructure kit has no npm skills or MCP servers. Its `teardown.sh`
@@ -207,9 +195,9 @@ skills. Match your teardown to your install.
 
 - **Context budget**: Kit rules + KIT.md should stay under 3000 tokens total.
   Measure after building. If over budget, split rules or trim descriptions.
-- **Don't duplicate Superpowers**: If Superpowers already enforces TDD, debugging,
-  or code review — don't add kit rules that overlap.
-- **Skills chain is a sequence, not a replacement**: GSD still owns the outer
+- **Don't duplicate base skills**: If Praxis already has `/debug`, `/review`,
+  `/simplify` — don't add kit rules that overlap.
+- **Skills chain is a sequence, not a replacement**: Praxis still owns the outer
   workflow. The kit provides domain context INTO that workflow.
 - **Removal condition is mandatory**: If you can't state when the kit becomes
   unnecessary, don't build it.

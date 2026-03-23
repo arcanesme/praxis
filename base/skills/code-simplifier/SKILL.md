@@ -13,13 +13,14 @@ allowed-tools: Bash, Read, Edit
 Read vault_path from `~/.claude/praxis.config.json`.
 Detect current project by matching CWD to `local_path` in vault `_index.md`.
 
-## DONE-WHEN
+## Acceptance
 - [ ] Diff analyzed by isolated subagent
 - [ ] Simplification opportunities identified and categorized
 - [ ] User-approved changes applied
 - [ ] No functional regressions (tests pass after changes)
 
-## NON-GOALS
+## Boundaries
+Out of scope:
 - Does not add features or change behavior
 - Does not refactor architecture — only simplifies within existing structure
 - Does not touch files outside the recent diff
@@ -123,9 +124,8 @@ If a pattern recurred (same category hit 3+ times):
 
 | Caller | When |
 |--------|------|
-| `/gsd:verify` Step 3b | After UNIFY, before session-retro |
+| `/verify` Step 3b | After UNIFY, before session-retro |
 | Manual `/simplify` | Any time after implementation |
-| Ralph iteration | After story completion, before commit |
 
 ## Removal Condition
 Remove when an external linter or formatter handles all 5 simplification

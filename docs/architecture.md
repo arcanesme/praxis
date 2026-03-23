@@ -11,8 +11,7 @@ scope: global harness
 > "Philosophy must be practiced, not just studied." — Musonius Rufus
 
 Praxis is a layered harness for Claude Code. It combines a universal workflow
-base (GSD + Superpowers + Ralph) with domain-specific AI-Kits that activate
-on demand via slash commands.
+base with domain-specific AI-Kits that activate on demand via slash commands.
 
 ## Layer Architecture
 
@@ -27,55 +26,46 @@ on demand via slash commands.
 │  Loads ONLY when invoked, unloads on /kit:off     │
 ├─────────────────────────────────────────────────┤
 │  UNIVERSAL BASE (always loaded)                   │
-│  GSD        — spec→plan→execute→verify workflow   │
-│  Superpowers — TDD, debugging, code review        │
-│  Ralph      — autonomous PRD→execute loop         │
+│  Praxis workflow — discuss→plan→execute→verify    │
+│  Quality enforcement — debug, review, simplify    │
 ├─────────────────────────────────────────────────┤
 │  CLAUDE CODE                                      │
 │  ~/.claude/CLAUDE.md + ~/.claude/rules/*          │
-│  Plugin system, skill discovery, subagents        │
+│  Skill discovery, subagents, hooks                │
 └─────────────────────────────────────────────────┘
 ```
 
 ## Activation Boundary
 
-External plugins (GSD, Superpowers) auto-activate for methodology — they
-enforce workflow discipline and quality standards. Custom skills and kits
-activate on explicit slash command for operations — they touch the vault,
-scaffold projects, run commits.
+Custom skills and kits activate on explicit slash command for operations —
+they touch the vault, scaffold projects, run commits.
 
 False triggers on methodology: low-cost (skip the suggestion).
 False triggers on operations: real consequences (wrong vault paths, unwanted scaffolds).
 
 ## Workflow Hierarchy
 
-**GSD owns the outer workflow.** Always start feature work with GSD.
-Superpowers' brainstorm/write-plan/execute-plan commands are redundant
-when GSD is running — never invoke alongside GSD phases.
+**Praxis owns the workflow.** Always start feature work with `/discuss` or `/next`.
 
-**Superpowers owns quality enforcement within execution.** TDD, debugging,
-and code review activate automatically inside whatever GSD sets up.
-
-**One exception — pure bugfixes.** Skip GSD entirely. Use Superpowers
-debugging methodology directly.
-
-**Ralph is the outer loop.** Spawns fresh instances. GSD + Superpowers
-operate within each iteration.
+- Full loop: discuss → plan → execute → verify → simplify → ship
+- Lightweight: `/quick` for ad-hoc tasks, `/fast` for trivial changes
+- Pure bugfixes: skip the full loop, use `/debug` directly
 
 ## Context Rot Prevention
 
-GSD and Ralph address context rot at different scales:
+Praxis addresses context rot through phase-scoped context loading and
+file-based handoffs at phase boundaries.
 
-| Scale | Tool | Mechanism |
-|-------|------|-----------|
-| Intra-session | GSD | Phase-scoped context loading; file-based handoff at phase boundaries |
-| Inter-session | Ralph | Fresh instance per story; `claude-progress.json` as sole state bridge |
+| Mechanism | How |
+|-----------|-----|
+| Phase scoping | Load ONLY context for current phase — not everything |
+| File-based handoff | SPEC → plan file → milestone steps. Conversation is not the record. |
+| Vault persistence | Decisions, plans, learnings persist across sessions |
+| Context reset | `/context-reset` checkpoints state before `/clear` |
+| Pre-compaction hook | `vault-checkpoint.sh` saves Praxis state before compaction |
 
 When context degradation is detected (repeated corrections, instruction drift),
 use `/context-reset` to checkpoint state and restart clean.
-
-Story sizing rule: each Ralph story must fit one context window (~10k output tokens).
-Stories requiring cross-story reasoning stay in GSD.
 
 ## AI-Kit Pattern
 
@@ -92,18 +82,6 @@ A kit is a self-contained domain tooling bundle:
 
 Kits activate via `/kit:<n>`, deactivate via `/kit:off`.
 The `/kit` command is idempotent — double-activate is a no-op.
-This is critical for Ralph integration.
-
-### Ralph Integration
-
-Kit activation persists across Ralph iterations via project `CLAUDE.md`:
-
-```markdown
-## Active kit
-On session start, activate: /kit:web-designer
-```
-
-No modification to `ralph.sh` needed.
 
 ## Distribution
 
@@ -128,6 +106,6 @@ prompt, stored in `~/.claude/praxis.config.json` (gitignored).
 |------|---------|
 | **Praxis** | The complete harness system |
 | **AI-Kit** | A domain-specific tooling bundle |
-| **Universal base** | GSD + Superpowers + Ralph — always loaded |
+| **Universal base** | Praxis workflow + quality enforcement — always loaded |
 | **Kit manifest** | `KIT.md` — declares what a kit contains |
 | **Skills chain** | Ordered sequence of skills a kit activates |

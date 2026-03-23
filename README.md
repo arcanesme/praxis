@@ -8,7 +8,7 @@ A layered harness for [Claude Code](https://docs.anthropic.com/en/docs/claude-co
 
 Praxis gives Claude Code a three-layer operating system:
 
-**Universal base** — always loaded. [GSD](https://github.com/gsd-build/get-shit-done) structures work (spec → plan → execute → verify). [Superpowers](https://github.com/obra/superpowers) enforces quality (TDD, debugging, code review). [Ralph](https://github.com/snarktank/ralph) runs autonomous execution loops.
+**Universal base** — always loaded. Praxis structures work (discuss → plan → execute → verify → simplify → ship). Built-in quality enforcement (debugging, code review, simplification).
 
 **AI-Kits** — activated on demand via `/kit:<name>`. Each kit bundles domain-specific rules, skills, MCP servers, and slash commands. Activate the web-designer kit and your components get design system enforcement, accessibility auditing, and production lint. Deactivate with `/kit:off`.
 
@@ -31,32 +31,23 @@ npx praxis-harness uninstall   # remove Praxis-owned files from ~/.claude/
 
 ## After install
 
-Open Claude Code and run:
-
-```
-/plugin marketplace add obra/superpowers-marketplace
-/plugin install superpowers@superpowers-marketplace
-/plugin marketplace add snarktank/ralph
-/plugin install ralph-skills@ralph-marketplace
-```
-
-Verify with `/help` — you should see GSD, Superpowers, and Praxis commands.
+Verify with `/help` — you should see Praxis commands (`/discuss`, `/execute`, `/verify`, `/plan`, `/ship`, `/kit:*`).
 
 ## Workflow
 
-The standard GSD workflow for feature development:
+The standard Praxis workflow for feature development:
 
 ```
 /standup           → orient (reads status.md, surfaces stale state)
-/gsd:discuss       → frame the problem (SPEC questions, scope guard)
+/discuss       → frame the problem (conversational, scope guard)
 /discover          → research options with confidence levels (before /spec)
-/gsd:plan-phase    → plan milestones (with dependency ordering + boundaries)
-/gsd:execute       → implement one milestone at a time (file-group isolation)
-/gsd:verify        → validate (test/lint/typecheck/build, self-review, UNIFY)
+/plan    → plan milestones (with dependency ordering + boundaries)
+/execute       → implement one milestone at a time (file-group isolation)
+/verify        → validate (test/lint/typecheck/build, self-review, UNIFY)
 /session-retro     → capture learnings, update vault
 ```
 
-For pure bugfixes: `/debug` (test-first debugging, skips GSD).
+For pure bugfixes: `/debug` (test-first debugging, skips the full loop).
 For code review: `/review` (launches subagent review at any time).
 For technical research: `/discover` (structured options evaluation before decisions).
 
@@ -64,10 +55,10 @@ For technical research: `/discover` (structured options evaluation before decisi
 
 | Command | Purpose |
 |---------|---------|
-| `gsd-discuss` | Frame the problem, SPEC questions, scope guard |
-| `gsd-execute` | Implement one milestone with file-group isolation + boundary enforcement |
-| `gsd-verify` | Validate milestone (test/lint/build), self-review, UNIFY phase summary |
-| `ralph` | Autonomous multi-story execution from a PRD |
+| `discuss` | Conversational problem framing, SPEC synthesis, scope guard |
+| `execute` | Implement one milestone with file-group isolation + boundary enforcement |
+| `verify` | Validate milestone (test/lint/build), self-review, UNIFY phase summary |
+
 | `plan` | Create a dated work plan with milestone dependencies + checkpoints |
 | `spec` | Create a structured spec or ADR with conflict detection |
 | `discover` | Structured technical discovery with confidence-rated options |
@@ -86,17 +77,6 @@ Key additions in this version:
 - **context-management** — context brackets (FRESH/MODERATE/DEPLETED/CRITICAL) adapt behavior to session stage
 - **vault** — Obsidian vault integration
 
-## Ralph
-
-Ralph is the autonomous execution mode for multi-story work. Use it when you have >5 independent stories that don't require human checkpoints.
-
-1. Write a PRD using `/prd-writer` (structured story format with file groups and estimates)
-2. Run `/ralph` to begin autonomous execution
-3. Each story runs in a fresh context with its own verify cycle
-4. Blocked stories are recorded and skipped — reported at run end
-
-Ralph is not a replacement for GSD — it runs GSD internally per story. Use GSD for work that needs cross-story reasoning or architectural decisions.
-
 ## Architecture
 
 ```
@@ -108,7 +88,7 @@ Ralph is not a replacement for GSD — it runs GSD internally per story. Use GSD
 │  Skills chain + domain rules + MCPs    │
 ├────────────────────────────────────────┤
 │  Universal base (always loaded)        │
-│  GSD → Superpowers → Ralph             │
+│  Praxis workflow engine                 │
 ├────────────────────────────────────────┤
 │  Vault layer                           │
 │  Obsidian                              │
@@ -118,7 +98,7 @@ Ralph is not a replacement for GSD — it runs GSD internally per story. Use GSD
 └────────────────────────────────────────┘
 ```
 
-**Workflow hierarchy:** GSD owns the outer loop (discuss → plan → execute → verify). Superpowers enforces quality inside execution (TDD, review, debug). Ralph runs autonomous multi-story iterations. Kits inject domain context into this workflow — they don't replace it.
+**Workflow hierarchy:** Praxis owns the outer loop (discuss → plan → execute → verify → simplify → ship). Kits inject domain context into this workflow — they don't replace it.
 
 ## Available kits
 

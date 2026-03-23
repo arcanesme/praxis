@@ -28,7 +28,7 @@ echo ""
 echo "This will NOT:"
 echo "  • Delete the repo at $REPO_PATH"
 echo "  • Delete vault templates at $VAULT_PATH"
-echo "  • Uninstall GSD, Superpowers, or Ralph plugins"
+echo "  • Uninstall any Claude Code plugins"
 echo "  • Remove any non-Praxis files from $CLAUDE_DIR"
 echo ""
 read -p "Continue? [y/N] " CONFIRM

@@ -71,4 +71,4 @@ Checks:  secrets ✓  lint ✓  types ✓  tests ✓
 - Never skip pre-flight checks. They are the safety net.
 - Never force-push without explicit user approval.
 - If the diff touches >20 files: warn about PR size and suggest splitting.
-- This command is the end of a GSD cycle — run after `/gsd:verify` passes.
+- This command is the end of a Praxis cycle — run after `/verify` passes.

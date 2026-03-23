@@ -2,7 +2,7 @@
 description: Validation phase — runs test/lint/typecheck/build and reports PASS or FAIL. Use after each milestone completion.
 ---
 
-You are running the GSD verification phase for the current milestone.
+You are running the verification phase for the current milestone.
 
 **Step 1 — Run validation sequence**
 Execute in order, showing actual output (never assertions):
@@ -21,13 +21,14 @@ If no commands are defined: warn and ask user for the correct commands.
 
 **Step 3 — On PASS**
 1. Update the active plan file: mark milestone status as complete
-2. Prompt: "Milestone verified. Ready to commit — proceed?"
-3. After commit: check if more milestones remain
-   - Yes → "Run `/gsd:execute` for the next milestone."
-   - No → "All milestones complete. Running self-review."
+2. Commit immediately — verification passed, no permission needed.
+   Use conventional commit format. See git-workflow.md.
+3. Check if more milestones remain:
+   - Yes → "Milestone committed. Run `/execute` for the next milestone."
+   - No → "All milestones committed. Running self-review."
 4. After ALL milestones: trigger Self-Review Protocol
    - Launch a subagent to review the full diff as a critical code reviewer
-   - Subagent receives ONLY: the diff, the SPEC, relevant rules files
+   - Subagent receives ONLY: the diff, the SPEC (from plan file `## SPEC` section), relevant rules files
    - Address all Critical and Major findings before reporting done
 
 **Step 3b — UNIFY (mandatory after all milestones verified)**

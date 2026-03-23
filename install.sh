@@ -300,13 +300,6 @@ fi
 # ═══════════════════════════════════════════
 step "Phase 4: Installing universal tools"
 
-echo "  Installing GSD (Get Shit Done)..."
-if npx get-shit-done-cc --claude --global 2>>"$LOG_FILE"; then
-  ok "GSD installed"
-else
-  warn "GSD auto-install failed. Install manually:"
-  echo "    npx get-shit-done-cc --claude --global"
-fi
 
 if command -v obsidian &>/dev/null; then
   ok "Obsidian CLI available"
@@ -513,19 +506,10 @@ echo -e "${YELLOW}${BOLD}Manual steps remaining:${NC}"
 echo ""
 echo "  Open Claude Code and run these commands:"
 echo ""
-echo -e "  ${CYAN}# Superpowers (quality enforcement)${NC}"
-echo "  /plugin marketplace add obra/superpowers-marketplace"
-echo "  /plugin install superpowers@superpowers-marketplace"
-echo ""
-echo -e "  ${CYAN}# Ralph (autonomous execution)${NC}"
-echo "  /plugin marketplace add snarktank/ralph"
-echo "  /plugin install ralph-skills@ralph-marketplace"
-echo ""
 echo -e "  ${CYAN}# Verify everything loaded${NC}"
 echo "  /help"
 echo ""
-echo "  You should see GSD commands (/gsd:*), Superpowers"
-echo "  commands (/superpowers:*), and kit command (/kit:*)."
+echo "  You should see Praxis commands (/discuss, /plan, /execute, /verify, /ship, /kit:*)."
 echo ""
 echo -e "${GREEN}${BOLD}  Then: /kit:list to see available kits.${NC}"
 echo ""

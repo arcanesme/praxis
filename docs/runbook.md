@@ -7,13 +7,13 @@ Operational troubleshooting guide. Each section follows Symptom / Cause / Fix fo
 The standard Praxis workflow for feature work:
 
 1. **Start session**: `/standup` — reads status.md, surfaces stale state, orients you
-2. **Frame the problem**: `/gsd:discuss` — SPEC questions, problem framing, scope guard
-3. **Plan the work**: `/gsd:plan-phase` — milestones with dependencies, write to vault
-4. **Execute milestones**: `/gsd:execute` — one milestone at a time, file-group isolation
-5. **Verify each milestone**: `/gsd:verify` — test/lint/typecheck/build, stop-and-fix
+2. **Frame the problem**: `/discuss` — conversational problem framing, SPEC synthesis, scope guard
+3. **Plan the work**: `/plan` — milestones with dependencies, write to vault
+4. **Execute milestones**: `/execute` — one milestone at a time, file-group isolation
+5. **Verify each milestone**: `/verify` — test/lint/typecheck/build, stop-and-fix
 6. **End session**: `/session-retro` — learnings, rule proposals, progress update
 
-For pure bugfixes: skip GSD, use `/debug` directly.
+For pure bugfixes: skip the full loop, use `/debug` directly.
 For code review: use `/review` at any point.
 
 ## Context Rot Recovery
@@ -40,33 +40,6 @@ all state — nothing is lost.
 **Fix (new session)**:
 Start a new Claude Code session. The SessionStart hook auto-loads agenda.md.
 Read the active plan to resume where you left off.
-
-## Ralph Recovery
-
-### Blocked Stories
-
-**Symptom**: Ralph reports blocked stories at run end.
-
-**Cause**: Test failures, missing dependencies, or scope issues in individual stories.
-
-**Fix**:
-1. Check `claude-progress.json` → `ralph_state.blocked_stories` for the list
-2. Edit the PRD — fix the blocked story (adjust file group, split scope, add deps)
-3. Clear the story from `blocked_stories` array
-4. Re-run `/ralph` — it picks up where it left off via `ralph_state`
-
-### Iteration Failed Mid-Run
-
-**Symptom**: Ralph stopped unexpectedly (crash, timeout, context limit).
-
-**Cause**: Story exceeded context window or hit an unrecoverable error.
-
-**Fix**:
-1. Check the last commit — was the story partially completed?
-2. Read `claude-progress.json` → `ralph_state.current_story`
-3. If partially done: manually complete or revert, move story to `completed_stories`
-4. If not started: leave `current_story` as-is, re-run `/ralph`
-5. Ralph resumes from `current_story` — no need to restart the full run
 
 ## Vault Recovery
 
