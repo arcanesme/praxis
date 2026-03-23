@@ -1,9 +1,7 @@
 ---
 name: simplify
 disable-model-invocation: true
-description: Post-implementation code simplification. Launches a subagent to review
-  recent changes for unnecessary complexity, over-abstraction, and opportunities to
-  simplify. Runs after any implementation phase. Side-effect skill — never auto-triggers.
+description: "Post-implementation code simplification. Launches a subagent to review recent changes for unnecessary complexity, over-abstraction, and opportunities to simplify. Runs after any implementation phase. Side-effect skill — never auto-triggers."
 ---
 
 # simplify Skill

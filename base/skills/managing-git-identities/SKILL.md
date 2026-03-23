@@ -1,10 +1,6 @@
 ---
 name: managing-git-identities
-description: >
-  Guides setup and troubleshooting of multiple Git identities
-  (SSH keys, commit author, GitHub CLI auth, includeIf directory
-  routing). Activates when user discusses git accounts, commit
-  identity mismatch, SSH key management, or gh auth switching.
+description: "Guides setup and troubleshooting of multiple Git identities (SSH keys, commit author, GitHub CLI auth, includeIf directory routing). Activates when user discusses git accounts, commit identity mismatch, SSH key management, or gh auth switching."
 ---
 
 ## Two Independent Problems

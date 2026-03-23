@@ -1,10 +1,7 @@
 ---
 name: plan-writer
 disable-model-invocation: true
-description: >
-  Writes a dated work plan to the vault plans/ directory. Creates the plan
-  file with YAML frontmatter, milestones, and acceptance criteria. Updates
-  status.md current_plan field. Called by /plan and /discuss workflows.
+description: "Writes a dated work plan to the vault plans/ directory. Creates the plan file with YAML frontmatter, milestones, and acceptance criteria. Updates status.md current_plan field. Called by /plan and /discuss workflows."
 ---
 
 # plan-writer Skill

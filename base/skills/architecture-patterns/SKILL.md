@@ -1,12 +1,6 @@
 ---
 name: architecture-patterns
-description: >
-  Architecture decision and design documentation standards. Auto-triggers when
-  writing ADRs, technical specs, risk register entries, system design documents,
-  or any decision that affects system design, network topology, identity model,
-  data residency, security posture, or compliance scope. Also triggers when
-  writing status updates, blocker reports, or spec summaries that require
-  What/So What/Now What structure.
+description: "Architecture decision and design documentation standards. Auto-triggers when writing ADRs, technical specs, risk register entries, system design documents, or any decision that affects system design, network topology, identity model, data residency, security posture, or compliance scope. Also triggers when writing status updates, blocker reports, or spec summaries that require What/So What/Now What structure."
 ---
 
 # Architecture Patterns

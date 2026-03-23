@@ -1,10 +1,7 @@
 ---
 name: verify-app
 disable-model-invocation: true
-description: End-to-end application verification. Launches a subagent to run the full
-  test suite, check build, verify runtime behavior, and confirm acceptance criteria.
-  Use after implementation to catch integration issues that unit tests miss.
-  Side-effect skill — never auto-triggers.
+description: "End-to-end application verification. Launches a subagent to run the full test suite, check build, verify runtime behavior, and confirm acceptance criteria. Use after implementation to catch integration issues that unit tests miss. Side-effect skill — never auto-triggers."
 ---
 
 # verify-app Skill

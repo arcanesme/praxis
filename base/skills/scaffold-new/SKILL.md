@@ -1,9 +1,7 @@
 ---
 name: scaffold-new
 disable-model-invocation: true
-description: Scaffold a brand new project into the full harness. Invoke with /scaffold-new only.
-  Creates repo CLAUDE.md, vault subtree, git identity verification, gitignore,
-  pre-commit hook, and Project Registry entry. Side-effect skill — never auto-triggers.
+description: "Scaffold a brand new project into the full harness. Invoke with /scaffold-new only. Creates repo CLAUDE.md, vault subtree, git identity verification, gitignore, pre-commit hook, and Project Registry entry. Side-effect skill — never auto-triggers."
 ---
 
 # scaffold-new Skill

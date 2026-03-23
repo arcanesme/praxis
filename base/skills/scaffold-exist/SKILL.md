@@ -1,9 +1,7 @@
 ---
 name: scaffold-exist
 disable-model-invocation: true
-description: Scaffold an existing project into the full harness. Invoke with /scaffold-exist only.
-  Adds missing harness files to projects that predate the scaffold standard.
-  Non-destructive — never overwrites without confirmation. Side-effect skill — never auto-triggers.
+description: "Scaffold an existing project into the full harness. Invoke with /scaffold-exist only. Adds missing harness files to projects that predate the scaffold standard. Non-destructive — never overwrites without confirmation. Side-effect skill — never auto-triggers."
 ---
 
 # scaffold-exist Skill

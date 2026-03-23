@@ -1,10 +1,7 @@
 ---
 name: pre-commit-lint
 disable-model-invocation: true
-description: Generate a stack-aware pre-commit hook script for a repo. Use when setting
-  up a new repo, when asked to "install pre-commit checks", "add linting to commits",
-  or "wire pre-commit-lint". Also invoked by scaffold-new Phase 5.5.
-  NOT invoked at commit time — generates a shell script that runs at commit time.
+description: "Generate a stack-aware pre-commit hook script for a repo. Use when setting up a new repo, when asked to install pre-commit checks, add linting to commits, or wire pre-commit-lint. Also invoked by scaffold-new Phase 5.5. NOT invoked at commit time — generates a shell script that runs at commit time."
 ---
 
 # pre-commit-lint Skill

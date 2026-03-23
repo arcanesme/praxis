@@ -1,9 +1,7 @@
 ---
 name: vault-gc
 disable-model-invocation: true
-description: Audit vault health and detect entropy. Invoke manually with /vault-gc
-  only. Two modes — full audit (manual) and lightweight staleness check (called
-  inline by session-retro). Never auto-deletes. Side-effect skill — never auto-triggers.
+description: "Audit vault health and detect entropy. Invoke manually with /vault-gc only. Two modes — full audit (manual) and lightweight staleness check (called inline by session-retro). Never auto-deletes. Side-effect skill — never auto-triggers."
 ---
 
 # vault-gc Skill

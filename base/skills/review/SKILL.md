@@ -1,8 +1,7 @@
 ---
 name: review
 disable-model-invocation: true
-description: Manual code review trigger. Launches a subagent to review a diff for
-  bugs, security, and convention violations. Use independently of Praxis phases.
+description: "Manual code review trigger. Launches a subagent to review a diff for bugs, security, and convention violations. Use independently of Praxis phases."
 ---
 
 # review Skill

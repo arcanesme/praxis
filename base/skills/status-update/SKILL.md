@@ -1,10 +1,7 @@
 ---
 name: status-update
 disable-model-invocation: true
-description: >
-  Atomic update to vault status.md. Ensures consistent format, enforces
-  the 100-line limit, and archives resolved items. Called at milestone
-  boundaries, session end, and phase transitions.
+description: "Atomic update to vault status.md. Ensures consistent format, enforces the 100-line limit, and archives resolved items. Called at milestone boundaries, session end, and phase transitions."
 ---
 
 # status-update Skill

@@ -1,12 +1,6 @@
 ---
 name: communication-standards
-description: >
-  Client-facing writing standards. Auto-triggers when writing proposals,
-  status reports, executive summaries, SOWs, deliverable documents, or any
-  content targeting a non-technical audience. Also triggers when writing
-  git commit messages, PR descriptions, or any text where AI attribution
-  must be avoided. Covers executive-summary-first rule, What/So What/Now What
-  structure, proposal format, audience calibration, and no-AI-attribution policy.
+description: "Client-facing writing standards. Auto-triggers when writing proposals, status reports, executive summaries, SOWs, deliverable documents, or any content targeting a non-technical audience. Also triggers when writing git commit messages, PR descriptions, or any text where AI attribution must be avoided. Covers executive-summary-first rule, What/So What/Now What structure, proposal format, audience calibration, and no-AI-attribution policy."
 ---
 
 # Communication Standards

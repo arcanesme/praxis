@@ -1,10 +1,6 @@
 ---
 name: context7-lookup
-description: >
-  Enforces the docs-first mandate from coding.md. Before implementing with
-  any external library, framework, or API, use Context7 to retrieve current
-  documentation. Activates when code references an external package, imports
-  a third-party library, or calls an API that releases frequently.
+description: "Enforces the docs-first mandate from coding.md. Before implementing with any external library, framework, or API, use Context7 to retrieve current documentation. Activates when code references an external package, imports a third-party library, or calls an API that releases frequently."
 ---
 
 # context7-lookup Skill

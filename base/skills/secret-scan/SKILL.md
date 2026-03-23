@@ -1,10 +1,6 @@
 ---
 name: secret-scan
-description: >
-  Canonical secret scanning skill. Scans files for credential patterns
-  (API keys, tokens, connection strings). Called by pre-commit-lint and
-  ship workflows. Also usable standalone for repo-wide audits. Replaces
-  all inline secret scan regex instances with a single authoritative source.
+description: "Canonical secret scanning skill. Scans files for credential patterns (API keys, tokens, connection strings). Called by pre-commit-lint and ship workflows. Also usable standalone for repo-wide audits. Replaces all inline secret scan regex instances with a single authoritative source."
 ---
 
 # secret-scan Skill
