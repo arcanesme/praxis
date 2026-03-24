@@ -43,25 +43,38 @@ PROJECT_DIR=$(basename "$PWD")
 # Write staging JSON for the Stop prompt to consume
 STAGING_FILE="$VAULT_PATH/.session-staging.json"
 
-cat > "$STAGING_FILE" <<STAGING_EOF
-{
-  "timestamp": "$TIMESTAMP",
-  "date": "$DATE",
-  "project": "$PROJECT_DIR",
-  "cwd": "$PWD",
-  "git": {
-    "branch": "$BRANCH",
-    "last_commit": "$LAST_COMMIT",
-    "dirty": $(if [[ -n "$DIRTY" ]]; then echo "true"; else echo "false"; fi)
-  },
-  "vault": {
-    "current_plan": "$CURRENT_PLAN",
-    "loop_position": "$LOOP_POSITION"
-  },
-  "recent_commits": $(echo "$RECENT_COMMITS" | jq -R -s 'split("\n") | map(select(length > 0))' 2>/dev/null || echo '[]'),
-  "files_changed_summary": "$FILES_CHANGED"
-}
-STAGING_EOF
+IS_DIRTY="false"
+if [[ -n "$DIRTY" ]]; then IS_DIRTY="true"; fi
+
+COMMITS_JSON=$(echo "$RECENT_COMMITS" | jq -R -s 'split("\n") | map(select(length > 0))' 2>/dev/null || echo '[]')
+
+jq -n \
+  --arg ts "$TIMESTAMP" \
+  --arg date "$DATE" \
+  --arg project "$PROJECT_DIR" \
+  --arg cwd "$PWD" \
+  --arg branch "$BRANCH" \
+  --arg last_commit "$LAST_COMMIT" \
+  --argjson dirty "$IS_DIRTY" \
+  --arg current_plan "$CURRENT_PLAN" \
+  --arg loop_position "$LOOP_POSITION" \
+  --argjson recent_commits "$COMMITS_JSON" \
+  --arg files_changed "$FILES_CHANGED" \
+  '{
+    timestamp: $ts,
+    date: $date,
+    project: $project,
+    cwd: $cwd,
+    git: { branch: $branch, last_commit: $last_commit, dirty: $dirty },
+    vault: { current_plan: $current_plan, loop_position: $loop_position },
+    recent_commits: $recent_commits,
+    files_changed_summary: $files_changed
+  }' > "$STAGING_FILE" 2>/dev/null
+
+if [[ $? -ne 0 ]]; then
+  # Fallback: minimal valid JSON if jq fails
+  echo '{"error":"jq failed to build staging JSON"}' > "$STAGING_FILE"
+fi
 
 echo "Session data staged: $STAGING_FILE" >&2
 
