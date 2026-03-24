@@ -23,12 +23,13 @@ If no commands are defined: warn and ask user for the correct commands.
 
 **Step 3 — On PASS**
 1. Update the active plan file: mark milestone status as complete
-2. Commit immediately — verification passed, no permission needed.
+2. Update `{vault_path}/claude-progress.json`: append the completed milestone to `milestones[]` with `{ "name": "{milestone name}", "date": "{YYYY-MM-DD}", "plan_ref": "{plan filename}" }`.
+3. Commit immediately — verification passed, no permission needed.
    Use conventional commit format. See git-workflow.md.
-3. Check if more milestones remain:
+4. Check if more milestones remain:
    - Yes → "Milestone committed. Run `/execute` for the next milestone."
    - No → "All milestones committed. Running self-review."
-4. After ALL milestones: trigger Self-Review Protocol
+5. After ALL milestones: trigger Self-Review Protocol
    - Launch a subagent to review the full diff as a critical code reviewer
    - Subagent receives ONLY: the diff, the SPEC (from plan file `## SPEC` section), relevant rules files
    - Address all Critical and Major findings before reporting done

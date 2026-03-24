@@ -90,6 +90,7 @@ Create files from templates in `references/`:
 - `status.md` from `vault-status-template.md` (`current_plan:` empty)
 - `tasks.md` from `vault-tasks-template.md`
 - `notes/learnings.md` from `vault-learnings-template.md`
+- `notes/decision-log.md` from `decision-log` template (append-only decision log)
 - `.gitignore` from `gitignore-template.txt` (new repos only)
 
 ---

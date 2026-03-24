@@ -96,6 +96,24 @@ For each approved simplification:
 3. If tests fail: revert the last edit, report which simplification broke tests
 4. Show final diff of simplifications applied
 
+## Phase 4b — Persist Findings
+
+Write simplification findings to `{vault_path}/notes/{YYYY-MM-DD}_simplify-findings.md`:
+```markdown
+---
+tags: [simplify, {project-slug}]
+date: {YYYY-MM-DD}
+source: agent
+---
+# Simplify Findings — {date}
+
+## Applied ({n})
+{file}:{lines} — {category} — {why}
+
+## Skipped ({n})
+{file}:{lines} — {category} — {reason skipped}
+```
+
 ## Phase 5 — Write Learning (optional)
 
 If a pattern recurred (same category hit 3+ times):

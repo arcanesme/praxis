@@ -69,16 +69,34 @@ CLEAN
 - Minor: note for future cleanup.
 - If >3 findings: offer to re-run after fixes (max 3 rounds).
 
-**Step 7 — Write review summary**
+**Step 7 — Write review findings to vault**
 - Read vault_path from `~/.claude/praxis.config.json`
-- Write summary to `{vault_path}/specs/review-{YYYY-MM-DD}-{slug}.md` with frontmatter:
-  ```yaml
+- Write full structured findings to `{vault_path}/specs/review-{YYYY-MM-DD}-{slug}.md`:
+  ```markdown
   ---
   tags: [review, {project-slug}]
   date: {YYYY-MM-DD}
   status: complete
   source: agent
   ---
+  # Code Review — {slug} ({date})
+
+  ## Findings
+
+  ### CRITICAL ({n})
+  {file}:{line} — {description} — {fix}
+
+  ### MAJOR ({n})
+  {file}:{line} — {description} — {fix}
+
+  ### MINOR ({n})
+  {file}:{line} — {description} — {fix}
+
+  ## Clean Files
+  {list of files with no findings}
+
+  ## Diff Scope
+  {git diff command used}
   ```
 
 ## Error Handling

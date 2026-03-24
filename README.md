@@ -66,7 +66,12 @@ For technical research: `/discover` (structured options evaluation before decisi
 | `risk` | Add a risk register entry to the vault |
 | `kit` | Activate/deactivate an AI-Kit |
 | `review` | Manual code review via subagent |
+| `simplify` | Post-implementation code simplification via subagent |
 | `debug` | Structured test-first debugging |
+| `ship` | Commit, push, and PR in one command with pre-flight checks |
+| `verify-app` | End-to-end verification with regression analysis |
+| `session-retro` | End-of-session retrospective with learnings extraction |
+| `status-update` | Manual vault status.md update |
 | `context-reset` | Reload context from vault without clearing session |
 
 ## Rules
@@ -126,13 +131,57 @@ The vault path is configured per machine during install:
 
 Requires [Obsidian CLI](https://obsidian.md) (enable in Obsidian Settings > General > Command line interface). Obsidian must be running for vault search.
 
+### What gets documented automatically
+
+Praxis auto-documents your work in the vault with zero manual effort. Two independent layers ensure nothing is lost:
+
+1. **Shell hooks** capture facts (git state, timestamps) even if Claude runs out of context
+2. **Stop prompt** captures meaning (summaries, decisions, learnings) from conversation context
+
+**At session end** (zero action needed):
+- `status.md` — updated with What/So What/Now What
+- `claude-progress.json` — session entry with summary, accomplishments, milestones, features
+- `notes/{date}_session-note.md` — session summary, decisions, learnings, next steps
+- `notes/decision-log.md` — checkpoint decisions, scope changes (appended)
+- `notes/learnings.md` — [LEARN:tag] pattern entries (appended)
+- `specs/` — ADRs for architectural decisions made during the session
+
+**During workflow skills** (automatic within each skill):
+
+| Skill | Auto-writes to vault |
+|-------|---------------------|
+| `/execute` | `status.md` loop position, `decision-log.md` scope events |
+| `/verify` | `claude-progress.json` milestones[] |
+| `/review` | `specs/review-{date}-{slug}.md` (full findings breakdown) |
+| `/simplify` | `notes/{date}_simplify-findings.md` |
+| `/debug` | `notes/{date}_debug-trace.md` |
+| `/verify-app` | `specs/verify-app-{date}-{slug}.md` |
+| `/ship` | `claude-progress.json` features[] |
+
+**On context compaction** (automatic fallback):
+- `plans/{date}-compact-checkpoint.md` — git state, active plan, loop position
+- `claude-progress.json` — session entry preserved
+
 ## Updating
+
+### Updating the harness
 
 ```bash
 npx praxis-harness update
 ```
 
-Re-copies all files from the latest npm package version. Config file is preserved.
+Re-copies all hooks, skills, rules, and kits from the latest npm package version. Config file is preserved.
+
+### Updating existing projects
+
+After a harness update that adds new vault files (like `decision-log.md`), run `/scaffold-exist` in a Claude Code session to audit your vault and add any missing files. This is non-destructive — it never overwrites existing content.
+
+```
+Step 1: npx praxis-harness update     → deploys new hooks, skills, rules to ~/.claude/
+Step 2: /scaffold-exist                → audits vault, adds missing files
+```
+
+New projects get everything automatically via `/scaffold-new`.
 
 ## Uninstalling
 

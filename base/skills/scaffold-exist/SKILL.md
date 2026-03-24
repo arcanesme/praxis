@@ -52,6 +52,7 @@ Build and show audit table:
 | `specs/` | ? | Create if missing |
 | `research/` | ? | Create if missing |
 | `notes/learnings.md` | ? | Create if missing |
+| `notes/decision-log.md` | ? | Create if missing |
 | Repo CLAUDE.md sections | ? | Add missing sections |
 | Registry row | ? | Verify accuracy |
 

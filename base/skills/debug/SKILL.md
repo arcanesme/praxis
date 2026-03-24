@@ -44,6 +44,32 @@ Before touching any implementation code:
 3. Run the linter — clean.
 4. Show all output.
 
+**Step 5b — Persist debug trace**
+- Read vault_path from `~/.claude/praxis.config.json`
+- Write debug session to `{vault_path}/notes/{YYYY-MM-DD}_debug-trace.md`:
+  ```markdown
+  ---
+  tags: [debug, {project-slug}]
+  date: {YYYY-MM-DD}
+  source: agent
+  ---
+  # Debug Trace — {short title}
+
+  ## Bug Report
+  - **Observed**: {observed behavior}
+  - **Expected**: {expected behavior}
+  - **Suspect**: {file(s)}
+
+  ## Root Cause
+  {root cause statement from Step 3}
+
+  ## Fix
+  {what was changed and why}
+
+  ## Verification
+  {test output summary — pass/fail}
+  ```
+
 **Step 6 — Write learnings**
 - Read vault_path from `~/.claude/praxis.config.json`
 - If this bug represents a pattern (not a one-off typo):

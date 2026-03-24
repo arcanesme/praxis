@@ -74,3 +74,7 @@ Checks:  secrets ✓  lint ✓  types ✓  tests ✓
 - Never force-push without explicit user approval.
 - If the diff touches >20 files: warn about PR size and suggest splitting.
 - This command is the end of a Praxis cycle — run after `/verify` passes.
+
+**Step 7 — Update vault tracking**
+- Read vault_path from `~/.claude/praxis.config.json`
+- Update `{vault_path}/claude-progress.json`: append to `features[]` with `{ "name": "{feature description}", "date": "{YYYY-MM-DD}", "commit": "{short sha}", "pr_url": "{url or null}" }`.

@@ -33,13 +33,28 @@ Before implementing the current milestone, declare the file group:
   boundary-protected file: STOP. Surface the conflict before proceeding.
 - If current milestone has `checkpoint: decision` or `checkpoint: human-verify`:
   present the decision/output to user before proceeding. Do not auto-advance.
+- After a checkpoint decision or user-approved scope expansion, append to `{vault_path}/notes/decision-log.md`:
+  ```
+  ## {YYYY-MM-DD} — {Checkpoint decision | Scope expansion}
+  - **Context**: {milestone name, what triggered the decision}
+  - **Decision**: {what was decided}
+  - **Rationale**: {why}
+  ```
 
 **Step 3 — Implement current milestone**
+- Update `{vault_path}/status.md`: set `loop_position: EXECUTE`.
 - One milestone at a time. Keep diffs scoped.
 - Do not expand scope without explicit user approval.
 - Use extended thinking for tasks touching >3 files or requiring architectural decisions.
 - Before writing to or editing any file: check if it is in the declared file group.
 - If a required change is discovered in an off-limits file: STOP.
+  Log to `{vault_path}/notes/decision-log.md`:
+  ```
+  ## {YYYY-MM-DD} — Scope violation detected
+  - **Milestone**: {name}
+  - **Requested**: {file outside group}
+  - **Action**: Surfaced as new milestone candidate
+  ```
   Surface as a new milestone candidate. Do not expand current milestone.
 - Milestone diff must touch ONLY declared files. Undeclared file change = scope violation.
 

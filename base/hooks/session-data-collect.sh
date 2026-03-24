@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# PreCompact hook — writes minimal checkpoint to vault before context compaction.
-# Always exits 0 (advisory, never blocks compaction).
+# Stop hook — collects structured session data and stages it for the Stop prompt.
+# Always exits 0 (advisory, never blocks session end).
 set -uo pipefail
 
 CONFIG_FILE="$HOME/.claude/praxis.config.json"
@@ -14,17 +14,17 @@ if [[ -z "$VAULT_PATH" || ! -d "$VAULT_PATH" ]]; then
   exit 0
 fi
 
-PLANS_DIR="$VAULT_PATH/plans"
-mkdir -p "$PLANS_DIR"
-
 DATE=$(date +%Y-%m-%d)
-TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
-CHECKPOINT_FILE="$PLANS_DIR/$DATE-compact-checkpoint.md"
+TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
+# Git state (fail gracefully if not in a repo)
 BRANCH=$(git --no-pager rev-parse --abbrev-ref HEAD 2>/dev/null || echo "unknown")
 LAST_COMMIT=$(git --no-pager log --oneline -1 2>/dev/null || echo "no commits")
-PROJECT_DIR=$(basename "$PWD")
+RECENT_COMMITS=$(git --no-pager log --oneline -5 2>/dev/null || echo "")
+FILES_CHANGED=$(git --no-pager diff --stat HEAD~5..HEAD --stat-count=50 2>/dev/null | tail -1 || echo "unknown")
+DIRTY=$(git --no-pager status --porcelain 2>/dev/null | head -20)
 
+# Vault state
 STATUS_FILE="$VAULT_PATH/status.md"
 PROGRESS_FILE="$VAULT_PATH/claude-progress.json"
 
@@ -37,33 +37,33 @@ if [[ -f "$STATUS_FILE" ]]; then
   [[ -z "$LOOP_POSITION" ]] && LOOP_POSITION="unknown"
 fi
 
-cat > "$CHECKPOINT_FILE" <<EOF
----
-tags: [checkpoint, compact]
-date: $DATE
-source: agent
----
-# Compact Checkpoint — $TIMESTAMP
+# Project detection
+PROJECT_DIR=$(basename "$PWD")
 
-## Working Directory
-$PWD
+# Write staging JSON for the Stop prompt to consume
+STAGING_FILE="$VAULT_PATH/.session-staging.json"
 
-## Git State
-- Branch: $BRANCH
-- Last commit: $LAST_COMMIT
+cat > "$STAGING_FILE" <<STAGING_EOF
+{
+  "timestamp": "$TIMESTAMP",
+  "date": "$DATE",
+  "project": "$PROJECT_DIR",
+  "cwd": "$PWD",
+  "git": {
+    "branch": "$BRANCH",
+    "last_commit": "$LAST_COMMIT",
+    "dirty": $(if [[ -n "$DIRTY" ]]; then echo "true"; else echo "false"; fi)
+  },
+  "vault": {
+    "current_plan": "$CURRENT_PLAN",
+    "loop_position": "$LOOP_POSITION"
+  },
+  "recent_commits": $(echo "$RECENT_COMMITS" | jq -R -s 'split("\n") | map(select(length > 0))' 2>/dev/null || echo '[]'),
+  "files_changed_summary": "$FILES_CHANGED"
+}
+STAGING_EOF
 
-## Active Plan
-$CURRENT_PLAN
-
-## Loop Position
-$LOOP_POSITION
-
-## Note
-This checkpoint was auto-written by the PreCompact hook.
-Read this file after compaction to restore context.
-EOF
-
-echo "Vault checkpoint written: $CHECKPOINT_FILE" >&2
+echo "Session data staged: $STAGING_FILE" >&2
 
 # Update claude-progress.json if jq is available
 if command -v jq &>/dev/null && [[ -f "$PROGRESS_FILE" ]]; then
@@ -72,17 +72,18 @@ if command -v jq &>/dev/null && [[ -f "$PROGRESS_FILE" ]]; then
      --arg date "$DATE" \
      --arg branch "$BRANCH" \
      --arg commit "$LAST_COMMIT" \
+     --arg source "hook" \
      '.last_session = $ts |
       .sessions += [{
         "date": $date,
         "branch": $branch,
         "last_commit": $commit,
-        "source": "compact"
+        "source": $source
       }]' "$PROGRESS_FILE" > "$TMP_FILE" 2>/dev/null
 
   if [[ $? -eq 0 && -s "$TMP_FILE" ]]; then
     mv "$TMP_FILE" "$PROGRESS_FILE"
-    echo "claude-progress.json updated (compact)" >&2
+    echo "claude-progress.json updated" >&2
   else
     rm -f "$TMP_FILE"
   fi

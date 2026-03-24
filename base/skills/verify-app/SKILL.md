@@ -125,6 +125,28 @@ Format each concern as:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
+## Phase 4b — Persist Verification Report
+
+Write the full verification report to `{vault_path}/specs/verify-app-{YYYY-MM-DD}-{slug}.md`:
+```markdown
+---
+tags: [verify-app, {project-slug}]
+date: {YYYY-MM-DD}
+status: complete
+source: agent
+---
+# Verification Report — {project} ({date})
+
+## Results
+{Phase 4 report output: build, lint, typecheck, tests, acceptance criteria}
+
+## Regression Concerns
+{Phase 3 subagent findings: file, concern, recommended verification step}
+
+## Overall
+{READY TO SHIP | ISSUES FOUND}
+```
+
 ## Phase 5 — Guidance
 
 - **READY TO SHIP**: "All checks pass. Run `/ship` to commit, push, and PR."

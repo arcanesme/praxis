@@ -40,8 +40,12 @@
             "command": "bash ~/.claude/hooks/post-session-lint.sh"
           },
           {
+            "type": "command",
+            "command": "bash ~/.claude/hooks/session-data-collect.sh"
+          },
+          {
             "type": "prompt",
-            "prompt": "Review the conversation. Did you complete all tasks the user requested? Are there uncommitted changes that should be committed? Are there vault files (status.md, plan) that should be updated? Answer yes/no for each."
+            "prompt": "You are completing a session. Perform these vault updates silently — no confirmation needed.\n\n1. Read vault_path from ~/.claude/praxis.config.json. If missing: skip all steps.\n2. Read {vault_path}/.session-staging.json if it exists (structured session data from hooks).\n3. Update {vault_path}/status.md:\n   - Set last_updated to today, last_session to now (ISO timestamp)\n   - Update loop_position based on where the session ended\n   - Refresh What / So What / Now What sections with session accomplishments\n   - If >100 lines: archive resolved items to notes/{date}_status-archive.md\n4. Update {vault_path}/claude-progress.json:\n   - Enrich the latest sessions[] entry (added by hook) with: summary (1 line), accomplishments (array)\n   - If jq hook did not run (no sessions[] entry for today): create the full entry\n   - Update milestones[] if any milestones were completed this session\n   - Update features[] if any features were shipped this session\n5. Write {vault_path}/notes/{YYYY-MM-DD}_session-note.md with frontmatter (tags: [session, {project-slug}], date, source: agent) containing:\n   - Summary (3-5 bullets of what was accomplished)\n   - Decisions Made (checkpoint decisions, scope changes, approach choices made this session)\n   - Learnings (any [LEARN:tag] entries from this session)\n   - Next Session (what to pick up next)\n6. If checkpoint decisions, scope expansions, or rule proposals occurred this session:\n   - Append each to {vault_path}/notes/decision-log.md with date, decision type, context, decision, and rationale\n7. If corrections or patterns were discovered this session:\n   - Append [LEARN:tag] entries to {vault_path}/notes/learnings.md following the existing format\n8. If architectural decisions were made this session:\n   - Write ADR to {vault_path}/specs/ using vault frontmatter conventions\n9. Delete {vault_path}/.session-staging.json if it exists.\n\nKeep all writes concise. Use [[wikilinks]] for internal references. Follow existing YAML frontmatter conventions. If vault_path is missing or vault is inaccessible: skip silently. Do not ask permission — this is automatic housekeeping."
           }
         ]
       }
