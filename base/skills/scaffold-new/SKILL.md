@@ -150,7 +150,21 @@ After copying Vale configs: run `vale sync` to download community packages (Micr
 Ask: "Generate VS Code workspace settings?"
 If yes:
 - Generate `.vscode/settings.json` with stack-detected configuration (formatter, linter paths)
-- Generate `.vscode/extensions.json` with recommended extensions matching installed tools
+- Generate `.vscode/extensions.json` with recommended extensions from this mapping:
+
+| Always | Extension ID |
+|--------|-------------|
+| Vale | `chrischinchilla.vale-vscode` |
+| ShellCheck | `timonwong.shellcheck` |
+| EditorConfig | `editorconfig.editorconfig` |
+| markdownlint | `davidanson.vscode-markdownlint` |
+
+| Stack Detected | Extension ID |
+|---------------|-------------|
+| Go | `golang.go` |
+| Terraform | `hashicorp.terraform` |
+| Docker | `exiasr.hadolint` |
+
 If no: skip silently.
 
 ---

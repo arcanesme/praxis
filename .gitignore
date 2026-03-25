@@ -16,12 +16,16 @@ package-lock.json
 .DS_Store
 Thumbs.db
 
-# Editors
-.vscode/
+# Editors (allow .vscode/extensions.json for contributor recommendations)
+.vscode/*
+!.vscode/extensions.json
 .idea/
 *.swp
 *.swo
 *~
+
+# Vale (downloaded by vale sync)
+.vale-styles/
 
 # Build artifacts from old project
 __pycache__/

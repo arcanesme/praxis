@@ -87,6 +87,43 @@ if command -v docker &>/dev/null; then
   fi
 fi
 
+# ── Vale setup (sync packages + copy Praxis rules) ──
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+VALE_CONFIG_DIR="$SCRIPT_DIR/../base/configs/vale"
+if command -v vale &>/dev/null && [ -f "$VALE_CONFIG_DIR/.vale.ini" ]; then
+  echo ""
+  echo "── Setting up Vale prose linter ──"
+  (cd "$VALE_CONFIG_DIR" && vale sync 2>/dev/null || true)
+  if [ -d "$VALE_CONFIG_DIR/Praxis" ] && [ -d "$VALE_CONFIG_DIR/.vale-styles" ]; then
+    cp -R "$VALE_CONFIG_DIR/Praxis" "$VALE_CONFIG_DIR/.vale-styles/Praxis"
+    echo "  Praxis rules copied to .vale-styles/"
+  fi
+fi
+
+# ── VS Code extensions ──
+if command -v code &>/dev/null; then
+  echo ""
+  echo "── Installing VS Code extensions ──"
+  CORE_EXTENSIONS=(
+    chrischinchilla.vale-vscode
+    timonwong.shellcheck
+    editorconfig.editorconfig
+    davidanson.vscode-markdownlint
+  )
+  for ext in "${CORE_EXTENSIONS[@]}"; do
+    code --install-extension "$ext" --force 2>/dev/null && printf "  ✓ %s\n" "$ext" || printf "  ✗ %s\n" "$ext"
+  done
+
+  # Stack-conditional extensions
+  $INSTALL_GO && code --install-extension golang.go --force 2>/dev/null && echo "  ✓ golang.go" || true
+  $INSTALL_TF && code --install-extension hashicorp.terraform --force 2>/dev/null && echo "  ✓ hashicorp.terraform" || true
+  command -v docker &>/dev/null && code --install-extension exiasr.hadolint --force 2>/dev/null && echo "  ✓ exiasr.hadolint" || true
+else
+  echo ""
+  echo "  ⚠ VS Code 'code' CLI not on PATH — skipping extension install"
+  echo "    Fix: In VS Code, Cmd+Shift+P → 'Shell Command: Install code command in PATH'"
+fi
+
 echo ""
 echo "=== Done. Run 'bash scripts/install-tools.sh --all' to install all stacks. ==="
 echo ""
