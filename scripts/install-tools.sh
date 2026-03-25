@@ -97,6 +97,12 @@ if command -v vale &>/dev/null && [ -f "$VALE_CONFIG_DIR/.vale.ini" ]; then
   if [ -d "$VALE_CONFIG_DIR/Praxis" ] && [ -d "$VALE_CONFIG_DIR/.vale-styles" ]; then
     cp -R "$VALE_CONFIG_DIR/Praxis" "$VALE_CONFIG_DIR/.vale-styles/Praxis"
     echo "  Praxis rules copied to .vale-styles/"
+    # Copy vocabulary files to Vale's expected location
+    if [ -d "$VALE_CONFIG_DIR/Praxis/vocabularies" ]; then
+      mkdir -p "$VALE_CONFIG_DIR/.vale-styles/config/vocabularies/Praxis"
+      cp "$VALE_CONFIG_DIR/Praxis/vocabularies/"*.txt "$VALE_CONFIG_DIR/.vale-styles/config/vocabularies/Praxis/"
+      echo "  Praxis vocabulary copied to .vale-styles/config/vocabularies/"
+    fi
   fi
 fi
 

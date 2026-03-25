@@ -1,0 +1,25 @@
+extends: substitution
+message: "Use '%s' instead of '%s'."
+level: error
+ignorecase: false
+swap:
+  terraform: Terraform
+  Github: GitHub
+  github: GitHub
+  Github Actions: GitHub Actions
+  Github actions: GitHub Actions
+  github actions: GitHub Actions
+  VScode: VS Code
+  vscode: VS Code
+  Vscode: VS Code
+  NodeJS: Node.js
+  Nodejs: Node.js
+  nodeJS: Node.js
+  Typescript: TypeScript
+  typescript: TypeScript
+  Javascript: JavaScript
+  javascript: JavaScript
+  obsidian: Obsidian
+  azure: Azure
+  Powershell: PowerShell
+  powershell: PowerShell

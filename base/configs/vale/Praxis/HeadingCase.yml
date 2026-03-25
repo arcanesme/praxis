@@ -1,0 +1,26 @@
+extends: capitalization
+message: "'%s' should use sentence case."
+level: warning
+scope: heading
+match: $sentence
+indicators:
+  - ":"
+exceptions:
+  - Praxis
+  - CLAUDE
+  - MCP
+  - SPEC
+  - ADR
+  - API
+  - CLI
+  - VS Code
+  - GitHub
+  - Azure
+  - Terraform
+  - Obsidian
+  - Node.js
+  - TypeScript
+  - JavaScript
+  - PowerShell
+  - YAML
+  - JSON
