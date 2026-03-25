@@ -57,6 +57,8 @@ conversation length heuristic (not token count — we cannot read session JSONL)
 - Re-read key requirements before implementation decisions
 - Reinforce constraint awareness — re-state SPEC if drifting
 - Prefer concise output — save context for implementation
+- Run lint on all files modified this session to catch drift-induced errors:
+  `golangci-lint run $(git diff --name-only HEAD) 2>/dev/null || true`
 
 ### DEPLETED (late session, >60%)
 - Checkpoint progress to vault files before continuing

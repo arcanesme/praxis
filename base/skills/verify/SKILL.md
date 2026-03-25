@@ -12,7 +12,12 @@ Execute in order, showing actual output (never assertions):
 2. **Linter** → run the project lint command → show output, fix ALL warnings
 3. **Typecheck** (if applicable) → show output
 4. **Build** (if applicable) → show output
-5. **Functional check** — ask: "Is there a smoke test, `terraform plan` output, or browser check needed for this milestone?" If yes: block until user confirms it passed. If no: proceed.
+5. **Security scan** (if tools available):
+   - **Go**: `gosec ./...` OR `golangci-lint run --enable=gosec` (if golangci-lint available)
+   - **All staged code**: `semgrep --config=auto --error .` (if semgrep available)
+   - If either tool finds HIGH/CRITICAL: treat as blocking — must fix before proceeding.
+   - If tools not installed: skip with advisory note, do not block.
+6. **Functional check** — ask: "Is there a smoke test, `terraform plan` output, or browser check needed for this milestone?" If yes: block until user confirms it passed. If no: proceed.
 
 Read test/lint/build commands from the project CLAUDE.md `## Commands` section.
 If no commands are defined: warn and ask user for the correct commands.
@@ -29,10 +34,16 @@ If no commands are defined: warn and ask user for the correct commands.
 4. Check if more milestones remain:
    - Yes → "Milestone committed. Run `/execute` for the next milestone."
    - No → "All milestones committed. Running self-review."
-5. After ALL milestones: trigger Self-Review Protocol
-   - Launch a subagent to review the full diff as a critical code reviewer
-   - Subagent receives ONLY: the diff, the SPEC (from plan file `## SPEC` section), relevant rules files
-   - Address all Critical and Major findings before reporting done
+5. After ALL milestones: trigger Self-Review Protocol (Subagent Isolation)
+   - Launch a subagent for code review. The subagent receives ONLY:
+     1. The diff: `git diff main...HEAD` (or `git diff HEAD~N` for N commits)
+     2. The SPEC/ACCEPTANCE section from the active plan
+     3. Relevant rules files (scoped to file types in the diff)
+   - The subagent must NOT receive session conversation history or implementation notes.
+   - Two-pass review:
+     - **Pass 1 — Spec compliance**: Does the diff deliver what ACCEPTANCE requires? Flag gaps.
+     - **Pass 2 — Code quality**: Bugs, security issues, dead code, missing error handling, maintainability.
+   - If either pass finds issues: list them. Do not auto-fix — report back to the operator.
 
 **Step 3b — UNIFY (mandatory after all milestones verified)**
 After self-review passes, write phase summary:

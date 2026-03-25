@@ -103,6 +103,10 @@ Missing servers are non-blocking — features degrade gracefully.
    - Git operation → `~/.claude/rules/git-workflow.md`
    - Client-facing writing → auto-loaded by `communication-standards` skill
    - Architecture/specs → auto-loaded by `architecture-patterns` skill
+5. Quality re-anchor: read most recent `compact-checkpoint.md` → check the Quality State section.
+   - If lint findings existed before compaction: re-run `golangci-lint run`, confirm status.
+   - If tests were failing before compaction: re-run test command, confirm status.
+   - Do NOT assume pre-compaction state is current. Always re-run fresh.
 
 ## Core Anti-Patterns (NEVER)
 - Silently swallow errors or use empty catch blocks

@@ -153,6 +153,93 @@ else
   error "bin/praxis.js has syntax errors"
 fi
 
+# ── 8. Quality Hooks ─────────────────────────────────────────
+echo ""
+echo "Quality hooks:"
+
+for hook in file-guard.sh quality-check.sh; do
+  if [[ -f "$REPO_PATH/base/hooks/$hook" ]]; then
+    ok "hooks/$hook exists"
+    if [[ -x "$REPO_PATH/base/hooks/$hook" ]]; then
+      ok "hooks/$hook is executable"
+    else
+      error "hooks/$hook is not executable"
+    fi
+  else
+    error "hooks/$hook missing"
+  fi
+done
+
+# ── 9. Hook Chain Wiring ─────────────────────────────────────
+echo ""
+echo "Hook chain wiring:"
+
+# Verify quality-check.sh wired in PostToolUse
+if jq -e '.hooks.PostToolUse[].hooks[].command | select(contains("quality-check.sh"))' \
+  "$REPO_PATH/base/hooks/settings-hooks.json" >/dev/null 2>&1; then
+  ok "quality-check.sh wired in PostToolUse"
+else
+  error "quality-check.sh not found in PostToolUse hooks"
+fi
+
+# Verify auto-format.sh NOT in settings-hooks.json
+if jq -e '.hooks.PostToolUse[].hooks[].command | select(contains("auto-format.sh"))' \
+  "$REPO_PATH/base/hooks/settings-hooks.json" >/dev/null 2>&1; then
+  error "auto-format.sh still in PostToolUse (should be replaced by quality-check.sh)"
+else
+  ok "auto-format.sh removed from PostToolUse"
+fi
+
+# Verify file-guard.sh wired in PreToolUse
+if jq -e '.hooks.PreToolUse[].hooks[].command | select(contains("file-guard.sh"))' \
+  "$REPO_PATH/base/hooks/settings-hooks.json" >/dev/null 2>&1; then
+  ok "file-guard.sh wired in PreToolUse"
+else
+  error "file-guard.sh not found in PreToolUse hooks"
+fi
+
+# ── 10. Config Directory ─────────────────────────────────────
+echo ""
+echo "Config directory:"
+
+if [[ -d "$REPO_PATH/base/configs" ]]; then
+  ok "base/configs/ exists"
+  for config_dir in vale linters; do
+    if [[ -d "$REPO_PATH/base/configs/$config_dir" ]]; then
+      ok "base/configs/$config_dir/ exists"
+    else
+      error "base/configs/$config_dir/ missing"
+    fi
+  done
+
+  # Vale config check
+  if [[ -f "$REPO_PATH/base/configs/vale/.vale.ini" ]]; then
+    ok "vale config exists"
+  else
+    error "vale config missing"
+  fi
+
+  # Vale rule files
+  VALE_COUNT=$(find "$REPO_PATH/base/configs/vale/Praxis" -name "*.yml" 2>/dev/null | wc -l | tr -d ' ')
+  if [[ "$VALE_COUNT" -ge 6 ]]; then
+    ok "vale Praxis rules: $VALE_COUNT files"
+  else
+    error "vale Praxis rules: expected >=6, found $VALE_COUNT"
+  fi
+
+  # YAML validation on vale rules
+  for f in "$REPO_PATH"/base/configs/vale/Praxis/*.yml; do
+    name=$(basename "$f")
+    if python3 -c "import yaml; yaml.safe_load(open('$f'))" 2>/dev/null; then
+      ok "vale/$name valid YAML"
+    else
+      error "vale/$name invalid YAML"
+    fi
+  done
+else
+  error "base/configs/ directory missing"
+fi
+
 # ── Summary ───────────────────────────────────────────────────
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"

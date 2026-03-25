@@ -52,6 +52,13 @@ Run the full validation sequence from `/verify` Step 1:
 3. Typecheck (if applicable)
 4. Build (if applicable)
 
+**Step 4b — Post-fix security re-scan**
+After applying the fix, run the full validation sequence from /verify Step 1 (including security scan).
+If the original failure was security-related:
+1. Re-run the exact scanner that found the original issue
+2. Confirm the specific finding is resolved
+3. Verify the fix didn't introduce NEW findings in the same file
+
 **Step 5 — Evaluate result**
 - **PASS** → Milestone repaired. Commit the fix. Return to workflow.
   Output: `Repaired: {what was fixed} in {file}. Next: continue with /execute or /verify.`

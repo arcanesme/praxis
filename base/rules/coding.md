@@ -113,7 +113,30 @@ Before adding any new package:
 
 ---
 
+## Linter Delegation
+
+Style, formatting, import ordering, complexity thresholds, and security patterns
+are enforced by automated tooling (golangci-lint, shellcheck, hadolint, tflint,
+semgrep, vale). Rules files cover ONLY:
+- Architecture decisions tooling cannot express
+- Permission boundaries and file-group scoping
+- Error learning from real session failures
+- Verification command references
+
+Do NOT duplicate in CLAUDE.md what hooks already enforce.
+
+---
+
 ## Verification Commands
+
+Single-file (matches PostToolUse hooks):
+- `go vet <file>` / `shellcheck <file>` / `hadolint Dockerfile` / `vale <file>.md`
+
+Project-level (matches pre-commit + /verify):
+- `golangci-lint run`
+- `semgrep --config=auto --error .`
+- `govulncheck ./...`
+- `trivy config .`
 
 ```bash
 # Verify Context7 MCP is active

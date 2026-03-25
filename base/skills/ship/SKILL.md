@@ -14,6 +14,12 @@ You are running the ship workflow — commit, push, and PR in one command.
   3. Typecheck (if applicable)
   4. Test suite (from CLAUDE.md `## Commands`)
   5. Identity check: `git --no-pager config user.email` must match expected
+  6. Secret deep scan: `gitleaks protect --staged` (if gitleaks available)
+  7. Security scan: `semgrep --config=auto --error .` (if semgrep available, on staged files)
+  8. Dependency check: `govulncheck ./...` (if Go project with go.mod)
+  9. Cost check: `infracost breakdown --path=.` (if Terraform project — advisory only, do not block)
+- Any HIGH/CRITICAL finding in steps 6-8 blocks the ship. Cost check is informational.
+- If tools not installed: skip with note, do not block.
 - If ANY check fails: STOP. Fix first, then re-run `/ship`.
 
 **Step 2 — Stage and review changes**

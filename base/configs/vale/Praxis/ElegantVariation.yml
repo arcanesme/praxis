@@ -1,0 +1,14 @@
+extends: existence
+message: "Elegant variation: '%s' — use the plain term."
+level: suggestion
+ignorecase: true
+tokens:
+  - "the aforementioned"
+  - "the above-mentioned"
+  - "the previously mentioned"
+  - "this individual"
+  - "said individual"
+  - "the eponymous"
+  - "this entity"
+  - "the latter"
+  - "the former"

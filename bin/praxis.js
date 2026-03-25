@@ -105,6 +105,14 @@ async function install() {
     }
   }
 
+  // Copy base/configs/ → ~/.claude/configs/
+  const configsDir = path.join(PKG_DIR, 'base', 'configs');
+  if (fs.existsSync(configsDir)) {
+    fs.mkdirSync(path.join(CLAUDE_DIR, 'configs'), { recursive: true });
+    copyDir(configsDir, path.join(CLAUDE_DIR, 'configs'));
+    ok('linter configs installed');
+  }
+
   // Copy kits/ → ~/.claude/kits/
   const kitsDir = path.join(PKG_DIR, 'kits');
   if (fs.existsSync(kitsDir)) {
@@ -234,6 +242,10 @@ function health() {
   }
   check(fs.existsSync(path.join(CLAUDE_DIR, 'settings.json')), 'settings.json with hooks configured');
 
+  // Configs
+  console.log('\nConfigs:');
+  check(fs.existsSync(path.join(CLAUDE_DIR, 'configs')), 'configs directory installed');
+
   // Kits
   console.log('\nKits:');
   check(fs.existsSync(path.join(CLAUDE_DIR, 'kits')), 'kits directory installed');
@@ -315,6 +327,13 @@ function uninstall() {
       }
     }
     ok('hooks removed');
+  }
+
+  // Remove configs
+  const configsTarget = path.join(CLAUDE_DIR, 'configs');
+  if (fs.existsSync(configsTarget)) {
+    fs.rmSync(configsTarget, { recursive: true, force: true });
+    ok('linter configs removed');
   }
 
   // Remove kits

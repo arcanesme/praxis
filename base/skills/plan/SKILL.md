@@ -106,6 +106,22 @@ After building the milestone list:
 - Validate checkpoints: milestones with architectural decisions or user-facing output
   should be annotated as `checkpoint: decision` or `checkpoint: human-verify`.
 
+**Step 2c — Execution type recommendation**
+After building milestones, recommend `execution_type` in plan frontmatter:
+
+Recommend **tdd** when:
+- Plan touches existing code that already has tests
+- Plan involves API contracts, interfaces, or data transformations
+- Plan is a bug fix (regression test first)
+
+Recommend **execute** when:
+- Pure IaC / infrastructure work
+- Greenfield scaffolding with no existing test patterns
+- Documentation-only changes
+
+Write the recommendation to plan frontmatter. Explain the reasoning in one line.
+The operator can override during plan review.
+
 **Step 3 — Write and wire**
 - Write to: `{vault_path}/plans/{YYYY-MM-DD}_{kebab-title}.md`
 - Update `status.md`: set `current_plan:`, update `last_updated`, set `loop_position: PLAN`, update `## Now What`

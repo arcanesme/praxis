@@ -129,6 +129,32 @@ If no: skip silently.
 
 ---
 
+## Phase 5.5b — Linter Config Generation
+
+Based on the detected tech stack from Phase 1, copy relevant configs from `base/configs/`:
+
+| Stack Detected | Configs to Copy |
+|---------------|-----------------|
+| Go | `.golangci.yml` |
+| Shell scripts | `.shellcheckrc` |
+| Dockerfile | `.hadolint.yaml` |
+| Terraform | `.tflint.hcl` |
+| Any | `.vale.ini`, `.vale-styles/Praxis/*` (all rule files), `.editorconfig`, `commitlint.config.js` |
+
+After copying Vale configs: run `vale sync` to download community packages (Microsoft, write-good, Readability).
+
+---
+
+## Phase 5.5c — VS Code Workspace (optional)
+
+Ask: "Generate VS Code workspace settings?"
+If yes:
+- Generate `.vscode/settings.json` with stack-detected configuration (formatter, linter paths)
+- Generate `.vscode/extensions.json` with recommended extensions matching installed tools
+If no: skip silently.
+
+---
+
 ## Phase 6 — Update Project Registry
 
 Append to vault CLAUDE.md Project Registry table and agenda.md.

@@ -37,6 +37,27 @@ if [[ -f "$STATUS_FILE" ]]; then
   [[ -z "$LOOP_POSITION" ]] && LOOP_POSITION="unknown"
 fi
 
+# ── Quality state snapshot (survives compaction) ──
+LINT_STATE="unknown"
+TEST_STATE="unknown"
+
+if [ -f "go.mod" ] && command -v golangci-lint &>/dev/null; then
+  LINT_COUNT=$(golangci-lint run ./... 2>&1 | grep -c "^" || true)
+  if [ "$LINT_COUNT" -eq 0 ]; then
+    LINT_STATE="clean"
+  else
+    LINT_STATE="$LINT_COUNT findings"
+  fi
+fi
+
+if [ -f "go.mod" ] && command -v go &>/dev/null; then
+  if go test ./... -short 2>&1 | grep -q "^ok"; then
+    TEST_STATE="passing"
+  else
+    TEST_STATE="failing"
+  fi
+fi
+
 cat > "$CHECKPOINT_FILE" <<EOF
 ---
 tags: [checkpoint, compact]
@@ -57,6 +78,10 @@ $CURRENT_PLAN
 
 ## Loop Position
 $LOOP_POSITION
+
+## Quality State
+- Lint: $LINT_STATE
+- Tests: $TEST_STATE
 
 ## Note
 This checkpoint was auto-written by the PreCompact hook.

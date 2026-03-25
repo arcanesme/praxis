@@ -1,0 +1,7 @@
+ignored:
+  - DL3003
+trustedRegistries:
+  - docker.io
+  - mcr.microsoft.com
+  - ghcr.io
+strict-labels: true

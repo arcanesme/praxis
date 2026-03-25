@@ -39,10 +39,20 @@ paths:
 - Managed identity preferred over service principal where possible
 - Tag all resources: `project`, `environment`, `owner`, `created_by = "terraform"`
 
+### Security scanning
+- Run `trivy config .` before committing infrastructure changes.
+- If trivy is not installed: warn, do not block. (tfsec is deprecated — use trivy.)
+
+### Cost Awareness
+Before proposing any Azure resource, state the estimated SKU and monthly cost.
+Prefer B-series (burstable) over D/E-series unless workload justifies it.
+Infracost runs on every commit — cost surprises are treated as bugs.
+
 ## Verification Commands
 ```bash
 terraform fmt -recursive -check
 terraform validate
+trivy config --severity HIGH,CRITICAL .
 rg 'source\s*=\s*"\.\.\/environments' modules/
 rg '^resource "' environments/
 ```

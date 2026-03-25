@@ -3,6 +3,11 @@
 # Always exits 0 (never blocks session end).
 set -uo pipefail
 
+INPUT=$(cat)
+if [ "$(echo "$INPUT" | jq -r '.stop_hook_active // false')" = "true" ]; then
+  exit 0
+fi
+
 CONFIG_FILE="$HOME/.claude/praxis.config.json"
 
 # Find project CLAUDE.md by walking up from CWD

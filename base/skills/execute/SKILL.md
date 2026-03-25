@@ -41,6 +41,21 @@ Before implementing the current milestone, declare the file group:
   - **Rationale**: {why}
   ```
 
+**Step 2c — Execution mode selection**
+Read `execution_type` from the active plan frontmatter.
+
+**If execution_type: tdd**:
+1. Write test file first (`*_test.go`, `*.test.ts`, etc.)
+2. Run test command → confirm RED (tests fail as expected)
+3. If tests pass before implementation → tests are wrong, rewrite them
+4. Implement minimum code to make tests GREEN
+5. Run lint (project lint command from CLAUDE.md ## Commands)
+6. Refactor if needed — tests must stay green
+7. Commit test + implementation together
+
+**If execution_type: execute** (default):
+Proceed with existing implementation flow unchanged.
+
 **Step 3 — Implement current milestone**
 - Update `{vault_path}/status.md`: set `loop_position: EXECUTE`.
 - One milestone at a time. Keep diffs scoped.

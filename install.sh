@@ -365,6 +365,12 @@ if [[ -d "$PRAXIS_DIR/base/hooks" ]]; then
 fi
 ok "$HOOKS_LINKED hooks linked"
 
+# Configs (linter reference configs)
+if [[ -d "$PRAXIS_DIR/base/configs" ]]; then
+  ln -sf "$PRAXIS_DIR/base/configs" "$CLAUDE_DIR/configs"
+  ok "Configs directory linked"
+fi
+
 # Merge hook configuration into settings.json
 HOOKS_CONFIG="$PRAXIS_DIR/base/hooks/settings-hooks.json"
 SETTINGS_FILE="$CLAUDE_DIR/settings.json"
@@ -441,6 +447,27 @@ if [[ -f "$PRAXIS_DIR/scripts/onboard-mcp.sh" ]]; then
   else
     echo "  Run later: bash $PRAXIS_DIR/scripts/onboard-mcp.sh all"
   fi
+fi
+
+# ═══════════════════════════════════════════
+# Phase 4c: Quality Tools (optional)
+# ═══════════════════════════════════════════
+step "Phase 4c: Quality tools (optional)"
+
+echo "  Quality tools enhance Praxis linting and prose checking:"
+echo "    • shellcheck  — shell script linter"
+echo "    • vale        — prose linter"
+echo "    • commitlint  — commit message format"
+echo ""
+read -rp "  Install quality tools? [y/N] " INSTALL_TOOLS
+if [[ "${INSTALL_TOOLS:-N}" =~ ^[Yy] ]]; then
+  if [[ -f "$PRAXIS_DIR/scripts/install-tools.sh" ]]; then
+    bash "$PRAXIS_DIR/scripts/install-tools.sh"
+  else
+    warn "install-tools.sh not found — skipping"
+  fi
+else
+  echo "  Run later: bash $PRAXIS_DIR/scripts/install-tools.sh"
 fi
 
 # ═══════════════════════════════════════════

@@ -1,0 +1,22 @@
+extends: existence
+message: "Hedging detected: '%s' — commit to a position or remove."
+level: suggestion
+ignorecase: true
+tokens:
+  - "it could potentially"
+  - "it might potentially"
+  - "it may potentially"
+  - "arguably"
+  - "it remains to be seen"
+  - "only time will tell"
+  - "it is not unreasonable to"
+  - "one could argue"
+  - "some might say"
+  - "it would not be wrong to"
+  - "to some extent"
+  - "to a certain degree"
+  - "in some ways"
+  - "more or less"
+  - "for the most part"
+  - "by and large"
+  - "generally speaking"

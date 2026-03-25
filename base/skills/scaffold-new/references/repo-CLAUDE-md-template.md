@@ -39,13 +39,39 @@ Code lives here. Knowledge, decisions, and plans live in the vault.
 - {stack_item_3}
 
 ## Commands
+<!-- Populated by scaffold-new based on detected stack -->
+
+### Go
+```bash
+test:     go test ./...
+lint:     golangci-lint run
+format:   goimports -w . && shfmt -w .
+typecheck: go build ./...
+security: govulncheck ./... && semgrep --config=auto --error .
+```
+
+### Terraform
+```bash
+lint:     tflint --recursive && trivy config .
+format:   terraform fmt -recursive
+security: trivy config --severity HIGH,CRITICAL .
+cost:     infracost breakdown --path=.
+```
+
+### General
 ```bash
 dev:    # fill in as project develops
 test:   # fill in as project develops
 lint:   # fill in as project develops
 build:  # fill in as project develops
 format: # fill in as project develops
+prose:  vale .
 ```
+
+## Thresholds
+- coverage_minimum: 80
+- max_function_lines: 60
+- max_cognitive_complexity: 20
 
 ## Code Style
 - Prefer simple, readable code over clever abstractions
@@ -65,6 +91,12 @@ format: # fill in as project develops
 - **Plans**: `{vault_path}/plans/YYYY-MM-DD_[task-slug].md`
 - **Learnings**: `{vault_path}/notes/learnings.md` using [LEARN:tag] schema
 
+## Protected Files
+<!-- Files that file-guard.sh blocks from modification -->
+- go.sum
+- go.mod
+- .github/workflows/
+
 ## Error Learning
 <!-- When a mistake is corrected, write a new rule here to prevent recurrence -->
 <!-- Each rule should be specific and actionable -->
@@ -77,6 +109,9 @@ format: # fill in as project develops
 **Step 1** — Read this file top to bottom first.
 **Step 2** — Active task? → read active plan. No task? → read status.md.
 **Step 3** — Load stack rules only if the current task touches them.
+**Step 4** — Quality re-anchor: read most recent `compact-checkpoint.md` → check Quality State section.
+If lint findings existed before compaction: re-run lint, confirm status.
+If tests were failing before compaction: re-run tests, confirm status.
 
 ## Compact Preservation
 When compacting, always preserve:

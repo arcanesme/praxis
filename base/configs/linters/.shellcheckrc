@@ -1,0 +1,4 @@
+shell=bash
+enable=all
+# Suppress "not following sourced file" in hook context
+disable=SC1091

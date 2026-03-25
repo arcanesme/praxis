@@ -109,9 +109,10 @@ PLACEHOLDER_FOUND=0
 # Also exclude HTML comments and fenced code blocks
 while IFS= read -r file; do
   [[ -f "$file" ]] || continue
-  # Skip templates directory and references directories
+  # Skip templates, references, and configs directories
   [[ "$file" == *"/templates/"* ]] && continue
   [[ "$file" == *"/references/"* ]] && continue
+  [[ "$file" == *"/configs/"* ]] && continue
 
   # Strip fenced code blocks (including indented), HTML comments,
   # lines with inline backticks, and shell comments/echo lines
