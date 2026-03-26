@@ -178,8 +178,13 @@ Vault indexing is automatic.
 
 ## Phase 7 — Confirm & Open Vault
 
-Open the vault in Obsidian:
-- `open "obsidian://open?vault=Obsidian"`
+Derive the vault name dynamically and open it in Obsidian:
+```bash
+VAULT_PATH=$(jq -r '.vault_path' ~/.claude/praxis.config.json)
+VAULT_NAME=$(python3 -c "import urllib.parse; print(urllib.parse.quote('''$(basename "$VAULT_PATH")'''))")
+open "obsidian://open?vault=$VAULT_NAME"
+```
+If `vault_path` is not set or Obsidian is not installed: skip with a note.
 
 Print summary table with all created files and bootstrap sequence.
 
