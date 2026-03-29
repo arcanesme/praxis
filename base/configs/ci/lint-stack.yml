@@ -97,7 +97,7 @@ jobs:
   #     - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
   #       with:
   #         fetch-depth: 0
-  #     - uses: SonarSource/sonarqube-scan-action@0e1a25e90571a34e2ec5c72ee40ba45cc73a1e6e # v4
+  #     - uses: SonarSource/sonarqube-scan-action@0e1a25e90571a34e2ec5c72ee40ba45cc73a1e6e # v4 # nosemgrep: generic.secrets.security.detected-sonarqube-api-key.detected-sonarqube-api-key
   #       env:
   #         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
   #         SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
