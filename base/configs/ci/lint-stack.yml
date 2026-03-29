@@ -1,0 +1,126 @@
+# Polyglot Lint Stack — 3-Layer CI Template
+# Copy to: .github/workflows/lint-stack.yml
+# Conditional: each tool runs only if its language files exist in the repo.
+# Pin actions to SHA — update hashes when upgrading versions.
+
+name: Lint Stack
+on:
+  pull_request:
+    branches: [main, develop]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  # ─────────────────────────────────────────────
+  # LAYER 1: Fast Feedback (~10s per tool)
+  # ─────────────────────────────────────────────
+  lint:
+    name: L1 — Lint + Format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      # Python — Ruff
+      - name: Ruff check
+        if: hashFiles('**/*.py') != ''
+        uses: astral-sh/ruff-action@9700c1666704e06e2cf8f9046755e3dfc6297e40 # v3.2.1
+        with:
+          args: "check"
+      - name: Ruff format check
+        if: hashFiles('**/*.py') != ''
+        uses: astral-sh/ruff-action@9700c1666704e06e2cf8f9046755e3dfc6297e40 # v3.2.1
+        with:
+          args: "format --check"
+
+      # JS/TS — Biome
+      - name: Setup Biome
+        if: hashFiles('**/*.js', '**/*.ts', '**/*.jsx', '**/*.tsx') != ''
+        uses: biomejs/setup-biome@1cbe33ead22c7a2fded3b52fa2893611c815c3d2 # v2.5.0
+      - name: Biome CI
+        if: hashFiles('**/*.js', '**/*.ts', '**/*.jsx', '**/*.tsx') != ''
+        run: biome ci .
+
+      # Go — golangci-lint
+      - name: golangci-lint
+        if: hashFiles('go.mod') != ''
+        uses: golangci/golangci-lint-action@1481404843c368bc19ca9406f87d6e0fc97bdcfd # v7.0.0
+        with:
+          version: v2.1
+
+      # Rust — Clippy
+      - name: Setup Rust toolchain
+        if: hashFiles('Cargo.toml') != ''
+        uses: dtolnay/rust-toolchain@56f84321dbccf38fb67ce29ab63e4754056677e0 # stable
+        with:
+          toolchain: stable
+          components: clippy, rustfmt
+      - name: Clippy
+        if: hashFiles('Cargo.toml') != ''
+        run: cargo clippy --all-targets --all-features -- -D warnings
+      - name: rustfmt check
+        if: hashFiles('Cargo.toml') != ''
+        run: cargo fmt --all -- --check
+
+      # Shell — ShellCheck
+      - name: ShellCheck
+        if: hashFiles('**/*.sh') != ''
+        run: |
+          sudo apt-get install -y shellcheck
+          find . -name '*.sh' -not -path './node_modules/*' -not -path './vendor/*' | xargs shellcheck -s bash
+
+  # ─────────────────────────────────────────────
+  # LAYER 2: Quality Gates (~2min)
+  # ─────────────────────────────────────────────
+  security-scan:
+    name: L2 — Semgrep
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: semgrep/semgrep-action@713efdd345ae26c72e79b5b32927be8e0e6bab83 # v1
+        with:
+          config: >-
+            p/default
+            p/secrets
+            p/owasp-top-ten
+        env:
+          SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_APP_TOKEN }}
+
+  # Uncomment to add SonarQube quality gate (requires self-hosted server)
+  # sonarqube:
+  #   name: L2 — SonarQube
+  #   runs-on: ubuntu-latest
+  #   needs: lint
+  #   steps:
+  #     - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+  #       with:
+  #         fetch-depth: 0
+  #     - uses: SonarSource/sonarqube-scan-action@0e1a25e90571a34e2ec5c72ee40ba45cc73a1e6e # v4
+  #       env:
+  #         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  #         SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+  #     - uses: SonarSource/sonarqube-quality-gate-action@dc2f7b0dd95544cd550de3066f25f47e3fc20894 # v1.1.0
+  #       timeout-minutes: 5
+  #       env:
+  #         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  # ─────────────────────────────────────────────
+  # LAYER 3: AI Review (~2min, optional)
+  # ─────────────────────────────────────────────
+  # Uncomment to enable AI-powered PR review.
+  # Requires OPENAI_API_KEY secret or self-hosted Ollama.
+  #
+  # ai-review:
+  #   name: L3 — AI Review
+  #   runs-on: ubuntu-latest
+  #   needs: [security-scan]
+  #   steps:
+  #     - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+  #     - uses: Codium-ai/pr-agent@main
+  #       env:
+  #         OPENAI_KEY: ${{ secrets.OPENAI_API_KEY }}
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #       with:
+  #         command: review

@@ -30,7 +30,15 @@
       {"name": "gitleaks", "feature": "secret-scanning", "install": "brew install gitleaks"},
       {"name": "osv-scanner", "feature": "dep-audit", "install": "go install github.com/google/osv-scanner/cmd/osv-scanner@latest"},
       {"name": "pip-audit", "feature": "dep-audit-python", "install": "pip install pip-audit"},
-      {"name": "docker", "feature": "docker-sandbox", "install": "brew install --cask docker"}
+      {"name": "docker", "feature": "docker-sandbox", "install": "brew install --cask docker"},
+      {"name": "biome", "feature": "lint-js", "install": "npm install -g @biomejs/biome"},
+      {"name": "ruff", "feature": "lint-python", "install": "pip install ruff"},
+      {"name": "semgrep", "feature": "security-scan", "install": "pip install semgrep"},
+      {"name": "markdownlint", "feature": "lint-markdown", "install": "npm install -g markdownlint-cli"},
+      {"name": "pre-commit", "feature": "pre-commit-hooks", "install": "pip install pre-commit"},
+      {"name": "golangci-lint", "feature": "lint-go", "install": "brew install golangci-lint"},
+      {"name": "rustfmt", "feature": "format-rust", "install": "rustup component add rustfmt"},
+      {"name": "clippy", "feature": "lint-rust", "install": "rustup component add clippy"}
     ]
   },
   "env_vars": {

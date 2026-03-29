@@ -61,6 +61,18 @@ case "$EXT" in
       taplo format "$FILE_PATH" 2>/dev/null
     fi
     ;;
+  js|jsx|ts|tsx)
+    if command -v biome &>/dev/null; then
+      biome format --write "$FILE_PATH" 2>/dev/null
+    elif command -v prettier &>/dev/null; then
+      prettier --write "$FILE_PATH" 2>/dev/null
+    fi
+    ;;
+  rs)
+    if command -v rustfmt &>/dev/null; then
+      rustfmt "$FILE_PATH" 2>/dev/null
+    fi
+    ;;
   md)
     if command -v prettier &>/dev/null; then
       prettier --write --prose-wrap always "$FILE_PATH" 2>/dev/null
@@ -108,6 +120,30 @@ case "$EXT" in
       LINT_OUT=$(markdownlint "$FILE_PATH" 2>&1) || true
       if [ -n "$LINT_OUT" ]; then
         ISSUES+=("markdownlint: $LINT_OUT")
+      fi
+    fi
+    ;;
+  js|jsx|ts|tsx)
+    if command -v biome &>/dev/null; then
+      LINT_OUT=$(biome lint "$FILE_PATH" 2>&1) || true
+      if [ -n "$LINT_OUT" ] && ! echo "$LINT_OUT" | grep -q "No diagnostics"; then
+        ISSUES+=("biome: $LINT_OUT")
+      fi
+    fi
+    ;;
+  rs)
+    if command -v cargo &>/dev/null; then
+      DIR=$(dirname "$FILE_PATH")
+      # Walk up to find Cargo.toml for crate context
+      CRATE_DIR="$DIR"
+      while [ "$CRATE_DIR" != "/" ] && [ ! -f "$CRATE_DIR/Cargo.toml" ]; do
+        CRATE_DIR=$(dirname "$CRATE_DIR")
+      done
+      if [ -f "$CRATE_DIR/Cargo.toml" ]; then
+        LINT_OUT=$(cd "$CRATE_DIR" && cargo clippy --quiet -- -D warnings 2>&1) || true
+        if [ -n "$LINT_OUT" ]; then
+          ISSUES+=("clippy: $LINT_OUT")
+        fi
       fi
     fi
     ;;
