@@ -101,7 +101,7 @@ jobs:
   #       env:
   #         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
   #         SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-  #     - uses: SonarSource/sonarqube-quality-gate-action@dc2f7b0dd95544cd550de3066f25f47e3fc20894 # v1.1.0
+  #     - uses: SonarSource/sonarqube-quality-gate-action@dc2f7b0dd95544cd550de3066f25f47e3fc20894 # v1.1.0  # nosemgrep: generic.secrets.security.detected-sonarqube-docs-api-key.detected-sonarqube-docs-api-key
   #       timeout-minutes: 5
   #       env:
   #         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
