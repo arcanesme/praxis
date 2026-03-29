@@ -49,7 +49,7 @@ format: # N/A — no formatter configured
 
 ## Code Style
 - Prefer simple, readable code over clever abstractions
-- After finishing implementation, run `/simplify` to clean up
+- After finishing implementation, run `/px-simplify` to clean up
 - If a fix feels hacky, find a cleaner solution before finishing
 - No AI-generated comments or attributions in code or commits
 
@@ -57,7 +57,7 @@ format: # N/A — no formatter configured
 - Before marking any task complete, run the test suite
 - Check logs before claiming a bug is fixed
 - End every task instruction with a verification step
-- Use `/verify-app` for end-to-end checks
+- Use `/px-verify-app` for end-to-end checks
 
 ## Conventions
 - **Commits**: conventional commits (feat:, fix:, docs:, refactor:, test:, chore:)
@@ -69,7 +69,7 @@ format: # N/A — no formatter configured
 - **Shell JSON via heredoc breaks on special chars** — Always use `jq -n` with `--arg` for safe JSON construction. Never interpolate shell variables into JSON heredocs.
 - **npx caches stale versions** — Always use `npx @esoteric-logic/praxis-harness@latest` with `@latest` suffix. Without it, machines reuse cached older versions.
 - **Escaped spaces in config paths** — Vault paths in `praxis.config.json` must use literal spaces, not `\\ ` escapes. `jq -r` outputs escaped backslashes verbatim, breaking filesystem access.
-- **Secret-scan hook scans entire file** — The PreToolUse secret-scan hook checks the whole file on any edit, not just the diff. Files containing secret-matching regex patterns (like the `/ship` skill) cannot be edited via the Edit tool — use `cat >>` append instead.
+- **Secret-scan hook scans entire file** — The PreToolUse secret-scan hook checks the whole file on any edit, not just the diff. Files containing secret-matching regex patterns (like the `/px-ship` skill) cannot be edited via the Edit tool — use `cat >>` append instead.
 - **gh auth identity mismatch** — Personal repos need `gh auth switch --user <personal>` before push. The active `gh` account defaults to work identity, which lacks push access to personal repos.
 
 ## Project-Specific Rules
@@ -77,7 +77,7 @@ format: # N/A — no formatter configured
 ## Memory
 Keep MEMORY.md under 80 lines. Use topic files for overflow.
 Prefer linking to Obsidian vault notes over expanding MEMORY.md.
-Run `/sync-memory` when MEMORY.md exceeds 80 lines.
+Run `/px-sync-memory` when MEMORY.md exceeds 80 lines.
 
 ## After Compaction — Bootstrap Sequence
 

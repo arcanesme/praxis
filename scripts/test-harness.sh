@@ -94,12 +94,12 @@ echo "Cross-skill references:"
 
 # Skills that reference other skills — verify targets exist
 declare -A SKILL_REFS
-SKILL_REFS["verify"]="repair subagent"
-SKILL_REFS["review"]="subagent"
-SKILL_REFS["simplify"]="subagent"
-SKILL_REFS["verify-app"]="subagent"
-SKILL_REFS["repair"]="verify"
-SKILL_REFS["execute"]="verify discuss"
+SKILL_REFS["px-verify"]="px-repair px-subagent"
+SKILL_REFS["px-review"]="px-subagent"
+SKILL_REFS["px-simplify"]="px-subagent"
+SKILL_REFS["px-verify-app"]="px-subagent"
+SKILL_REFS["px-repair"]="px-verify"
+SKILL_REFS["px-execute"]="px-verify px-discuss"
 
 for caller in "${!SKILL_REFS[@]}"; do
   for target in ${SKILL_REFS[$caller]}; do

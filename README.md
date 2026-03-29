@@ -10,7 +10,7 @@ Praxis gives Claude Code a three-layer operating system:
 
 **Universal base** — always loaded. Praxis structures work (discuss → plan → execute → verify → simplify → ship). Built-in quality enforcement (debugging, code review, simplification).
 
-**AI-Kits** — activated on demand via `/kit:<name>`. Each kit bundles domain-specific rules, skills, MCP servers, and slash commands. Activate the web-designer kit and your components get design system enforcement, accessibility auditing, and production lint. Deactivate with `/kit:off`.
+**AI-Kits** — activated on demand via `/px-kit:<name>`. Each kit bundles domain-specific rules, skills, MCP servers, and slash commands. Activate the web-designer kit and your components get design system enforcement, accessibility auditing, and production lint. Deactivate with `/px-kit:off`.
 
 **Project config** — per-repo rules that fire automatically based on file paths. Terraform rules load when you touch `.tf` files. GitHub Actions rules load when you touch workflow YAML. No manual switching.
 
@@ -33,51 +33,51 @@ npx @esoteric-logic/praxis-harness@latest uninstall   # remove Praxis-owned file
 
 ## After install
 
-Verify with `/help` — you should see Praxis commands (`/discuss`, `/execute`, `/verify`, `/plan`, `/ship`, `/kit:*`).
+Verify with `/help` — you should see Praxis commands (`/px-discuss`, `/px-execute`, `/px-verify`, `/px-plan`, `/px-ship`, `/px-kit:*`).
 
 ## Workflow
 
 The standard Praxis workflow for feature development:
 
 ```
-/standup           → orient (reads status.md, surfaces stale state)
-/discuss       → frame the problem (conversational, scope guard)
-/discover          → research options with confidence levels (before /spec)
-/plan    → plan milestones (with dependency ordering + boundaries)
-/execute       → implement one milestone at a time (file-group isolation)
-/verify        → validate (test/lint/typecheck/build, self-review, UNIFY)
-/session-retro     → capture learnings, update vault
+/px-standup           → orient (reads status.md, surfaces stale state)
+/px-discuss          → frame the problem (conversational, scope guard)
+/px-discover         → research options with confidence levels (before /px-spec)
+/px-plan             → plan milestones (with dependency ordering + boundaries)
+/px-execute          → implement one milestone at a time (file-group isolation)
+/px-verify           → validate (test/lint/typecheck/build, self-review, UNIFY)
+/px-session-retro    → capture learnings, update vault
 ```
 
-For pure bugfixes: `/debug` (test-first debugging, skips the full loop).
-For code review: `/review` (launches subagent review at any time).
-For technical research: `/discover` (structured options evaluation before decisions).
+For pure bugfixes: `/px-debug` (test-first debugging, skips the full loop).
+For code review: `/px-review` (launches subagent review at any time).
+For technical research: `/px-discover` (structured options evaluation before decisions).
 
 ## Commands
 
 | Command | Purpose |
 |---------|---------|
-| `discuss` | Conversational problem framing, SPEC synthesis, scope guard |
-| `execute` | Implement one milestone with file-group isolation + boundary enforcement |
-| `verify` | Validate milestone (test/lint/build), self-review, UNIFY phase summary |
+| `px-discuss` | Conversational problem framing, SPEC synthesis, scope guard |
+| `px-execute` | Implement one milestone with file-group isolation + boundary enforcement |
+| `px-verify` | Validate milestone (test/lint/build), self-review, UNIFY phase summary |
 
-| `plan` | Create a dated work plan with milestone dependencies + checkpoints |
-| `spec` | Create a structured spec or ADR with conflict detection |
-| `discover` | Structured technical discovery with confidence-rated options |
-| `standup` | Session-start orientation from vault state |
-| `risk` | Add a risk register entry to the vault |
-| `kit` | Activate/deactivate an AI-Kit |
-| `review` | Manual code review via subagent |
-| `simplify` | Post-implementation code simplification via subagent |
-| `debug` | Structured test-first debugging |
-| `ship` | Commit, push, and PR in one command with pre-flight checks |
-| `verify-app` | End-to-end verification with regression analysis |
-| `session-retro` | End-of-session retrospective with learnings extraction |
-| `status-update` | Manual vault status.md update |
-| `repair` | Structured 3-attempt fix-and-verify loop for failed milestones |
-| `sync-memory` | Bridge auto-memory insights to Obsidian vault |
-| `context-probe` | Assess context health and recommend action |
-| `context-reset` | Reload context from vault without clearing session |
+| `px-plan` | Create a dated work plan with milestone dependencies + checkpoints |
+| `px-spec` | Create a structured spec or ADR with conflict detection |
+| `px-discover` | Structured technical discovery with confidence-rated options |
+| `px-standup` | Session-start orientation from vault state |
+| `px-risk` | Add a risk register entry to the vault |
+| `px-kit` | Activate/deactivate an AI-Kit |
+| `px-review` | Manual code review via subagent |
+| `px-simplify` | Post-implementation code simplification via subagent |
+| `px-debug` | Structured test-first debugging |
+| `px-ship` | Commit, push, and PR in one command with pre-flight checks |
+| `px-verify-app` | End-to-end verification with regression analysis |
+| `px-session-retro` | End-of-session retrospective with learnings extraction |
+| `px-status-update` | Manual vault status.md update |
+| `px-repair` | Structured 3-attempt fix-and-verify loop for failed milestones |
+| `px-sync-memory` | Bridge auto-memory insights to Obsidian vault |
+| `px-context-probe` | Assess context health and recommend action |
+| `px-context-reset` | Reload context from vault without clearing session |
 
 ## Rules
 
@@ -114,11 +114,11 @@ Key additions in this version:
 
 | Kit | Activate | What it does |
 |-----|----------|-------------|
-| web-designer | `/kit:web-designer` | Design system init → component build → accessibility audit → production lint |
-| infrastructure | `/kit:infrastructure` | Terraform plan → apply → drift detection → compliance check |
-| api | `/kit:api` | RESTful conventions → OpenAPI specs → contract testing |
-| security | `/kit:security` | Threat modeling → IAM review → OWASP audit |
-| data | `/kit:data` | Schema design → migration planning → query optimization |
+| web-designer | `/px-kit:web-designer` | Design system init → component build → accessibility audit → production lint |
+| infrastructure | `/px-kit:infrastructure` | Terraform plan → apply → drift detection → compliance check |
+| api | `/px-kit:api` | RESTful conventions → OpenAPI specs → contract testing |
+| security | `/px-kit:security` | Threat modeling → IAM review → OWASP audit |
+| data | `/px-kit:data` | Schema design → migration planning → query optimization |
 
 More kits coming. See `docs/creating-a-kit.md` to build your own.
 
@@ -158,13 +158,13 @@ Praxis auto-documents your work in the vault with zero manual effort. Two indepe
 
 | Skill | Auto-writes to vault |
 |-------|---------------------|
-| `/execute` | `status.md` loop position, `decision-log.md` scope events |
-| `/verify` | `claude-progress.json` milestones[] |
-| `/review` | `specs/review-{date}-{slug}.md` (full findings breakdown) |
-| `/simplify` | `notes/{date}_simplify-findings.md` |
-| `/debug` | `notes/{date}_debug-trace.md` |
-| `/verify-app` | `specs/verify-app-{date}-{slug}.md` |
-| `/ship` | `claude-progress.json` features[] |
+| `/px-execute` | `status.md` loop position, `decision-log.md` scope events |
+| `/px-verify` | `claude-progress.json` milestones[] |
+| `/px-review` | `specs/review-{date}-{slug}.md` (full findings breakdown) |
+| `/px-simplify` | `notes/{date}_simplify-findings.md` |
+| `/px-debug` | `notes/{date}_debug-trace.md` |
+| `/px-verify-app` | `specs/verify-app-{date}-{slug}.md` |
+| `/px-ship` | `claude-progress.json` features[] |
 
 **On context compaction** (automatic fallback):
 - `plans/{date}-compact-checkpoint.md` — git state, active plan, loop position
@@ -184,14 +184,14 @@ Re-copies all hooks, skills, rules, and kits from the latest npm package version
 
 ### Updating existing projects
 
-After a harness update that adds new vault files (like `decision-log.md`), run `/scaffold-exist` in a Claude Code session to audit your vault and add any missing files. This is non-destructive — it never overwrites existing content.
+After a harness update that adds new vault files (like `decision-log.md`), run `/px-scaffold-exist` in a Claude Code session to audit your vault and add any missing files. This is non-destructive — it never overwrites existing content.
 
 ```
 Step 1: npx @esoteric-logic/praxis-harness@latest update   → deploys new hooks, skills, rules
-Step 2: /scaffold-exist                                      → audits vault, adds missing files
+Step 2: /px-scaffold-exist                                   → audits vault, adds missing files
 ```
 
-New projects get everything automatically via `/scaffold-new`.
+New projects get everything automatically via `/px-scaffold-new`.
 
 ## Uninstalling
 

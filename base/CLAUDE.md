@@ -14,20 +14,20 @@ You are a senior engineering partner. Think before you build. Verify before you 
 
 ## Workflow Hierarchy
 - **Praxis** owns the outer loop: discuss → plan → execute → verify → simplify → ship.
-  Always start feature work with `/discuss` or `/next`.
+  Always start feature work with `/px-discuss` or `/px-next`.
 - **Kits** inject domain context into this workflow — they don't replace it.
-- Pure bugfixes: skip the full loop, use `/debug` directly.
-- Trivial changes (typos, config): use `/fast` to skip planning.
-- After every implementation: run `/simplify` to clean up code before verify.
-- Use `/verify-app` for end-to-end checks, `/ship` when ready to commit+push+PR.
+- Pure bugfixes: skip the full loop, use `/px-debug` directly.
+- Trivial changes (typos, config): use `/px-fast` to skip planning.
+- After every implementation: run `/px-simplify` to clean up code before verify.
+- Use `/px-verify-app` for end-to-end checks, `/px-ship` when ready to commit+push+PR.
 
 ## Plan Mode Protocol
 For non-trivial tasks (3+ steps):
 1. Start in Plan Mode — iterate on the plan until it's solid
 2. Switch to auto-accept edits and let Claude one-shot the implementation
-3. Run `/simplify` after implementation
-4. Run `/verify-app` to confirm everything works
-5. Run `/ship` to commit, push, and PR
+3. Run `/px-simplify` after implementation
+4. Run `/px-verify-app` to confirm everything works
+5. Run `/px-ship` to commit, push, and PR
 
 ## Error Learning
 When a mistake is corrected: update project CLAUDE.md `## Error Learning` section
@@ -85,7 +85,7 @@ Registered via `claude mcp add`. Persist globally across sessions.
 
 | Server | Purpose | Install | Degrades without |
 |--------|---------|---------|-----------------|
-| perplexity | AI web search | `bash scripts/onboard-mcp.sh perplexity` | No web research in `/discover` |
+| perplexity | AI web search | `bash scripts/onboard-mcp.sh perplexity` | No web research in `/px-discover` |
 | filesystem | Direct vault file access | `claude mcp add filesystem` | Uses shell for vault reads |
 | sequential-thinking | Multi-step reasoning | `claude mcp add sequential-thinking` | Standard reasoning only |
 
@@ -101,8 +101,8 @@ Missing servers are non-blocking — features degrade gracefully.
    - GitHub Actions → `~/.claude/rules/github-actions.md`
    - PowerShell scripts → `~/.claude/rules/powershell.md`
    - Git operation → `~/.claude/rules/git-workflow.md`
-   - Client-facing writing → auto-loaded by `communication-standards` skill
-   - Architecture/specs → auto-loaded by `architecture-patterns` skill
+   - Client-facing writing → auto-loaded by `px-communication-standards` skill
+   - Architecture/specs → auto-loaded by `px-architecture-patterns` skill
 5. Quality re-anchor: read most recent `compact-checkpoint.md` → check the Quality State section.
    - If lint findings existed before compaction: re-run `golangci-lint run`, confirm status.
    - If tests were failing before compaction: re-run test command, confirm status.
@@ -120,15 +120,15 @@ Missing servers are non-blocking — features degrade gracefully.
 - Use vault search when Obsidian is not running (obsidian backend requires Obsidian open)
 
 ## AI-Kit Registry
-Kits activate via `/kit:<n>` slash command. Kits are idempotent — double-activate is a no-op.
+Kits activate via `/px-kit:<n>` slash command. Kits are idempotent — double-activate is a no-op.
 
 | Kit | Activate | Domain |
 |-----|----------|--------|
-| web-designer | `/kit:web-designer` | Design system → components → accessibility → production lint |
-| infrastructure | `/kit:infrastructure` | Terraform → Azure → GitHub Actions → compliance |
-| api | `/kit:api` | RESTful conventions → OpenAPI specs → contract testing |
-| security | `/kit:security` | Threat modeling → IAM review → OWASP audit |
-| data | `/kit:data` | Schema design → migration planning → query optimization |
+| web-designer | `/px-kit:web-designer` | Design system → components → accessibility → production lint |
+| infrastructure | `/px-kit:infrastructure` | Terraform → Azure → GitHub Actions → compliance |
+| api | `/px-kit:api` | RESTful conventions → OpenAPI specs → contract testing |
+| security | `/px-kit:security` | Threat modeling → IAM review → OWASP audit |
+| data | `/px-kit:data` | Schema design → migration planning → query optimization |
 
 Kit manifests live in `~/.claude/kits/<name>/KIT.md`.
 
@@ -159,17 +159,17 @@ Kit manifests live in `~/.claude/kits/<name>/KIT.md`.
 ### Auto-invocable skills (replace former universal rules)
 | Skill | Triggers when |
 |-------|--------------|
-| `communication-standards` | Writing client-facing docs, proposals, status reports, commits, PRs |
-| `architecture-patterns` | Writing ADRs, specs, system design, risk docs, blocker reports |
+| `px-communication-standards` | Writing client-facing docs, proposals, status reports, commits, PRs |
+| `px-architecture-patterns` | Writing ADRs, specs, system design, risk docs, blocker reports |
 
 ## Judgment & Research Commands
 
 | Command | Purpose |
 |---------|---------|
-| `/duel` | Parallel Alpha/Beta implementation → blind scoring → synthesis |
-| `/deliberate` | Multi-perspective decision analysis with scored option matrix |
-| `/freshness` | Full dependency audit — CVEs, outdated packages, maintenance status |
-| `/research <pkg>` | Live docs (Context7) + CVE/version/maintenance check (Perplexity Sonar) |
+| `/px-duel` | Parallel Alpha/Beta implementation → blind scoring → synthesis |
+| `/px-deliberate` | Multi-perspective decision analysis with scored option matrix |
+| `/px-freshness` | Full dependency audit — CVEs, outdated packages, maintenance status |
+| `/px-research <pkg>` | Live docs (Context7) + CVE/version/maintenance check (Perplexity Sonar) |
 
 MCP server templates: `base/configs/mcp-servers.json` — declarative config for context7, github, perplexity-sonar.
 Dependency registry: `base/configs/registry.json` — single source of truth for all tools, auth, hooks.
