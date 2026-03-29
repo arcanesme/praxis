@@ -99,7 +99,12 @@ async function install() {
       if (fs.existsSync(settingsFile)) {
         try { settings = JSON.parse(fs.readFileSync(settingsFile, 'utf8')); } catch {}
       }
-      Object.assign(settings, hooksCfg);
+      // Safe merge that prevents prototype pollution
+      for (const [key, value] of Object.entries(hooksCfg)) {
+        if (key !== '__proto__' && key !== 'constructor' && key !== 'prototype') {
+          settings[key] = value;
+        }
+      }
       fs.writeFileSync(settingsFile, JSON.stringify(settings, null, 2) + '\n');
       ok('hooks configuration merged into settings.json');
     }
