@@ -2,6 +2,7 @@
 # PreCompact hook — writes minimal checkpoint to vault before context compaction.
 # Always exits 0 (advisory, never blocks compaction).
 set -uo pipefail
+trap 'exit 0' ERR
 
 CONFIG_FILE="$HOME/.claude/praxis.config.json"
 

@@ -4,13 +4,10 @@
 # Also implements: set-key subcommand for secret management.
 set -euo pipefail
 
-# ─── Colors ───
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[0;33m'
-CYAN='\033[0;36m'
-BOLD='\033[1m'
-NC='\033[0m'
+# ─── Colors (shared) ───
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+REPO_DIR="$(dirname "$SCRIPT_DIR")"
+source "$REPO_DIR/base/lib/output.sh"
 
 PASS=0
 WARN=0
@@ -19,10 +16,10 @@ PRAXIS_DIR="$HOME/.praxis"
 SECRETS_FILE="$PRAXIS_DIR/secrets"
 REPORT_FILE="$PRAXIS_DIR/preflight-report.json"
 
+# Override shared helpers with counter-incrementing versions
 ok()   { echo -e "  ${GREEN}✓${NC} $1"; PASS=$((PASS + 1)); }
 warn() { echo -e "  ${YELLOW}⚠${NC} $1"; WARN=$((WARN + 1)); }
 fail() { echo -e "  ${RED}✗${NC} $1"; BLOCK=$((BLOCK + 1)); }
-step() { echo -e "\n${CYAN}${BOLD}$1${NC}"; }
 
 # ═══════════════════════════════════════════
 # Subcommand: set-key

@@ -4,31 +4,18 @@ set -euo pipefail
 echo "=== Praxis: Installing security kit ==="
 echo ""
 
-PASS=0
-TOTAL=0
-
-check() {
-  TOTAL=$((TOTAL + 1))
-  if command -v "$1" &>/dev/null; then
-    echo "  ✓ $1 found ($(command -v "$1"))"
-    PASS=$((PASS + 1))
-  else
-    echo "  ✗ $1 not found (optional)"
-    echo "    Install: $2"
-  fi
-}
+source "$(dirname "$0")/../../base/lib/kit-check.sh"
 
 echo "Checking optional CLI tools..."
 echo ""
 
-check "trivy"     "brew install trivy  OR  https://aquasecurity.github.io/trivy"
-check "deepsource" "curl -fsSL https://cli.deepsource.com/install | sh"
+check "trivy"     "brew install trivy  OR  https://aquasecurity.github.io/trivy" "optional"
+check "deepsource" "curl -fsSL https://cli.deepsource.com/install | sh" "optional"
 check "rg"        "brew install ripgrep  OR  apt-get install ripgrep"
 
-echo ""
-echo "  $PASS/$TOTAL tools found"
-echo ""
+kit_check_summary
 
+echo ""
 echo "Note: This kit uses Claude's built-in analysis for most checks."
 echo "External tools enhance scanning but are not required."
 echo ""

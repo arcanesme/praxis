@@ -4,10 +4,8 @@ set -euo pipefail
 CLAUDE_DIR="$HOME/.claude"
 CONFIG_FILE="$CLAUDE_DIR/praxis.config.json"
 
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-BOLD='\033[1m'
-NC='\033[0m'
+PRAXIS_DIR="$(cd "$(dirname "$0")" && pwd)"
+source "$PRAXIS_DIR/base/lib/output.sh"
 
 echo ""
 echo -e "${BOLD}Praxis — Uninstall${NC}"

@@ -20,24 +20,9 @@ set -euo pipefail
 CLAUDE_DIR="${CLAUDE_DIR:-$HOME/.claude}"
 CONFIG_FILE="${CONFIG_FILE:-$CLAUDE_DIR/praxis.config.json}"
 
-# ─── Colors (safe defaults if not already set) ───
-RED="${RED:-\033[0;31m}"
-GREEN="${GREEN:-\033[0;32m}"
-YELLOW="${YELLOW:-\033[0;33m}"
-CYAN="${CYAN:-\033[0;36m}"
-BOLD="${BOLD:-\033[1m}"
-NC="${NC:-\033[0m}"
-
-# ─── Output helpers (no-op if already defined by install.sh) ───
-if ! declare -f ok &>/dev/null; then
-  ok()   { echo -e "  $GREEN✓$NC $1"; }
-fi
-if ! declare -f warn &>/dev/null; then
-  warn() { echo -e "  $YELLOW⚠$NC $1"; }
-fi
-if ! declare -f fail &>/dev/null; then
-  fail() { echo -e "  $RED✗$NC $1"; }
-fi
+# ─── Colors & output helpers (safe to source multiple times) ───
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+source "$SCRIPT_DIR/../base/lib/output.sh"
 
 # ═══════════════════════════════════════════
 # Utilities

@@ -2,7 +2,8 @@
 # dep-audit.sh — PostToolUse:Write|Edit|MultiEdit hook
 # Runs dependency vulnerability checks when manifest files are modified.
 # Always exits 0 (advisory only — PostToolUse cannot hard-block).
-set -euo pipefail
+set -uo pipefail
+trap 'exit 0' ERR
 
 INPUT=$(cat)
 FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // .tool_input.path // empty' 2>/dev/null)
@@ -20,28 +21,40 @@ case "$BASENAME" in
   package.json)
     ECOSYSTEM="npm"
     if command -v npm &>/dev/null && [[ -f "$DIR/package-lock.json" || -f "$DIR/node_modules/.package-lock.json" ]]; then
-      AUDIT_RESULT=$(cd "$DIR" && npm audit --audit-level=high --json 2>/dev/null || true)
+      # npm audit exits non-zero when vulnerabilities exist — capture output regardless
+      AUDIT_RESULT=$(cd "$DIR" && npm audit --audit-level=high --json 2>/dev/null) || {
+        if [[ -n "$AUDIT_RESULT" ]]; then
+          : # non-zero with output = vulnerabilities found (expected)
+        else
+          echo "DEP-AUDIT (npm): audit command failed" >&2
+        fi
+      }
     fi
     ;;
   go.mod)
     ECOSYSTEM="go"
     if command -v govulncheck &>/dev/null; then
-      AUDIT_RESULT=$(cd "$DIR" && govulncheck -json ./... 2>/dev/null || true)
+      AUDIT_RESULT=$(cd "$DIR" && govulncheck -json ./... 2>/dev/null) || {
+        [[ -z "$AUDIT_RESULT" ]] && echo "DEP-AUDIT (go): govulncheck failed" >&2
+      }
     elif command -v go &>/dev/null; then
-      # Fallback: at least check for known issues via go list
-      AUDIT_RESULT=$(cd "$DIR" && go list -m -json all 2>/dev/null | head -c 5000 || true)
+      AUDIT_RESULT=$(cd "$DIR" && go list -m -json all 2>/dev/null | head -c 5000) || AUDIT_RESULT=""
     fi
     ;;
   requirements.txt|pyproject.toml)
     ECOSYSTEM="python"
     if command -v pip-audit &>/dev/null; then
-      AUDIT_RESULT=$(cd "$DIR" && pip-audit --format=json 2>/dev/null || true)
+      AUDIT_RESULT=$(cd "$DIR" && pip-audit --format=json 2>/dev/null) || {
+        [[ -z "$AUDIT_RESULT" ]] && echo "DEP-AUDIT (python): pip-audit failed" >&2
+      }
     fi
     ;;
   Cargo.toml)
     ECOSYSTEM="rust"
     if command -v cargo-audit &>/dev/null; then
-      AUDIT_RESULT=$(cd "$DIR" && cargo audit --json 2>/dev/null || true)
+      AUDIT_RESULT=$(cd "$DIR" && cargo audit --json 2>/dev/null) || {
+        [[ -z "$AUDIT_RESULT" ]] && echo "DEP-AUDIT (rust): cargo-audit failed" >&2
+      }
     fi
     ;;
   *)

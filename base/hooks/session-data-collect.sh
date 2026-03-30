@@ -2,6 +2,7 @@
 # Stop hook — collects structured session data and stages it for the Stop prompt.
 # Always exits 0 (advisory, never blocks session end).
 set -uo pipefail
+trap 'exit 0' ERR
 
 CONFIG_FILE="$HOME/.claude/praxis.config.json"
 

@@ -2,6 +2,7 @@
 # PostToolUse hook — auto-formats files after edit.
 # Always exits 0 (advisory, never blocks).
 set -uo pipefail
+trap 'exit 0' ERR
 
 INPUT=$(cat)
 FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // .tool_input.path // empty' 2>/dev/null)
