@@ -1,6 +1,6 @@
 {
   "name": "@esoteric-logic/praxis-harness",
-  "version": "2.9.0",
+  "version": "2.9.1",
   "description": "Layered Claude Code harness — workflow discipline, AI-Kits, persistent vault integration",
   "bin": {
     "praxis-harness": "./bin/praxis.js"
