@@ -23,8 +23,6 @@ CHECKPOINT_FILE="$PLANS_DIR/$DATE-compact-checkpoint.md"
 
 BRANCH=$(git --no-pager rev-parse --abbrev-ref HEAD 2>/dev/null || echo "unknown")
 LAST_COMMIT=$(git --no-pager log --oneline -1 2>/dev/null || echo "no commits")
-PROJECT_DIR=$(basename "$PWD")
-
 STATUS_FILE="$VAULT_PATH/status.md"
 PROGRESS_FILE="$VAULT_PATH/claude-progress.json"
 

@@ -1,0 +1,27 @@
+{
+  "name": "code-quality",
+  "version": "1.0.0",
+  "description": "DeepSource-equivalent code quality enforcement for Claude Code. Parallel deterministic gate (SAST, secrets, SCA, IaC) + AI review layer (over-engineering, smells, structure, performance).",
+  "activation": "/kit:code-quality",
+  "requires": ["opengrep", "trufflehog", "osv-scanner", "checkov", "jq", "bc"],
+  "skills": [
+    "skills/sast-scan.md",
+    "skills/secrets-scan.md",
+    "skills/sca-scan.md",
+    "skills/iac-scan.md",
+    "skills/over-engineering.md",
+    "skills/code-smells.md",
+    "skills/structural-review.md",
+    "skills/performance-review.md",
+    "skills/test-quality.md",
+    "skills/self-review.md"
+  ],
+  "hooks": {
+    "pre-push": "hooks/pre-push.sh",
+    "post-commit": "hooks/post-commit.sh"
+  },
+  "config": {
+    "thresholds": "configs/thresholds.json",
+    "checks_registry": "configs/checks-registry.json"
+  }
+}

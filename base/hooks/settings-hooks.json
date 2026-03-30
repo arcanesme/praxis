@@ -44,15 +44,6 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash ~/.claude/hooks/quality-check.sh"
-          }
-        ]
-      },
-      {
-        "matcher": "Write|Edit|MultiEdit",
-        "hooks": [
-          {
-            "type": "command",
             "command": "bash ~/.claude/hooks/dep-audit.sh"
           }
         ]
@@ -62,10 +53,6 @@
       {
         "matcher": "",
         "hooks": [
-          {
-            "type": "command",
-            "command": "bash ~/.claude/hooks/post-session-lint.sh"
-          },
           {
             "type": "prompt",
             "prompt": "Run the project test suite. Read CLAUDE.md ## Commands for the test command. If no test command defined, respond {ok:true}. Run tests. If all pass: respond {ok:true}. If tests fail: respond {ok:false, reason:'Tests failing: <summary>'}. Do not fix — only report."

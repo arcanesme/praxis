@@ -36,7 +36,7 @@ Out of scope:
 
 1. Read `{repo_root}/CLAUDE.md` → extract `{identity_email}` and `{stack}`
 2. Detect stack from repo: `git ls-files | grep -E "\.(tf|ps1|yml|py|ts|sh|go)$" | sed 's/.*\.//' | sort -u`
-3. Check tool availability: tflint, trivy, actionlint, ruff, mypy, terraform, shellcheck, golangci-lint, semgrep, hadolint, govulncheck, infracost, markdownlint, gitleaks, commitlint
+3. Check tool availability: tflint, trivy, actionlint, ruff, mypy, terraform, shellcheck, golangci-lint, hadolint, govulncheck, infracost, markdownlint, gitleaks, commitlint
 
 ## Phase 1 — Generate Hook
 
@@ -50,7 +50,6 @@ Append stack sections based on detected flags:
 - **Go** (if golangci-lint available): `golangci-lint run` on staged .go files
 - **Security** (if tools available):
   - `gitleaks protect --staged` (replaces regex-based secret scan if gitleaks available)
-  - `semgrep --config=auto --error` on staged code files (if semgrep available)
 - **Terraform security** (if tools available):
   - `trivy config --severity HIGH,CRITICAL --exit-code 1` on staged .tf files
   - `infracost breakdown --path=.` (advisory only, exit 0)

@@ -97,7 +97,7 @@ async function install() {
       const hooksCfg = JSON.parse(fs.readFileSync(hooksConfig, 'utf8'));
       let settings = {};
       if (fs.existsSync(settingsFile)) {
-        try { settings = JSON.parse(fs.readFileSync(settingsFile, 'utf8')); } catch {}
+        try { settings = JSON.parse(fs.readFileSync(settingsFile, 'utf8')); } catch { /* invalid JSON — use empty defaults */ }
       }
       Object.assign(settings, hooksCfg);
       fs.writeFileSync(settingsFile, JSON.stringify(settings, null, 2) + '\n');
@@ -122,7 +122,7 @@ async function install() {
 
   // Orphan cleanup: deleted rules and legacy files
   const orphans = [
-    'obsidian.md', 'code-quality.md', 'security.md',
+    'obsidian.md', 'security.md',
     'communication.md', 'architecture.md'
   ];
   for (const f of orphans) {
@@ -299,7 +299,7 @@ function uninstall() {
       if (fs.existsSync(target)) fs.unlinkSync(target);
     }
     // Also remove legacy files
-    for (const f of ['obsidian.md', 'code-quality.md', 'security.md', 'communication.md', 'architecture.md']) {
+    for (const f of ['obsidian.md', 'security.md', 'communication.md', 'architecture.md']) {
       const target = path.join(CLAUDE_DIR, 'rules', f);
       if (fs.existsSync(target)) fs.unlinkSync(target);
     }

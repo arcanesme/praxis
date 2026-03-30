@@ -269,7 +269,7 @@ done
 
 # Check hook scripts exist and are executable
 HOOKS_DIR="$HOME/.claude/hooks"
-REQUIRED_HOOKS=(secret-scan.sh file-guard.sh identity-check.sh credential-guard.sh quality-check.sh session-data-collect.sh)
+REQUIRED_HOOKS=(secret-scan.sh file-guard.sh identity-check.sh credential-guard.sh session-data-collect.sh)
 for hook in "${REQUIRED_HOOKS[@]}"; do
   if [[ -x "$HOOKS_DIR/$hook" ]] || [[ -L "$HOOKS_DIR/$hook" ]]; then
     ok "Hook: $hook"

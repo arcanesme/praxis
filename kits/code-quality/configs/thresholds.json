@@ -1,0 +1,36 @@
+{
+  "_comment": "Gate policy: block_always = always block push, block_if_new = block only if not in baseline, warn = surface but allow, info = log only",
+  "gate_policy": {
+    "CRITICAL": "block_always",
+    "HIGH": "block_if_new",
+    "MEDIUM": "warn",
+    "LOW": "info"
+  },
+  "coverage": {
+    "line_min": 80,
+    "branch_min": 70,
+    "new_code_min": 90
+  },
+  "complexity": {
+    "cyclomatic_max": 15,
+    "cognitive_max": 20,
+    "function_lines_max": 30,
+    "file_lines_max": 300,
+    "nesting_depth_max": 3,
+    "parameter_count_max": 4,
+    "public_methods_max": 5
+  },
+  "ai_review": {
+    "enabled": true,
+    "block_on_critical": true,
+    "block_on_high": false,
+    "categories": [
+      "over-engineering",
+      "code-smell",
+      "structural",
+      "security",
+      "performance",
+      "test-quality"
+    ]
+  }
+}

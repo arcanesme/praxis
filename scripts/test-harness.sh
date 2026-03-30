@@ -157,7 +157,7 @@ fi
 echo ""
 echo "Quality hooks:"
 
-for hook in file-guard.sh quality-check.sh; do
+for hook in file-guard.sh; do
   if [[ -f "$REPO_PATH/base/hooks/$hook" ]]; then
     ok "hooks/$hook exists"
     if [[ -x "$REPO_PATH/base/hooks/$hook" ]]; then
@@ -174,20 +174,12 @@ done
 echo ""
 echo "Hook chain wiring:"
 
-# Verify quality-check.sh wired in PostToolUse
-if jq -e '.hooks.PostToolUse[].hooks[].command | select(contains("quality-check.sh"))' \
+# Verify dep-audit.sh wired in PostToolUse
+if jq -e '.hooks.PostToolUse[].hooks[].command | select(contains("dep-audit.sh"))' \
   "$REPO_PATH/base/hooks/settings-hooks.json" >/dev/null 2>&1; then
-  ok "quality-check.sh wired in PostToolUse"
+  ok "dep-audit.sh wired in PostToolUse"
 else
-  error "quality-check.sh not found in PostToolUse hooks"
-fi
-
-# Verify auto-format.sh NOT in settings-hooks.json
-if jq -e '.hooks.PostToolUse[].hooks[].command | select(contains("auto-format.sh"))' \
-  "$REPO_PATH/base/hooks/settings-hooks.json" >/dev/null 2>&1; then
-  error "auto-format.sh still in PostToolUse (should be replaced by quality-check.sh)"
-else
-  ok "auto-format.sh removed from PostToolUse"
+  error "dep-audit.sh not found in PostToolUse hooks"
 fi
 
 # Verify file-guard.sh wired in PreToolUse

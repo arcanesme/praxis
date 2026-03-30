@@ -1,0 +1,52 @@
+version = 1
+
+[[analyzers]]
+name = "javascript"
+enabled = true
+
+  [analyzers.meta]
+  plugins = ["node"]
+  environment = ["nodejs"]
+  dialect = "javascript"
+
+[[analyzers]]
+name = "shell"
+enabled = true
+
+  [analyzers.meta]
+  dialect = "bash"
+
+[[analyzers]]
+name = "terraform"
+enabled = true
+
+[[analyzers]]
+name = "docker"
+enabled = true
+
+[[analyzers]]
+name = "secrets"
+enabled = true
+
+exclude_patterns = [
+  "node_modules/**",
+  "vendor/**",
+  ".terraform/**",
+  "target/**",
+  "dist/**",
+  "build/**",
+  "templates/**",
+  "*.min.js",
+  "*.generated.*",
+]
+
+test_patterns = [
+  "scripts/test-harness.sh",
+  "**/*_test.go",
+  "**/*_test.rs",
+  "**/test_*.py",
+  "**/*.test.js",
+  "**/*.test.ts",
+  "**/*.spec.js",
+  "**/*.spec.ts",
+]

@@ -197,5 +197,5 @@ Do NOT auto-remediate. Always ask first.
 ---
 
 ## Removal Condition
-Remove when static analysis tooling (Semgrep, SonarQube, or equivalent) is wired
-into the pre-commit hook and covers all six entropy categories with automated reporting.
+Remove when static analysis tooling (DeepSource or equivalent) is wired
+into CI and covers all six entropy categories with automated reporting.

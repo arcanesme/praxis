@@ -128,23 +128,32 @@ Kits activate via `/px-kit:<n>` slash command. Kits are idempotent — double-ac
 | infrastructure | `/px-kit:infrastructure` | Terraform → Azure → GitHub Actions → compliance |
 | api | `/px-kit:api` | RESTful conventions → OpenAPI specs → contract testing |
 | security | `/px-kit:security` | Threat modeling → IAM review → OWASP audit |
+| code-quality | `/px-kit:code-quality` | SAST + secrets + SCA + IaC gate → AI review (over-engineering, smells, structure) |
 | data | `/px-kit:data` | Schema design → migration planning → query optimization |
 
 Kit manifests live in `~/.claude/kits/<name>/KIT.md`.
 
 ## Rules Registry — Load on Demand Only
 
-### Universal — always active (8 rules)
+### Universal — always active (9 rules)
 | File | Purpose |
 |------|---------|
 | `~/.claude/rules/profile.md` | Who the user is, identities, working style |
 | `~/.claude/rules/execution-loop.md` | SPEC/PLAN/VALIDATE loop enforcement |
-| `~/.claude/rules/coding.md` | Code quality, security, complexity thresholds, Context7 mandate |
+| `~/.claude/rules/coding.md` | Context7 mandate, tool preferences, quality architecture reference |
+| `~/.claude/rules/code-quality.md` | Layer 2: Active constraints — hard limits during generation |
 | `~/.claude/rules/git-workflow.md` | Commits, branches, identity verification, pre-commit checks |
 | `~/.claude/rules/vault.md` | Second brain integration — vault backend, file purposes |
 | `~/.claude/rules/context-management.md` | Context anti-rot, phase scoping, context reset protocol |
 | `~/.claude/rules/memory-boundary.md` | Auto-memory boundary, MEMORY.md cap, dream integration |
 | `~/.claude/rules/security-posture.md` | Sandbox model, credential protection, protected paths |
+
+### Skills — loaded at session start
+| File | Purpose |
+|------|---------|
+| `~/.claude/skills/code-excellence.md` | Layer 1: Principles — shapes reasoning about code |
+| `~/.claude/skills/engineering-judgment.md` | Layer 1: Meta-reasoning — principal engineer decision framework |
+| `~/.claude/skills/self-verify.md` | Layer 3: Self-verification protocol — proves correctness before commit |
 
 ### Scoped — load only when paths match
 | File | Loads when |

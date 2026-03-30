@@ -52,7 +52,7 @@ else
   echo "NOTE: Install gitleaks manually (see https://github.com/gitleaks/gitleaks)"
 fi
 install_npm markdownlint-cli @commitlint/cli @commitlint/config-conventional
-install_pip semgrep yamllint
+install_pip yamllint
 
 # ── Go stack ──
 if $INSTALL_GO; then
@@ -114,7 +114,7 @@ echo ""
 echo "=== Done. Run 'bash scripts/install-tools.sh --all' to install all stacks. ==="
 echo ""
 echo "Installed tools:"
-for tool in shellcheck shfmt jq gitleaks goimports golangci-lint govulncheck tflint trivy infracost hadolint semgrep yamllint markdownlint commitlint; do
+for tool in shellcheck shfmt jq gitleaks goimports golangci-lint govulncheck tflint trivy infracost hadolint deepsource yamllint markdownlint commitlint; do
   if command -v "$tool" &>/dev/null; then
     printf "  ✓ %s\n" "$tool"
   else

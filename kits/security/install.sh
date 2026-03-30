@@ -22,7 +22,7 @@ echo "Checking optional CLI tools..."
 echo ""
 
 check "trivy"     "brew install trivy  OR  https://aquasecurity.github.io/trivy"
-check "semgrep"   "pip install semgrep  OR  brew install semgrep"
+check "deepsource" "curl -fsSL https://cli.deepsource.com/install | sh"
 check "rg"        "brew install ripgrep  OR  apt-get install ripgrep"
 
 echo ""
