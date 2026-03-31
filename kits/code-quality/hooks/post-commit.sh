@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 # Triggers Claude AI self-review after commit
 # This is advisory — does not block, surfaces findings for next commit
 
@@ -11,7 +12,7 @@ if ! command -v claude &>/dev/null; then
 fi
 
 CHANGED=$(git diff --name-only HEAD~1...HEAD 2>/dev/null | head -20)
-if [ -z "$CHANGED" ]; then
+if [[ -z "$CHANGED" ]]; then
   exit 0
 fi
 

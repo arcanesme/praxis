@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Run once on kit install to snapshot existing violations
 # Pre-push hook only blocks on NET NEW violations above this baseline
 

@@ -2,7 +2,7 @@
 # dep-audit.sh — PostToolUse:Write|Edit|MultiEdit hook
 # Runs dependency vulnerability checks when manifest files are modified.
 # Always exits 0 (advisory only — PostToolUse cannot hard-block).
-set -uo pipefail
+set -euo pipefail
 trap 'exit 0' ERR
 
 INPUT=$(cat)

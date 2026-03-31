@@ -23,7 +23,10 @@ Do NOT present a template or form. Let them talk.
 
 **Step 3 — Search for related work**
 After the user describes the task, search vault for prior art:
-Run: `obsidian search query="{topic}" limit=5`
+Read `vault_backend` from `~/.claude/praxis.config.json`.
+- If `obsidian`: run `obsidian search query="{topic}" limit=5`
+- If `ripgrep`: run `rg --files-with-matches "{topic}" {vault_path}/`
+- If vault search fails (e.g., Obsidian not running): warn and proceed without blocking.
 If related specs, plans, or research exist: mention them briefly.
 If nothing exists: proceed silently.
 

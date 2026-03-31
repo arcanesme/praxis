@@ -48,7 +48,7 @@ Classify each: type, tag (`bugfix|convention|perf|security|tooling|arch|process`
 For each finding with clear root cause:
 - Project-specific → `{vault_path}/notes/learnings.md`
 - Global/harness pattern → harness project learnings.md
-- Check for duplicates via `obsidian search` before writing
+- Check for duplicates via vault search (using configured backend) before writing. If vault search unavailable: skip duplicate check and proceed.
 
 Format:
 ```markdown

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # PostToolUse hook — auto-formats files after edit.
 # Always exits 0 (advisory, never blocks).
-set -uo pipefail
+set -euo pipefail
 trap 'exit 0' ERR
 
 INPUT=$(cat)

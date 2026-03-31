@@ -50,7 +50,13 @@ KEY="${KEY:0:300}"
 
 # ── Increment counter ──
 # Use a hash of the key for safe JSON field names
-KEY_HASH=$(echo -n "$KEY" | md5 2>/dev/null || echo -n "$KEY" | md5sum 2>/dev/null | cut -d' ' -f1 || echo "fallback")
+if command -v md5sum &>/dev/null; then
+  KEY_HASH=$(echo -n "$KEY" | md5sum | cut -d' ' -f1)
+elif command -v md5 &>/dev/null; then
+  KEY_HASH=$(echo -n "$KEY" | md5 -q)
+else
+  KEY_HASH="${KEY:0:32}"
+fi
 
 COUNT=$(jq -r --arg cat "$CATEGORY" --arg key "$KEY_HASH" \
   '.[$cat][$key] // 0' "$STATE_FILE" 2>/dev/null || echo "0")

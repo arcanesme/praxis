@@ -46,10 +46,10 @@ Read identity table from `~/.claude/rules/git-workflow.md`.
 
 ## Phase 1 — Gather Info
 
-Before asking, run vault duplicate check:
-```bash
-obsidian search query="{slug}" path="01_Projects" limit=3
-```
+Before asking, run vault duplicate check using configured backend:
+- If `obsidian`: `obsidian search query="{slug}" path="01_Projects" limit=3`
+- If `ripgrep`: `rg --files-with-matches "{slug}" {vault_path}/`
+- If vault search fails: warn and proceed without blocking.
 
 Ask in one message:
 - **Project name** — display name
@@ -71,7 +71,7 @@ today_date   = current date YYYY-MM-DD
 
 ## Phase 2 — Scaffold repo CLAUDE.md
 
-1. Read `references/repo-CLAUDE-md-template.md`
+1. Read `templates/project-index.md` (the repo CLAUDE.md template)
 2. Apply full substitution map. All placeholders must resolve.
 3. Scan output for remaining `{placeholder}` patterns. Resolve before writing.
 4. Write to `{repo_root}/CLAUDE.md`
@@ -85,19 +85,19 @@ Create directories:
 mkdir -p {vault_path}/plans {vault_path}/notes {vault_path}/specs {vault_path}/research
 ```
 
-Create files from templates in `references/`:
-- `_index.md` from `vault-index-template.md`
-- `status.md` from `vault-status-template.md` (`current_plan:` empty)
-- `tasks.md` from `vault-tasks-template.md`
-- `notes/learnings.md` from `vault-learnings-template.md`
-- `notes/decision-log.md` from `decision-log` template (append-only decision log)
-- `.gitignore` from `gitignore-template.txt` (new repos only)
+Create files from templates in `templates/`:
+- `_index.md` from `templates/_index.md`
+- `status.md` from `templates/status.md` (`current_plan:` empty)
+- `tasks.md` from `templates/tasks.md`
+- `notes/learnings.md` — scaffold minimal learnings file (no template exists; create with YAML frontmatter + empty `## Learnings` section)
+- `notes/decision-log.md` from `templates/decision-log.md` (append-only decision log)
+- `.gitignore` — scaffold standard gitignore for detected stack (new repos only)
 
 ---
 
 ## Phase 3.5 — Scaffold claude-progress.json
 
-From `references/claude-progress-template.json`. Apply substitution map.
+From `templates/claude-progress.json`. Apply substitution map.
 Write to `{vault_path}/claude-progress.json`.
 
 ---
@@ -105,7 +105,9 @@ Write to `{vault_path}/claude-progress.json`.
 ## Phase 4 — Vault Search Check
 
 Vault indexing is automatic for `obsidian` backend. No manual re-index needed.
-Verify the new project is searchable: `obsidian search query="{slug}" limit=1`
+Verify the new project is searchable using configured backend:
+- If `obsidian`: `obsidian search query="{slug}" limit=1`
+- If `ripgrep`: `rg --files-with-matches "{slug}" {vault_path}/`
 On failure: warn, do not block.
 
 ---

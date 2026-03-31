@@ -17,7 +17,7 @@ for arg in "$@"; do
 done
 
 # Auto-detect if no flags
-if [ $# -eq 0 ]; then
+if [[ $# -eq 0 ]]; then
   command -v go &>/dev/null && INSTALL_GO=true
   command -v terraform &>/dev/null && INSTALL_TF=true
 fi
@@ -43,7 +43,7 @@ install_go()   { go install "$@" 2>/dev/null || true; }
 
 # ── Core (always) ──
 echo "── Installing core tools ──"
-if [ "$PKG" = "brew" ]; then
+if [[ "$PKG" == "brew" ]]; then
   install_brew shellcheck shfmt jq gitleaks
 else
   sudo apt-get update -qq
@@ -60,7 +60,7 @@ if $INSTALL_GO; then
   echo "── Installing Go quality tools ──"
   install_go golang.org/x/tools/cmd/goimports@latest
   install_go golang.org/x/vuln/cmd/govulncheck@latest
-  if [ "$PKG" = "brew" ]; then
+  if [[ "$PKG" == "brew" ]]; then
     install_brew golangci-lint
   else
     curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b "$(go env GOPATH)/bin" 2>/dev/null || true
@@ -71,7 +71,7 @@ fi
 if $INSTALL_TF; then
   echo ""
   echo "── Installing Terraform quality tools ──"
-  if [ "$PKG" = "brew" ]; then
+  if [[ "$PKG" == "brew" ]]; then
     install_brew tflint trivy infracost
   else
     echo "NOTE: Install tflint, trivy, infracost manually for Linux"
@@ -82,7 +82,7 @@ fi
 if command -v docker &>/dev/null; then
   echo ""
   echo "── Installing container tools ──"
-  if [ "$PKG" = "brew" ]; then
+  if [[ "$PKG" == "brew" ]]; then
     install_brew hadolint
   fi
 fi

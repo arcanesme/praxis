@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -euo pipefail
 
 # ════════════════════════════════════════════════════════════════
@@ -85,7 +85,10 @@ if [[ "$PLATFORM" == "darwin" ]]; then
     echo "  Installing Homebrew..."
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     if [[ -f /opt/homebrew/bin/brew ]]; then
-      eval "$(/opt/homebrew/bin/brew shellenv)"
+      export HOMEBREW_PREFIX="/opt/homebrew"
+      export HOMEBREW_CELLAR="/opt/homebrew/Cellar"
+      export HOMEBREW_REPOSITORY="/opt/homebrew"
+      export PATH="/opt/homebrew/bin:/opt/homebrew/sbin:$PATH"
     fi
     ok "Homebrew installed"
   else
@@ -587,28 +590,35 @@ PASS=0
 TOTAL=0
 
 verify() {
+  local label="$2"
   TOTAL=$((TOTAL + 1))
-  if eval "$1" &>/dev/null; then
-    ok "$2"
+  if "$@" &>/dev/null; then
+    ok "$label"
     PASS=$((PASS + 1))
   else
-    fail "$2"
+    fail "$label"
   fi
 }
 
-verify "[[ -L '$CLAUDE_DIR/CLAUDE.md' ]]"           "CLAUDE.md symlinked"
-verify "[[ -d '$CLAUDE_DIR/rules' ]]"                "Rules directory exists"
-verify "[[ -d '$CLAUDE_DIR/skills' ]]"               "Skills directory exists"
-verify "[[ -L '$CLAUDE_DIR/kits' ]]"                 "Kits directory symlinked"
-verify "[[ -d '$CLAUDE_DIR/hooks' ]]"                "Hooks directory exists"
-verify "[[ -f '$CLAUDE_DIR/settings.json' ]]"        "Settings with hooks configured"
-verify "[[ -f '$CONFIG_FILE' ]]"                     "Config file exists"
-verify "jq -e '.vault_path' '$CONFIG_FILE'"          "Vault path in config"
-verify "jq -e '.identity.name' '$CONFIG_FILE'"       "Identity configured"
-verify "[[ -d '$VAULT_PATH' ]]"                      "Vault directory accessible"
-verify "command -v claude"                           "Claude Code CLI available"
-verify "command -v node"                             "Node.js available"
-verify "command -v jq"                               "jq available"
+check_link()   { [[ -L "$1" ]]; }
+check_dir()    { [[ -d "$1" ]]; }
+check_file()   { [[ -f "$1" ]]; }
+check_jq()     { jq -e "$1" "$2" >/dev/null 2>&1; }
+check_cmd()    { command -v "$1" &>/dev/null; }
+
+verify check_link "$CLAUDE_DIR/CLAUDE.md"            "CLAUDE.md symlinked"
+verify check_dir  "$CLAUDE_DIR/rules"                "Rules directory exists"
+verify check_dir  "$CLAUDE_DIR/skills"               "Skills directory exists"
+verify check_link "$CLAUDE_DIR/kits"                 "Kits directory symlinked"
+verify check_dir  "$CLAUDE_DIR/hooks"                "Hooks directory exists"
+verify check_file "$CLAUDE_DIR/settings.json"        "Settings with hooks configured"
+verify check_file "$CONFIG_FILE"                     "Config file exists"
+verify check_jq   '.vault_path' "$CONFIG_FILE"       "Vault path in config"
+verify check_jq   '.identity.name' "$CONFIG_FILE"    "Identity configured"
+verify check_dir  "$VAULT_PATH"                      "Vault directory accessible"
+verify check_cmd  claude                             "Claude Code CLI available"
+verify check_cmd  node                               "Node.js available"
+verify check_cmd  jq                                 "jq available"
 
 echo ""
 echo -e "  Checks: ${BOLD}$PASS/$TOTAL passed${NC}"

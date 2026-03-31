@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -euo pipefail
 
 # ════════════════════════════════════════════════════════════════
@@ -16,15 +16,21 @@ FAIL=0
 TOTAL=0
 
 check() {
+  local label="$2"
   TOTAL=$((TOTAL + 1))
-  if eval "$1" 2>/dev/null; then
-    echo "  ✓ $2"
+  if "$@" 2>/dev/null; then
+    echo "  ✓ $label"
     PASS=$((PASS + 1))
   else
-    echo "  ✗ $2"
+    echo "  ✗ $label"
     FAIL=$((FAIL + 1))
   fi
 }
+
+check_exists() { [[ -e "$1" ]]; }
+check_file()   { [[ -f "$1" ]]; }
+check_dir()    { [[ -d "$1" ]]; }
+check_cmd()    { command -v "$1" &>/dev/null; }
 
 echo "Praxis Health Check"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
@@ -32,7 +38,7 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 # ─── CLAUDE.md symlink ───
 echo ""
 echo "Core:"
-check "[[ -e '$CLAUDE_DIR/CLAUDE.md' ]]" "CLAUDE.md installed"
+check check_exists "$CLAUDE_DIR/CLAUDE.md" "CLAUDE.md installed"
 
 # ─── Rules symlinks ───
 echo ""
@@ -41,7 +47,7 @@ if [[ -d "$PRAXIS_DIR/base/rules" ]]; then
   for rule in "$PRAXIS_DIR"/base/rules/*.md; do
     [[ -f "$rule" ]] || continue
     fname=$(basename "$rule")
-    check "[[ -e '$CLAUDE_DIR/rules/$fname' ]]" "rules/$fname installed"
+    check check_exists "$CLAUDE_DIR/rules/$fname" "rules/$fname installed"
   done
 fi
 
@@ -52,7 +58,7 @@ if [[ -d "$PRAXIS_DIR/base/commands" ]]; then
   for cmd in "$PRAXIS_DIR"/base/commands/*.md; do
     [[ -f "$cmd" ]] || continue
     fname=$(basename "$cmd")
-    check "[[ -e '$CLAUDE_DIR/commands/$fname' ]]" "commands/$fname installed"
+    check check_exists "$CLAUDE_DIR/commands/$fname" "commands/$fname installed"
   done
 fi
 
@@ -63,24 +69,24 @@ if [[ -d "$PRAXIS_DIR/base/skills" ]]; then
   for skill_dir in "$PRAXIS_DIR"/base/skills/*/; do
     [[ -d "$skill_dir" ]] || continue
     skill_name=$(basename "$skill_dir")
-    check "[[ -e '$CLAUDE_DIR/skills/$skill_name' ]]" "skills/$skill_name installed"
+    check check_exists "$CLAUDE_DIR/skills/$skill_name" "skills/$skill_name installed"
   done
 fi
 
 # ─── Kits symlink ───
 echo ""
 echo "Kits:"
-check "[[ -e '$CLAUDE_DIR/kits' ]]" "kits directory installed"
+check check_exists "$CLAUDE_DIR/kits" "kits directory installed"
 
 # ─── Config ───
 echo ""
 echo "Config:"
-check "[[ -f '$CONFIG_FILE' ]]" "praxis.config.json exists"
+check check_file "$CONFIG_FILE" "praxis.config.json exists"
 
 if [[ -f "$CONFIG_FILE" ]]; then
   VAULT_PATH=$(jq -r '.vault_path // empty' "$CONFIG_FILE" 2>/dev/null)
   if [[ -n "$VAULT_PATH" ]]; then
-    check "[[ -d '$VAULT_PATH' ]]" "vault_path ($VAULT_PATH) is a real directory"
+    check check_dir "$VAULT_PATH" "vault_path ($VAULT_PATH) is a real directory"
   else
     TOTAL=$((TOTAL + 1))
     echo "  ✗ vault_path not set in config"
@@ -91,10 +97,10 @@ fi
 # ─── Required tools ───
 echo ""
 echo "Tools:"
-check "command -v obsidian" "Obsidian CLI available"
-check "command -v node" "node available"
-check "command -v claude" "claude available"
-check "command -v jq" "jq available"
+check check_cmd obsidian "Obsidian CLI available"
+check check_cmd node "node available"
+check check_cmd claude "claude available"
+check check_cmd jq "jq available"
 
 # ─── MCP Servers (warn only) ───
 echo ""

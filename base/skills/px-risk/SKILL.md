@@ -9,7 +9,10 @@ You are adding a risk register entry for the current project.
 **Step 1 — Detect project and existing risks**
 - Read vault_path from `~/.claude/praxis.config.json`
 - Detect project from CWD
-- Run: `obsidian search query="risk register {project-slug}" limit=3`
+- Search vault for existing risks using configured backend:
+  - If `obsidian`: run `obsidian search query="risk register {project-slug}" limit=3`
+  - If `ripgrep`: run `rg --files-with-matches "risk" {vault_path}/specs/`
+  - If vault search fails: proceed without blocking
 - Check if `{vault_path}/specs/risk-register.md` exists
 - If found: read it to determine next sequential risk ID (R-01, R-02, etc.)
 

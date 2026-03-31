@@ -6,7 +6,7 @@ set -euo pipefail
 INPUT=$(cat)
 FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // .tool_input.path // empty')
 
-if [ -z "$FILE_PATH" ]; then
+if [[ -z "$FILE_PATH" ]]; then
   exit 0
 fi
 
@@ -29,7 +29,7 @@ for pattern in "${PROTECTED_PATTERNS[@]}"; do
 done
 
 # Check project-level protected files from CLAUDE.md if it exists
-if [ -f "CLAUDE.md" ]; then
+if [[ -f "CLAUDE.md" ]]; then
   # Extract paths from ## Protected Files section
   IN_SECTION=false
   while IFS= read -r line; do
@@ -42,7 +42,7 @@ if [ -f "CLAUDE.md" ]; then
     fi
     if $IN_SECTION && echo "$line" | grep -qE "^- "; then
       PROTECTED=$(echo "$line" | sed 's/^- //' | sed 's/ *#.*//' | xargs)
-      if [ -n "$PROTECTED" ] && echo "$FILE_PATH" | grep -qE "$PROTECTED"; then
+      if [[ -n "$PROTECTED" ]] && echo "$FILE_PATH" | grep -qE "$PROTECTED"; then
         echo "BLOCKED: $FILE_PATH matches project-protected pattern '$PROTECTED'. Explain the intended change."
         exit 2
       fi

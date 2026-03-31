@@ -19,7 +19,7 @@ function fail(msg)   { console.error('  \x1b[31m\u2717\x1b[0m ' + msg); }
 function dim(msg)    { console.log('  \x1b[2m' + msg + '\x1b[0m'); }
 
 function toolExists(name) {
-  const r = spawnSync('which', [name], { stdio: 'pipe' });
+  const r = spawnSync('command', ['-v', name], { stdio: 'pipe', shell: true });
   return r.status === 0;
 }
 
@@ -94,12 +94,33 @@ async function install() {
     const hooksConfig = path.join(hooksDir, 'settings-hooks.json');
     const settingsFile = path.join(CLAUDE_DIR, 'settings.json');
     if (fs.existsSync(hooksConfig)) {
-      const hooksCfg = JSON.parse(fs.readFileSync(hooksConfig, 'utf8'));
+      let hooksCfg;
+      try {
+        hooksCfg = JSON.parse(fs.readFileSync(hooksConfig, 'utf8'));
+      } catch (hookParseErr) {
+        fail('settings-hooks.json has invalid JSON: ' + hookParseErr.message);
+        hooksCfg = {};
+      }
       let settings = {};
       if (fs.existsSync(settingsFile)) {
-        try { settings = JSON.parse(fs.readFileSync(settingsFile, 'utf8')); } catch { /* invalid JSON — use empty defaults */ }
+        const raw = fs.readFileSync(settingsFile, 'utf8');
+        try {
+          settings = JSON.parse(raw);
+        } catch (parseErr) {
+          // Preserve corrupt file as backup before overwriting
+          const backupPath = settingsFile + '.backup';
+          fs.writeFileSync(backupPath, raw);
+          fail('settings.json has invalid JSON — backed up to ' + backupPath);
+        }
       }
-      Object.assign(settings, hooksCfg);
+      // Deep merge: preserve existing keys, overlay hooks
+      for (const [key, value] of Object.entries(hooksCfg)) {
+        if (typeof value === 'object' && !Array.isArray(value) && settings[key] && typeof settings[key] === 'object') {
+          settings[key] = { ...settings[key], ...value };
+        } else {
+          settings[key] = value;
+        }
+      }
       fs.writeFileSync(settingsFile, JSON.stringify(settings, null, 2) + '\n');
       ok('hooks configuration merged into settings.json');
     }
@@ -261,7 +282,7 @@ function health() {
       } else {
         total++; fail('vault_path not set in config');
       }
-    } catch { total++; fail('praxis.config.json is invalid JSON'); }
+    } catch (configErr) { total++; fail('praxis.config.json is invalid JSON: ' + configErr.message); }
   }
 
   // Tools
@@ -386,7 +407,7 @@ else if (arg === '--version' || arg === '-v') { console.log(VERSION); }
 else if (commands[arg]) {
   const result = commands[arg]();
   if (result && typeof result.catch === 'function') {
-    result.catch(err => { fail(err.message); process.exit(1); });
+    result.catch(err => { fail(err?.message || String(err)); process.exit(1); });
   }
 }
 else { fail('Unknown command: ' + arg); printHelp(); process.exit(1); }

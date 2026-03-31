@@ -1,5 +1,5 @@
-#!/bin/bash
-set -uo pipefail
+#!/usr/bin/env bash
+set -euo pipefail
 
 REPO_ROOT=$(git rev-parse --show-toplevel)
 KIT_DIR="$REPO_ROOT/.claude/kits/code-quality"
@@ -33,7 +33,7 @@ echo "------------------------"
 
 # Get changed files only (diff-scoped scanning)
 CHANGED=$(git diff --name-only origin/HEAD...HEAD 2>/dev/null || git diff --name-only HEAD~1...HEAD 2>/dev/null || echo "")
-if [ -z "$CHANGED" ]; then
+if [[ -z "$CHANGED" ]]; then
   echo "  No changed files detected — skipping gate"
   exit 0
 fi
@@ -46,7 +46,7 @@ GATE_FAILURES=()
 GATE_WARNINGS=()
 
 # -- SAST (OpenGrep) --
-if [ -s "$TMP/code-files.txt" ]; then
+if [[ -s "$TMP/code-files.txt" ]]; then
   echo "  SAST scan (OpenGrep)..."
   FILES=$(cat "$TMP/code-files.txt" | tr '\n' ' ')
   opengrep scan --config auto --json $FILES > "$TMP/sast.json" 2>/dev/null || true
@@ -54,8 +54,8 @@ if [ -s "$TMP/code-files.txt" ]; then
   CRITICAL=$(safe_jq '[.results[] | select(.extra.severity == "ERROR")] | length' "$TMP/sast.json")
   HIGH=$(safe_jq '[.results[] | select(.extra.severity == "WARNING")] | length' "$TMP/sast.json")
 
-  [ "$CRITICAL" -gt 0 ] && GATE_FAILURES+=("SAST: $CRITICAL critical findings")
-  [ "$HIGH" -gt 0 ]     && GATE_WARNINGS+=("SAST: $HIGH high findings")
+  [[ "$CRITICAL" -gt 0 ]] && GATE_FAILURES+=("SAST: $CRITICAL critical findings")
+  [[ "$HIGH" -gt 0 ]]     && GATE_WARNINGS+=("SAST: $HIGH high findings")
   echo "     Critical: $CRITICAL  High: $HIGH"
 fi &
 SAST_PID=$!
@@ -68,7 +68,7 @@ if [[ -s "$TMP/secrets.json" ]]; then
 else
   SECRETS=0
 fi
-[ "$SECRETS" -gt 0 ] && GATE_FAILURES+=("SECRETS: $SECRETS verified secrets found")
+[[ "$SECRETS" -gt 0 ]] && GATE_FAILURES+=("SECRETS: $SECRETS verified secrets found")
 echo "     Verified secrets: $SECRETS" &
 SECRETS_PID=$!
 
@@ -77,17 +77,17 @@ echo "  Dependency scan (OSV-Scanner)..."
 osv-scanner scan --format json "$REPO_ROOT" > "$TMP/sca.json" 2>/dev/null || true
 SCA_CRITICAL=$(safe_jq '[.vulns[]? | select(.database_specific.severity? == "CRITICAL")] | length' "$TMP/sca.json")
 SCA_HIGH=$(safe_jq '[.vulns[]? | select(.database_specific.severity? == "HIGH")] | length' "$TMP/sca.json")
-[ "$SCA_CRITICAL" -gt 0 ] && GATE_FAILURES+=("SCA: $SCA_CRITICAL critical CVEs in dependencies")
-[ "$SCA_HIGH" -gt 0 ]     && GATE_WARNINGS+=("SCA: $SCA_HIGH high CVEs in dependencies")
+[[ "$SCA_CRITICAL" -gt 0 ]] && GATE_FAILURES+=("SCA: $SCA_CRITICAL critical CVEs in dependencies")
+[[ "$SCA_HIGH" -gt 0 ]]     && GATE_WARNINGS+=("SCA: $SCA_HIGH high CVEs in dependencies")
 echo "     Critical CVEs: $SCA_CRITICAL  High CVEs: $SCA_HIGH" &
 SCA_PID=$!
 
 # -- IaC (Checkov) --
-if [ -s "$TMP/iac-files.txt" ]; then
+if [[ -s "$TMP/iac-files.txt" ]]; then
   echo "  IaC scan (Checkov)..."
   checkov -d "$REPO_ROOT" --output json --quiet --compact 2>/dev/null > "$TMP/iac.json" || true
   IaC_FAIL=$(safe_jq '.results.failed_checks | length' "$TMP/iac.json")
-  [ "$IaC_FAIL" -gt 0 ] && GATE_WARNINGS+=("IaC: $IaC_FAIL policy violations")
+  [[ "$IaC_FAIL" -gt 0 ]] && GATE_WARNINGS+=("IaC: $IaC_FAIL policy violations")
   echo "     Policy violations: $IaC_FAIL"
 fi &
 IaC_PID=$!
@@ -97,10 +97,10 @@ wait $SAST_PID $SECRETS_PID $SCA_PID $IaC_PID 2>/dev/null || true
 
 # -- COVERAGE --
 COVERAGE_THRESHOLD=$(safe_jq '.coverage.line_min' "$CONFIG" 80)
-if [ -f "$REPO_ROOT/coverage/coverage-summary.json" ]; then
+if [[ -f "$REPO_ROOT/coverage/coverage-summary.json" ]]; then
   COVERAGE=$(safe_jq '.total.lines.pct' "$REPO_ROOT/coverage/coverage-summary.json" 100)
   BELOW=$(echo "$COVERAGE < $COVERAGE_THRESHOLD" | bc -l 2>/dev/null || echo 0)
-  [ "$BELOW" = "1" ] && GATE_WARNINGS+=("COVERAGE: ${COVERAGE}% below threshold ${COVERAGE_THRESHOLD}%")
+  [[ "$BELOW" == "1" ]] && GATE_WARNINGS+=("COVERAGE: ${COVERAGE}% below threshold ${COVERAGE_THRESHOLD}%")
   echo "  Coverage: ${COVERAGE}% (threshold: ${COVERAGE_THRESHOLD}%)"
 fi
 
@@ -108,12 +108,12 @@ fi
 echo ""
 echo "------------------------"
 
-if [ ${#GATE_WARNINGS[@]} -gt 0 ]; then
+if [[ ${#GATE_WARNINGS[@]} -gt 0 ]]; then
   echo "Warnings:"
   for w in "${GATE_WARNINGS[@]}"; do echo "   $w"; done
 fi
 
-if [ ${#GATE_FAILURES[@]} -gt 0 ]; then
+if [[ ${#GATE_FAILURES[@]} -gt 0 ]]; then
   echo "Gate BLOCKED:"
   for f in "${GATE_FAILURES[@]}"; do echo "   $f"; done
   echo ""

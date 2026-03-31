@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # PreCompact hook — writes minimal checkpoint to vault before context compaction.
 # Always exits 0 (advisory, never blocks compaction).
-set -uo pipefail
+set -euo pipefail
 trap 'exit 0' ERR
 
 CONFIG_FILE="$HOME/.claude/praxis.config.json"
@@ -19,7 +19,7 @@ PLANS_DIR="$VAULT_PATH/plans"
 mkdir -p "$PLANS_DIR"
 
 DATE=$(date +%Y-%m-%d)
-TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
+TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 CHECKPOINT_FILE="$PLANS_DIR/$DATE-compact-checkpoint.md"
 
 BRANCH=$(git --no-pager rev-parse --abbrev-ref HEAD 2>/dev/null || echo "unknown")
@@ -40,16 +40,16 @@ fi
 LINT_STATE="unknown"
 TEST_STATE="unknown"
 
-if [ -f "go.mod" ] && command -v golangci-lint &>/dev/null; then
+if [[ -f "go.mod" ]] && command -v golangci-lint &>/dev/null; then
   LINT_COUNT=$(golangci-lint run ./... 2>&1 | grep -c "^" || true)
-  if [ "$LINT_COUNT" -eq 0 ]; then
+  if [[ "$LINT_COUNT" -eq 0 ]]; then
     LINT_STATE="clean"
   else
     LINT_STATE="$LINT_COUNT findings"
   fi
 fi
 
-if [ -f "go.mod" ] && command -v go &>/dev/null; then
+if [[ -f "go.mod" ]] && command -v go &>/dev/null; then
   if go test ./... -short 2>&1 | grep -q "^ok"; then
     TEST_STATE="passing"
   else

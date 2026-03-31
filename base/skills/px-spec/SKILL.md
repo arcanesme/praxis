@@ -21,11 +21,15 @@ You are creating a spec for the current project.
 Ask the following in a single message:
 - What is this spec for? (one sentence)
 - Type: ADR (architecture decision) / RISK (risk register entry) / SPEC (technical spec)
-- Is there an existing related spec in `specs/`? (run `obsidian search query="{topic}" limit=3` first)
+- Is there an existing related spec in `specs/`?
+  - Read `vault_backend` from `~/.claude/praxis.config.json`
+  - If `obsidian`: run `obsidian search query="{topic}" limit=3`
+  - If `ripgrep`: run `rg --files-with-matches "{topic}" {vault_path}/specs/`
+  - If vault search fails (e.g., Obsidian not running): warn "Vault search unavailable — skipping conflict check" and proceed without blocking
 
 **Step 2b — Cross-spec conflict check**
 After the vault search from Step 2, check for conflicts with accepted ADRs:
-- Run: `obsidian search query="{topic}" limit=10`
+- Run vault search for topic (using backend detected above) with limit=10
 - For each result with `status: accepted` or `status: proposed`:
   - Compare the decision direction. Does the new spec contradict an accepted decision?
 - If conflict detected, present:
