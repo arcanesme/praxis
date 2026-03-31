@@ -74,3 +74,25 @@ A comment that says `// increment counter` above `counter++` is noise.
 A comment that says `// retry three times because the upstream API returns 503 on cold start`
 is knowledge that cannot be inferred from the code alone.
 Delete the first kind. Write more of the second kind.
+
+---
+
+## Reference Codebases — What Excellence Looks Like
+
+When you need a reference for what excellent code looks like, use these:
+
+| Domain | Reference | What to study |
+| ------ | --------- | ------------- |
+| C / systems | SQLite source (`sqlite.org/src`) | Discipline: 590x test-to-source ratio, 100% branch coverage, zero external deps |
+| C / network | Redis `src/ae.c`, `src/dict.c` | Naming, readability, data structures that document themselves |
+| Go | Go standard library (`pkg.go.dev/std`) | Idiomatic naming, error design, interface sizing — one method where possible |
+| Rust | `rustc_errors` crate | Error message design: what failed, where, what to do next |
+| Error messages | Elm compiler output | Kindest, most actionable errors in any compiled language |
+| API design | Stripe API (`docs.stripe.com`) | Naming consistency, versioning discipline, error schema |
+| Documentation | Go stdlib `net/http` package docs | Every exported symbol explained by what it does for the caller |
+
+When uncertain if code is good enough: "Would this survive a review from the SQLite team?"
+If the answer is no — simplify first.
+
+The SQLite standard: every line has a reason. Every function has one job.
+Every error has a message a human can act on.

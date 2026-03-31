@@ -17,7 +17,8 @@ Execute in order, showing actual output (never assertions):
    - **DeepSource**: `deepsource issues list <file>` for files in diff (if deepsource CLI available)
    - If either tool finds HIGH/CRITICAL: treat as blocking — must fix before proceeding.
    - If tools not installed: skip with advisory note, do not block. DeepSource cloud validates on push.
-6. **Functional check** — ask: "Is there a smoke test, `terraform plan` output, or browser check needed for this milestone?" If yes: block until user confirms it passed. If no: proceed.
+6. **Quality gate** → run `/px-quality-gate` on changed files → BLOCK on naming/prose/structure violations. See `px-quality-gate` skill for full check list.
+7. **Functional check** — ask: "Is there a smoke test, `terraform plan` output, or browser check needed for this milestone?" If yes: block until user confirms it passed. If no: proceed.
 
 Read test/lint/build commands from the project CLAUDE.md `## Commands` section.
 If no commands are defined: warn and ask user for the correct commands.

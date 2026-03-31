@@ -125,6 +125,9 @@ Missing servers are non-blocking — features degrade gracefully.
 - Commit with wrong git identity
 - Write a file with unreplaced {placeholders}
 - Use vault search when Obsidian is not running (obsidian backend requires Obsidian open)
+- Mix refactoring and feature changes in one commit — commit refactor separately
+- Copy-paste 3+ lines instead of extracting a shared function
+- Use `console.log`/`fmt.Println`/`print()` for production logging — use the structured logger
 
 ## AI-Kit Registry
 Kits activate via `/px-kit:<n>` slash command. Kits are idempotent — double-activate is a no-op.
@@ -142,7 +145,7 @@ Kit manifests live in `~/.claude/kits/<name>/KIT.md`.
 
 ## Rules Registry — Load on Demand Only
 
-### Universal — always active (12 rules)
+### Universal — always active (14 rules)
 
 Quality is a generation-time constraint, not a post-hoc review. The rules below
 are the lens you write through — they shape every line of code produced.
@@ -161,6 +164,8 @@ are the lens you write through — they shape every line of code produced.
 | `~/.claude/rules/context-management.md` | Context anti-rot, phase scoping, context reset protocol |
 | `~/.claude/rules/memory-boundary.md` | Auto-memory boundary, MEMORY.md cap, dream integration |
 | `~/.claude/rules/security-posture.md` | Sandbox model, credential protection, protected paths |
+| `~/.claude/rules/writing-quality.md` | Prose constraints — sentence limits, fluff kill list, doc templates, voice rules |
+| `~/.claude/rules/refactor-triggers.md` | Pre-check protocol, commit refactor separately, QUALITY: comment convention |
 
 ### Scoped — load only when paths match
 
@@ -188,11 +193,19 @@ are the lens you write through — they shape every line of code produced.
 | `~/.claude/rules/live-docs-required.md` | Dependency manifests, files importing external packages |
 | `~/.claude/rules/desktop-protocol.md` | Claude Desktop ↔ Claude Code handoff sessions |
 
+#### Application observability
+
+| File | Loads when |
+|------|------------|
+| `~/.claude/rules/observable-code.md` | `**/services/**`, `**/handlers/**`, `**/workers/**`, `**/middleware/**`, `**/cmd/**` |
+
 ### Auto-invocable skills (replace former universal rules)
 | Skill | Triggers when |
 |-------|--------------|
 | `px-communication-standards` | Writing client-facing docs, proposals, status reports, commits, PRs |
 | `px-architecture-patterns` | Writing ADRs, specs, system design, risk docs, blocker reports |
+| `px-quality-gate` | Auto inside /px-verify (Step 1 item 5b) and before /px-ship — blocks on BLOCK findings |
+| `px-doc-lint` | Fast structural markdown check inside px-quality-gate for staged *.md files |
 
 ## Judgment & Research Commands
 

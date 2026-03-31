@@ -13,6 +13,22 @@
 - If Context7 is unavailable: state that docs could not be verified and flag the
   specific method/API as "unverified against current version."
 
+### Import-trigger protocol
+
+Any commit diff that adds a new `import`, `require`, `using`, or `use` statement for an
+external package must have a corresponding Context7 lookup in the same session.
+
+Language-specific patterns matched:
+
+- JavaScript/TypeScript: `import ... from`, `require(...)`
+- Python: `import ...`, `from ... import`
+- Go: `import "..."` or `import (...)`
+- Rust: `use ...::...`
+- Java/C#: `import ...`, `using ...`
+
+Every new external import requires a Context7 verification before the gate clears.
+Internal packages (same repo, same module) are excluded.
+
 ### Tool preferences
 - Use Read/Edit/Write tools instead of cat/sed/echo.
 - Use `rg` (ripgrep) for searching code, not grep.
