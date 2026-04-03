@@ -101,8 +101,14 @@ Registered via `claude mcp add`. Persist globally across sessions.
 Check: `claude mcp list` | Manage: `bash scripts/onboard-mcp.sh [server|all]`
 Missing servers are non-blocking — features degrade gracefully.
 
+**CLI companions** — invoked via npx, not MCP:
+
+| Tool | Purpose | Invoke | Degrades without |
+|------|---------|--------|-----------------|
+| opensrc | Fetch library source for deep inspection | `npx opensrc <package>` | No source-level investigation; Context7 docs only |
+
 ## After Compaction — Bootstrap
-1. Read project CLAUDE.md (always first)
+1. Read project CLAUDE.md (always first). If `AGENTS.md` exists in project root, read it too — it contains opensrc source manifests.
 2. Active task? → read active plan current milestone only
    No active task? → read `status.md`
 4. Load rules only for what the current task touches:

@@ -7,6 +7,9 @@ praxis.config.json
 *.local
 settings.json
 
+# opensrc — fetched library source (ephemeral, re-fetch as needed)
+opensrc/
+
 # Plugin caches
 plugins/
 node_modules/

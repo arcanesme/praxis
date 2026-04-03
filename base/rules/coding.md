@@ -29,6 +29,13 @@ Language-specific patterns matched:
 Every new external import requires a Context7 verification before the gate clears.
 Internal packages (same repo, same module) are excluded.
 
+### Source-level investigation (opensrc)
+- When Context7 docs are insufficient to understand library behavior (bugs, edge cases,
+  undocumented internals), run `npx opensrc <package>` to fetch source into `opensrc/<pkg>/`.
+- Before fetching: check `opensrc/sources.json` for already-fetched packages.
+- After fetching: read `AGENTS.md` in project root for the source manifest.
+- This is an escalation path, not a default — Context7 docs are the first stop.
+
 ### Tool preferences
 - Use Read/Edit/Write tools instead of cat/sed/echo.
 - Use `rg` (ripgrep) for searching code, not grep.

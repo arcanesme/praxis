@@ -62,6 +62,16 @@ Use `perplexity_search` (model: `sonar` for speed):
 - Query: `"[package] last commit release 2025 2026 archived"`
 - Extract: last commit date, last release date, repository status, contributor count
 
+## Step 5.5 — Source Fetch (optional, on `--deep` flag or when investigating internals)
+
+If the research is for understanding implementation behavior (not just API surface):
+1. Check `opensrc/sources.json` — skip if package already fetched
+2. Run `npx opensrc <package>` to fetch source into `opensrc/<pkg>/`
+3. Read `AGENTS.md` for the source manifest
+4. Note key implementation details in the report under a new "### Implementation Notes" section
+
+Skip this step for standard dependency evaluation (version/CVE/maintenance checks).
+
 ## Step 6 — Produce Report
 
 Output in this exact format:
@@ -80,6 +90,9 @@ Output in this exact format:
 
 ### API Notes (from live docs)
 [Relevant API surface, configuration, or usage patterns from Context7/Sonar docs]
+
+### Implementation Notes (when source was fetched)
+[Key internals, edge cases, or undocumented behavior discovered from source]
 
 ### Sources
 - [Citation URL 1]

@@ -35,7 +35,8 @@
       {"name": "markdownlint", "feature": "lint-markdown", "install": "npm install -g markdownlint-cli"},
       {"name": "golangci-lint", "feature": "lint-go", "install": "brew install golangci-lint"},
       {"name": "rustfmt", "feature": "format-rust", "install": "rustup component add rustfmt"},
-      {"name": "clippy", "feature": "lint-rust", "install": "rustup component add clippy"}
+      {"name": "clippy", "feature": "lint-rust", "install": "rustup component add clippy"},
+      {"name": "opensrc", "feature": "source-inspection", "install": "npx opensrc@latest --help"}
     ]
   },
   "env_vars": {
@@ -106,7 +107,8 @@
     ],
     "optional": [
       {"path": "base/hooks/recursion-guard.sh", "event": "PreToolUse", "matcher": "", "feature": "recursion-detection"},
-      {"path": "base/hooks/dep-audit.sh", "event": "PostToolUse", "matcher": "Write|Edit|MultiEdit", "feature": "dep-audit"}
+      {"path": "base/hooks/dep-audit.sh", "event": "PostToolUse", "matcher": "Write|Edit|MultiEdit", "feature": "dep-audit"},
+      {"path": "base/hooks/context7-remind.sh", "event": "PostToolUse", "matcher": "Write|Edit|MultiEdit", "feature": "context7-enforcement"}
     ]
   },
   "claude_settings": {
