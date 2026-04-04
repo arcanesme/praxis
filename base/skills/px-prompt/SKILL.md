@@ -80,75 +80,86 @@ When invoked with a project name, detect the right action:
 
 **Triggered when:** project folder doesn't exist.
 
-### 1a. Core intake (always ask)
+### 1a. Single-question intake
 
-1. **Description** — "Describe this project in one sentence."
+Ask ONE question: **"Describe this project in 1-2 sentences."**
 
-2. **Role** — "Who is the AI in this project?"
-   - Show available identity blocks: `node bin/prompt-blocks.js --category identity`
-   - User can pick one OR describe a custom role
+That's it. Infer everything else using the inference engine below.
 
-3. **Target platforms** — "Which platforms will you deploy to?"
-   - Multi-select: Claude Projects, Perplexity Spaces, Claude Code
-   - Default: Claude Projects + Perplexity Spaces
+### 1b. Inference engine — derive config from description
 
-4. **Complexity** — Based on the description, recommend a mode:
-   - Simple/standard project → **compiled** (block-based, continue to 1b)
-   - Complex multi-role agent → **standalone** with AI generation (continue to 1c)
-   - User already has a prompt → **standalone** paste-in (scaffold folder, skip to Step 3)
+Run these rules against the description to auto-populate the project config:
 
-### 1b. Compiled project setup
+**Role inference** (keywords → identity block):
+- "architect", "design", "infrastructure", "cloud", "azure", "aws" → `solutions-architect`
+- "engineer", "developer", "code", "build", "implement" → `senior-engineer`
+- "research", "analysis", "investigate", "study" → `research-partner`
+- "capture", "proposal", "federal", "deal", "RFP", "maximus" → `federal-deal-sa` (use `maximus-sa` profile)
+- No match → `solutions-architect` (default)
 
-5. **Domain expertise** — Show available domain blocks:
-   ```bash
-   node bin/prompt-blocks.js --category domains
-   ```
-   User picks from list or describes custom domains.
-   For custom domains: create a new block file at `prompts/blocks/domains/<id>.md`.
+**Domain inference** (keywords → domain blocks):
+- "cloud", "azure", "aws", "terraform", "infrastructure" → `cloud-infrastructure`
+- "federal", "govcon", "government", "compliance", "FedRAMP" → `govcon`
+- "web", "react", "frontend", "UI", "design" → `web-development`
+- "capture", "proposal", "RFP", "deal" → `govcon-capture`, `govcon-proposal`
+- No existing block match → standalone mode (AI generates custom domain content from research)
 
-6. **Research domains** (if Perplexity selected) — "What topics should Perplexity prioritize?"
-   Suggest based on selected domains. User accepts or customizes.
+**Platform inference:**
+- Default: Claude Projects + Perplexity Spaces
+- Add Claude Code if description contains: "code", "repo", "implement", "build", "develop", "engineering", "CLI"
+- Perplexity-only if description contains: "research only", "analysis only", "investigation"
 
-7. **Knowledge files** — "Reference documents to upload alongside? (compliance matrices, standards, playbooks)"
-   - User can provide paths to existing files
-   - OR request Perplexity-generated knowledge files (see Step 2e)
+**Mode inference:**
+- If description triggers `maximus-sa` profile → compiled with `maximus-sa`
+- If ≥2 existing domain blocks match → compiled with matched blocks
+- If description suggests multi-role, custom workflow, or complex agent → standalone
+- If no domain blocks match → standalone with AI generation (Perplexity fills the gap)
+- Default for unknown domains → standalone
 
-8. **Claude Code extras** (only if Claude Code selected) — tech stack, commands, git identity
+**Research domain inference:**
+- Derive from description keywords + matched domain names
+- For standalone: use the full description as research seed
+- Always generate at least 2 research queries
 
-9. **Build project folder:**
+### 1c. Show confirmation card
+
+Instead of asking more questions, show what was inferred:
+
+```
+Project: <project-name>
+
+  Role:       <inferred identity block or "custom via research">
+  Domains:    <matched blocks or "custom — AI-generated from research">
+  Platforms:  <inferred list>
+  Mode:       <compiled | standalone>
+  Profile:    <matched profile or "none — custom blocks">
+  Research:   <inferred research topics>
+  Knowledge:  auto-generate from research
+
+  [Proceed] [Edit]
+```
+
+- **Proceed** → run full pipeline (scaffold → research → generate → condense → results)
+- **Edit** → ask ONE targeted follow-up on the specific field to change
+
+### 1d. Build project and run pipeline
+
+After confirmation:
+
+1. **Scaffold folder:**
    ```bash
    mkdir -p prompts/projects/<project-name>/references
    ```
 
-   Write `prompt-config.yaml`:
-   ```yaml
-   project: <project-name>
-   description: <from intake>
-   mode: compiled
-   version: "1.0"
-   platforms: [claude-project, perplexity-space]
-   profile: null
-   blocks:
-     identity: [<matched-block>]
-     domains: [<selected-blocks>]
-     behaviors: []
-     formats: []
-     context: [<auto-selected by platform>]
-   research_domains: [<from intake>]
-   knowledge_files: [<from intake>]
-   ```
+2. **Write `prompt-config.yaml`** with inferred values
 
-   **Auto-add context blocks by platform:**
-   - Perplexity → `official-docs-first`, `flag-confidence`
-   - Claude Code → `vault-integration`, `mcp-servers`, `praxis-workflow`
+3. **If compiled mode:** `node bin/prompt-compile.js <project-name>` → Step 4
 
-10. **Compile:** `node bin/prompt-compile.js <project-name>`
+4. **If standalone mode:** → Step 2 (Perplexity research + generation)
 
-11. → Go to **Step 4** (results + deployment)
-
-### 1c. Standalone project with AI generation
-
-→ Go to **Step 2** (generate from scratch)
+**Auto-add context blocks by platform (compiled mode):**
+- Perplexity → `official-docs-first`, `flag-confidence`
+- Claude Code → `vault-integration`, `mcp-servers`, `praxis-workflow`
 
 ---
 
@@ -156,15 +167,13 @@ When invoked with a project name, detect the right action:
 
 **Triggered when:** standalone project exists but `system-prompt.md` is empty/missing, OR user explicitly requests generation.
 
-### 2a. Intake (if not already gathered in Step 1)
+### 2a. Use inference from Step 1
 
-1. **Description** — 2-3 sentences about the project
-2. **Role** — primary AI responsibility
-3. **Domains** — expertise areas (free-form, not limited to existing blocks)
-4. **Key behaviors** — rules beyond defaults
-5. **Target audience** — who reads the output
-6. **Knowledge files** — reference documents (existing or to be generated)
-7. **Target platforms** — deployment targets
+All intake was gathered in Step 1 (description → inference engine → confirmation card).
+Do NOT ask additional questions here. Use the confirmed config from Step 1c.
+
+The description provides: role, domains, audience, platforms.
+Behaviors default from `_base`. Knowledge files auto-generate from research.
 
 ### 2b. Domain research via Perplexity
 
@@ -264,9 +273,10 @@ Write to `prompts/projects/<project-name>/system-prompt.md`.
 
 ### 2e. Generate knowledge files from Perplexity research
 
-**Triggered when:** user requests knowledge file generation during intake, OR after prompt generation when domain research produced rich findings.
+**Always runs by default** after prompt generation. Do not ask — just generate.
+If the user declined in the confirmation card, skip this step.
 
-For each research domain, ask the user if they want a knowledge file generated:
+For each research domain:
 
 1. Run deep Perplexity queries per domain:
    ```
@@ -550,7 +560,7 @@ Use this context when the user asks for changes — edit in place rather than re
 - Confidence Levels: HIGH (verified), MEDIUM (corroborated), LOW (inferred/speculative)
 
 ### Knowledge file generation
-- Offer to generate knowledge files from Perplexity research during project creation
+- Always generate knowledge files from Perplexity research by default — don't ask
 - Each knowledge file under 10,000 chars (Claude Projects upload limit)
 - Structure: Key Concepts, Standards, Best Practices, Workflows, Tools, Sources
 - Write to `references/<domain-slug>.md`
@@ -567,9 +577,9 @@ Use this context when the user asks for changes — edit in place rather than re
 - Generated prompts are starting points — tell user to review and refine
 - If Perplexity unavailable: proceed with training data, flag for review
 
-### Block matching (compiled mode)
-- Role → identity block: "architect" → `solutions-architect`, "engineer" → `senior-engineer`, "researcher" → `research-partner`
-- Domain keywords → domain blocks: "cloud/azure/aws" → `cloud-infrastructure`, "federal/govcon" → `govcon`, "web/react" → `web-development`
-- If no match: create custom block on the fly
-- Auto-add `official-docs-first` + `flag-confidence` for Perplexity targets
-- Auto-add `vault-integration` + `mcp-servers` + `praxis-workflow` for Claude Code targets
+### Inference and block matching
+- See Step 1b for full inference rules (role, domain, platform, mode, research domains)
+- If no domain blocks match → standalone mode with AI generation, not compiled with empty blocks
+- Auto-add `official-docs-first` + `flag-confidence` for Perplexity targets (compiled mode)
+- Auto-add `vault-integration` + `mcp-servers` + `praxis-workflow` for Claude Code targets (compiled mode)
+- **Maximum 1 question** for new projects (description). Show confirmation card, not a questionnaire.
