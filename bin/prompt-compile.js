@@ -242,6 +242,7 @@ function main() {
     console.log('  --diff             Show what changed before writing');
     console.log('  --strict           Exit with error on budget overruns or unresolved vars');
     console.log('  --sync             Compile all projects with diff, show summary table');
+    console.log('  --dashboard        Rich project index with budgets and staleness');
     console.log('  --list             List all projects with mode and file status');
     process.exit(0);
   }
@@ -274,6 +275,65 @@ function main() {
         `${name.padEnd(20)} ${mode.padEnd(12)} ${fileStatus('system-prompt.md').padEnd(15)} ${fileStatus('project-instructions-claude-desktop.md').padEnd(15)} ${fileStatus('space-instructions-perplexity.md').padEnd(15)} ${fileStatus('CLAUDE.md').padEnd(12)} ${refCount}`
       );
     }
+    process.exit(0);
+  }
+
+  // --dashboard mode: rich project index with staleness and budgets
+  if (args.includes('--dashboard')) {
+    const projectDirs = fs.readdirSync(PROJECTS_DIR)
+      .filter((d) => d !== '_template' && fs.statSync(path.join(PROJECTS_DIR, d)).isDirectory());
+    if (projectDirs.length === 0) {
+      console.log('No projects found.');
+      process.exit(0);
+    }
+
+    const STALE_DAYS = 30;
+    const now = Date.now();
+
+    console.log('\n\x1b[1mPROMPT ENGINE DASHBOARD\x1b[0m');
+    console.log('\x1b[90m' + '━'.repeat(100) + '\x1b[0m');
+    console.log(
+      `${'Project'.padEnd(16)} ${'Mode'.padEnd(12)} ${'Perplexity'.padEnd(14)} ${'Claude Proj'.padEnd(14)} ${'CLAUDE.md'.padEnd(14)} ${'Refs'.padEnd(6)} ${'Updated'.padEnd(12)} Stale?`
+    );
+    console.log('\x1b[90m' + '─'.repeat(100) + '\x1b[0m');
+
+    for (const name of projectDirs) {
+      const dir = path.join(PROJECTS_DIR, name);
+      const cfgPath = path.join(dir, 'prompt-config.yaml');
+      const cfg = fs.existsSync(cfgPath) ? yaml.load(fs.readFileSync(cfgPath, 'utf8')) : {};
+      const mode = cfg.mode || 'compiled';
+
+      const fileBudget = (f, budget) => {
+        const p = path.join(dir, f);
+        if (!fs.existsSync(p)) return '\x1b[90m—\x1b[0m';
+        const chars = fs.readFileSync(p, 'utf8').length;
+        const icon = chars > budget ? '\x1b[33m⚠\x1b[0m' : '\x1b[32m✓\x1b[0m';
+        return `${chars} ${budget < Infinity ? icon : ''}`;
+      };
+
+      const refsDir = path.join(dir, 'references');
+      const refCount = fs.existsSync(refsDir)
+        ? fs.readdirSync(refsDir).filter((f) => f.endsWith('.md')).length
+        : 0;
+
+      // Find most recent file modification in project dir
+      let latestMtime = 0;
+      const allFiles = fs.readdirSync(dir).filter((f) => f.endsWith('.md') || f.endsWith('.yaml'));
+      for (const f of allFiles) {
+        const stat = fs.statSync(path.join(dir, f));
+        if (stat.mtimeMs > latestMtime) latestMtime = stat.mtimeMs;
+      }
+      const updated = latestMtime > 0 ? new Date(latestMtime).toISOString().slice(0, 10) : '—';
+      const daysSince = latestMtime > 0 ? Math.floor((now - latestMtime) / 86400000) : 999;
+      const stale = daysSince > STALE_DAYS ? '\x1b[31mYes\x1b[0m' : '\x1b[32mNo\x1b[0m';
+
+      console.log(
+        `${name.padEnd(16)} ${mode.padEnd(12)} ${fileBudget('space-instructions-perplexity.md', CHAR_BUDGETS['perplexity-space']).padEnd(23)} ${fileBudget('project-instructions-claude-desktop.md', CHAR_BUDGETS['claude-project']).padEnd(23)} ${fileBudget('CLAUDE.md', Infinity).padEnd(23)} ${String(refCount).padEnd(6)} ${updated.padEnd(12)} ${stale}`
+      );
+    }
+
+    console.log('\x1b[90m' + '━'.repeat(100) + '\x1b[0m');
+    console.log('\x1b[90mStaleness: >30 days since last file change. Budgets: ✓ under, ⚠ over.\x1b[0m\n');
     process.exit(0);
   }
 

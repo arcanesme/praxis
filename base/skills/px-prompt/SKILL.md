@@ -11,9 +11,14 @@ Single entry point for the prompt engine. Detects what needs to happen based on 
 
 ## Invocation
 - `/px-prompt <project-name>` — create, generate, or regenerate a project's prompts
+- `/px-prompt --deal <deal-name>` — fast-path for new Maximus capture deals (3 questions)
+- `/px-prompt --edit <project-name> "<change>"` — targeted edit, auto-regenerate platform outputs
 - `/px-prompt --sync` — recompile all projects, report diffs and budgets
+- `/px-prompt --dashboard` — project index with status, budgets, and staleness
+- `/px-prompt --refresh <project-name>` — re-run Perplexity research, diff and update
+- `/px-prompt --deploy <project-name>` — copy outputs to clipboard with deployment URLs
+- `/px-prompt --scan <project-name>` — full audit of project quality and budgets
 - `/px-prompt --list` — list all projects and their status
-- `/px-prompt --scan <project-name>` — scan project folder, suggest edits to existing prompts
 
 ---
 
@@ -50,28 +55,43 @@ Reference/knowledge files live in `prompts/projects/<project-name>/references/`.
 When invoked with a project name, detect the right action:
 
 ```
-/px-prompt <project-name>
+/px-prompt <args>
   │
-  ├─ Project doesn't exist?
+  ├─ --deal <deal-name>?
+  │   → ACTION: DEAL SHORTCUT (Step 7) — 3 questions, maximus-sa, auto-scaffold
+  │
+  ├─ --edit <project-name> "<change>"?
+  │   → ACTION: TARGETED EDIT (Step 8) — edit one section, regenerate outputs
+  │
+  ├─ --dashboard?
+  │   → ACTION: DASHBOARD (Step 9) — project index with staleness
+  │
+  ├─ --refresh <project-name>?
+  │   → ACTION: REFRESH (Step 10) — re-run Perplexity research, diff, update
+  │
+  ├─ --deploy <project-name>?
+  │   → ACTION: DEPLOY (Step 11) — clipboard + URLs
+  │
+  ├─ --scan <project-name>?
+  │   → ACTION: SCAN & AUDIT (Step 6)
+  │
+  ├─ --sync?
+  │   → ACTION: SYNC ALL (Step 5)
+  │
+  ├─ <project-name> — project doesn't exist?
   │   → ACTION: CREATE (Step 1)
   │
-  ├─ Project exists, mode: standalone, system-prompt.md missing?
-  │   → ACTION: GENERATE FROM SCRATCH (Step 2)
+  ├─ <project-name> — exists, standalone, system-prompt.md missing?
+  │   → ACTION: GENERATE (Step 2)
   │
-  ├─ Project exists, mode: standalone, system-prompt.md exists, platform outputs missing?
+  ├─ <project-name> — exists, standalone, platform outputs missing?
   │   → ACTION: CONDENSE (Step 3)
   │
-  ├─ Project exists, mode: standalone, all files present?
-  │   → ACTION: VALIDATE + offer to regenerate (Step 4)
+  ├─ <project-name> — exists, all files present?
+  │   → ACTION: VALIDATE (Step 4)
   │
-  ├─ Project exists, mode: compiled?
-  │   → ACTION: COMPILE (Step 4)
-  │
-  ├─ --scan flag?
-  │   → ACTION: SCAN & EDIT (Step 6)
-  │
-  └─ --sync flag?
-      → ACTION: SYNC ALL (Step 5)
+  └─ <project-name> — exists, compiled?
+      → ACTION: COMPILE (Step 4)
 ```
 
 ---
@@ -530,6 +550,269 @@ After scanning, maintain awareness of:
 - What the version history looks like (from prompt-config.yaml)
 
 Use this context when the user asks for changes — edit in place rather than regenerating from scratch.
+
+---
+
+## Step 7 — DEAL: Fast-path for Maximus capture deals
+
+**Triggered when:** `/px-prompt --deal <deal-name>`
+
+This is the fastest path for the most common task: creating a new Maximus capture deal.
+
+### 7a. Ask 3 deal-specific questions
+
+1. **Agency & Program** — "Which agency and program?" (e.g., "VA EHR Modernization")
+2. **Incumbents** — "Who's the incumbent?" (e.g., "Oracle Health (Cerner)")
+3. **Contract details** — "Contract type, vehicle, value, NAICS?" (user fills what they know, rest stays TBD)
+
+That's it. Role, domains, profile, platforms — all pre-set to `maximus-sa`.
+
+### 7b. Auto-scaffold with maximus-sa
+
+1. `mkdir -p prompts/projects/<deal-name>/references`
+2. Write `prompt-config.yaml`:
+   ```yaml
+   project: <deal-name>
+   description: "Maximus capture — <agency> <program>"
+   mode: compiled
+   profile: maximus-sa
+   version: "1.0"
+   platforms: [claude-project, perplexity-space, claude-code]
+   vars: {}
+   knowledge_packs:
+     - template: deal-context
+       output: deal-context.md
+       targets: [claude-project, perplexity-space]
+       vars:
+         agency: <from intake>
+         program_name: <from intake>
+         incumbents: <from intake>
+         contract_vehicle: <from intake or "TBD">
+         naics: <from intake or "TBD">
+         set_aside: <from intake or "TBD">
+         period_of_performance: <from intake or "TBD">
+         key_personnel: <from intake or "TBD">
+     - template: corporate-reference
+       output: maximus-corporate.md
+       targets: [claude-project, perplexity-space]
+       vars:
+         company_name: "Maximus Inc."
+         legal_name: "Maximus Inc."
+         ticker: "MMS (NYSE)"
+         hq: "Tysons, Virginia"
+         ceo: "Bruce Caswell"
+         uei: "RBGHRKKXVQ83"
+         cage_code: "7N773"
+         revenue: "~$5.31B (FY2024)"
+         backlog: "~$16.2B"
+         key_vehicles: "OASIS+, GSA MAS"
+         mission_threads: <from maximus project config>
+         key_partnerships: <from maximus project config>
+   ```
+
+3. Compile: `node bin/prompt-compile.js <deal-name>`
+4. Render knowledge packs: `node bin/prompt-knowledge.js <deal-name>`
+
+### 7c. Run OSINT research (if Perplexity available)
+
+Auto-run Perplexity queries for the deal:
+```
+perplexity_search: "<agency> <program> site:sam.gov OR site:usaspending.gov"
+perplexity_ask: "What is the current status of <agency> <program>? Incumbent, contract value, timeline, recent developments."
+perplexity_search: "<incumbent> federal contracts <agency>"
+```
+
+Write findings to `references/<deal-name>-intel.md`.
+
+### 7d. Show results
+
+→ Step 4 (results table + deployment instructions)
+
+**Total: 3 questions → compiled project + deal context + OSINT intel + all platform outputs.**
+
+---
+
+## Step 8 — EDIT: Targeted edit with auto-regeneration
+
+**Triggered when:** `/px-prompt --edit <project-name> "<change description>"`
+
+### 8a. Read current state
+
+1. Read `prompt-config.yaml` to determine mode (compiled vs standalone)
+2. Read the source file:
+   - Compiled: read the relevant block files based on what the change targets
+   - Standalone: read `system-prompt.md`
+3. Read all platform outputs for comparison
+
+### 8b. Apply the targeted edit
+
+Based on the change description, identify which section(s) to modify:
+
+**For standalone projects:**
+1. Edit `system-prompt.md` — apply the change to the specific section
+2. Auto-regenerate all platform outputs (Step 3)
+3. Show diff of what changed in each file
+
+**For compiled projects:**
+1. Identify which block file contains the content to change
+2. Edit the block file (both FULL and CONDENSED variants)
+3. Re-compile: `node bin/prompt-compile.js <project-name> --diff`
+4. Show diff of what changed
+
+### 8c. Report
+
+```
+EDIT APPLIED
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Changed: <file(s) modified>
+Regenerated: <platform outputs updated>
+Budget: perplexity ✓ | claude-desktop ✓ | CLAUDE.md ✓
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+**Examples:**
+- `/px-prompt --edit elect-azure "Add VITA SEC530 cybersecurity standard to domain expertise"`
+- `/px-prompt --edit maximus "Update CEO to new name"`
+- `/px-prompt --edit praxis "Add Python to tech stack"`
+
+---
+
+## Step 9 — DASHBOARD: Project index with status
+
+**Triggered when:** `/px-prompt --dashboard`
+
+### 9a. Gather data
+
+```bash
+node bin/prompt-compile.js --dashboard
+```
+
+### 9b. Show dashboard
+
+```
+PROMPT ENGINE DASHBOARD
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Project       Mode       Perplexity    Claude Proj   CLAUDE.md   Refs  Updated     Stale?
+─────────────────────────────────────────────────────────────────────────────────────────
+maximus       compiled   3,976 ✓       4,261 ⚠       30,665 ✓    4     2026-04-04  No
+elect-azure   standalone 2,392 ✓       —             3,098 ✓     0     2026-04-04  No
+praxis        compiled   1,626 ✓       1,404 ✓       3,417 ✓     0     2026-04-04  No
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Staleness: projects not updated in >30 days marked stale.
+Budgets: ✓ under budget, ⚠ over soft budget, ✗ over hard budget.
+```
+
+### 9c. Offer actions for flagged projects
+
+For stale projects: "Run `/px-prompt --refresh <name>` to update research."
+For over-budget: "Run `/px-prompt --edit <name>` to trim."
+For missing outputs: "Run `/px-prompt <name>` to generate."
+
+---
+
+## Step 10 — REFRESH: Re-run Perplexity research and update
+
+**Triggered when:** `/px-prompt --refresh <project-name>`
+
+### 10a. Read current project
+
+1. Read `prompt-config.yaml` for research domains and mode
+2. Read current `system-prompt.md` (standalone) or relevant block files (compiled)
+3. Note the current domain expertise content
+
+### 10b. Re-run Perplexity research
+
+For each research domain (from config or inferred from prompt content):
+
+```
+perplexity_ask: "What are the current best practices and standards for [domain] 
+in 2025-2026? Focus on changes since [last updated date]. 
+Key terminology updates, new frameworks, deprecated standards."
+```
+
+### 10c. Diff and propose updates
+
+Compare research findings against current prompt content:
+
+```
+REFRESH REPORT: <project-name>
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Domain: cloud-infrastructure
+  Current: "Azure Well-Architected Framework (5 pillars)"
+  Updated: "Azure Well-Architected Framework (6 pillars — Sustainability added 2025)"
+  → SUGGEST: Update Domain Expertise section
+
+Domain: govcon
+  Current: "CMMC 2.0"
+  Updated: "CMMC 2.0 — Final Rule effective Dec 2024, Level 2 assessments active"
+  → SUGGEST: Add CMMC enforcement timeline
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+### 10d. Apply updates
+
+For each suggested update, show the change and apply:
+- Standalone: edit `system-prompt.md`, regenerate platform outputs
+- Compiled: edit relevant block file(s), recompile
+- Knowledge files: regenerate from fresh research
+
+Update the `version` field in `prompt-config.yaml` and `last_updated` timestamp.
+
+---
+
+## Step 11 — DEPLOY: Copy outputs with deployment URLs
+
+**Triggered when:** `/px-prompt --deploy <project-name>`
+
+### 11a. Read project config
+
+Determine which platforms are targets from `prompt-config.yaml`.
+
+### 11b. Deploy sequence (per platform)
+
+**For Claude Projects / Desktop:**
+1. Read `system-prompt.md` (standalone) or `project-instructions-claude-desktop.md` (compiled)
+2. Copy content to clipboard: `cat <file> | pbcopy`
+3. Print: "Copied to clipboard. Paste at: claude.ai/projects → Set project instructions"
+4. If `references/` has files: "Upload these knowledge files: <list>"
+
+**For Perplexity Spaces:**
+1. Read `space-instructions-perplexity.md`
+2. Copy content to clipboard: `cat <file> | pbcopy`
+3. Print: "Copied to clipboard. Paste at: perplexity.ai → Space Settings → Answer Instructions"
+
+**For Claude Code:**
+1. If project has a `repo_root` in vars: `cp CLAUDE.md <repo_root>/CLAUDE.md`
+2. Print: "CLAUDE.md copied to repo root."
+3. If no repo_root: "Copy CLAUDE.md to your project repo root manually."
+
+### 11c. Deploy one platform at a time
+
+Since clipboard can only hold one thing, deploy sequentially:
+
+```
+DEPLOY: <project-name>
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[1/3] Claude Projects
+  → Copied system-prompt.md to clipboard (5,824 chars)
+  → Paste at: claude.ai/projects
+  → Upload 3 knowledge files from references/
+  Press Enter when done...
+
+[2/3] Perplexity Spaces
+  → Copied space-instructions-perplexity.md to clipboard (3,976 chars)
+  → Paste at: perplexity.ai → Space Settings
+  Press Enter when done...
+
+[3/3] Claude Code
+  → CLAUDE.md → /path/to/repo/CLAUDE.md
+  Done.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+DEPLOYED to 3 platforms.
+```
 
 ---
 
