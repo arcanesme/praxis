@@ -79,6 +79,66 @@ For technical research: `/px-discover` (structured options evaluation before dec
 | `px-context-probe` | Assess context health and recommend action |
 | `px-context-reset` | Reload context from vault without clearing session |
 
+## Prompt Engine
+
+Build and manage system prompts for Claude Projects, Perplexity Spaces, and Claude Code from a single source of truth.
+
+### Quick reference
+
+| Command | What it does |
+|---------|-------------|
+| `/px-prompt my-project` | Create a new project (1 question — describe it) |
+| `/px-prompt --deal irs-masterfile` | New Maximus capture deal (0 questions — Perplexity researches) |
+| `/px-prompt --deal benefeds --type recompete` | New deal with explicit type |
+| `/px-prompt --advance irs-masterfile` | Move deal to next capture phase |
+| `/px-prompt --edit my-project "add NIST 800-53"` | Edit one section, auto-regenerate outputs |
+| `/px-prompt --refresh my-project` | Re-run Perplexity research, diff and update |
+| `/px-prompt --deploy my-project` | Copy outputs to clipboard with platform URLs |
+| `/px-prompt --dashboard` | Project index with budgets and staleness |
+| `/px-prompt --sync` | Recompile all projects, show diffs |
+| `/px-prompt --scan my-project` | Full quality and budget audit |
+
+### Deal lifecycle (Maximus captures)
+
+```
+/px-prompt --deal irs-masterfile          # Create — Perplexity researches from name alone
+/px-prompt --advance irs-masterfile       # Shaping → Mid Capture
+/px-prompt --advance irs-masterfile       # Mid Capture → Pre-Proposal
+/px-prompt --refresh irs-masterfile       # Re-run OSINT before submission
+/px-prompt --advance irs-masterfile       # Pre-Proposal → Pre-Submission
+/px-prompt --deploy irs-masterfile        # Copy to clipboard, paste to platforms
+```
+
+### Deal types
+
+| Type | Flag | When | Emphasis |
+|------|------|------|----------|
+| Recompete | `--type recompete` | Incumbent holds the contract | Defense, ghost matrix, transition |
+| New Start | `--type new-start` | No incumbent, fresh opportunity | Discovery, innovation, OSINT |
+| Task Order | `--type task-order` | Competing on existing IDIQ/BPA | Speed, rates, vehicle history |
+| IDIQ/BPA | `--type idiq` | Winning the vehicle itself | Broad capabilities, teaming |
+
+Auto-detected from research if `--type` not specified.
+
+### Non-Maximus projects
+
+```
+/px-prompt cybersecurity-advisor          # Describe it → inference engine → research → deploy
+/px-prompt elect-azure                    # Work on existing project
+```
+
+Any project — federal, enterprise, personal. The engine infers role, domains, and platforms from your description.
+
+### CLI tools (direct use)
+
+```bash
+node bin/prompt-compile.js --dashboard    # Project dashboard
+node bin/prompt-compile.js --sync         # Recompile all projects
+node bin/prompt-compile.js <project>      # Compile one project
+node bin/prompt-knowledge.js <project>    # Render knowledge pack templates
+node bin/prompt-blocks.js --category domains  # List available blocks
+```
+
 ## Rules
 
 16 rules across universal and scoped categories. Universal rules load every session. Scoped rules load only when matching file patterns are detected.
