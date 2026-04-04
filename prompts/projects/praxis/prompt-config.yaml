@@ -1,0 +1,40 @@
+project: praxis
+description: Layered Claude Code harness — workflow discipline, AI-Kits, persistent vault integration
+mode: compiled
+profile: praxis
+
+vars:
+  repo_url: https://github.com/arcanesme/praxis.git
+  repo_name: praxis
+  vault_project_path: /Users/esoteric-mac/Documents/Esoteric Vault/01_Projects/Personal/_active/praxis
+  git_identity: personal
+  git_email: jeffreyattoh@reddogsme.com
+
+overrides:
+  add_blocks: {}
+  remove_blocks: []
+
+  claude_code_append:
+    tech_stack: |
+      - Node.js
+      - Bash
+      - Markdown
+    commands: |
+      dev:    node --check bin/praxis.js
+      test:   node --check bin/praxis.js
+      lint:   bash scripts/lint-harness.sh .
+    extra_notes: |
+      - No AI-generated comments or attributions in code or commits
+      - Prefer simple, readable code over clever abstractions
+
+  claude_project_append:
+    additional_context: |
+      Praxis is a personal project for automating Claude Code workflows.
+      It ships as an npm package: @esoteric-logic/praxis-harness.
+
+  perplexity_space_append:
+    research_domains: |
+      - Claude Code CLI features and updates
+      - Anthropic API and SDK changes
+      - MCP (Model Context Protocol) server development
+      - Obsidian plugin ecosystem

@@ -1,0 +1,18 @@
+name: federal-cloud
+description: Federal cloud engineering — Azure/AWS + compliance + security
+extends: _base
+
+blocks:
+  identity:
+    - solutions-architect
+  domains:
+    - cloud-infrastructure
+    - govcon
+  context:
+    - vault-integration
+    - mcp-servers
+    - praxis-workflow
+    - official-docs-first
+
+perplexity_space:
+  extra_sources: []

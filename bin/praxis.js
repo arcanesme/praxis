@@ -141,6 +141,13 @@ async function install() {
     ok('kits installed');
   }
 
+  // Copy prompts/ → ~/.claude/prompts/
+  const promptsDir = path.join(PKG_DIR, 'prompts');
+  if (fs.existsSync(promptsDir)) {
+    copyDir(promptsDir, path.join(CLAUDE_DIR, 'prompts'));
+    ok('prompt library installed');
+  }
+
   // Orphan cleanup: deleted rules and legacy files
   const orphans = [
     'obsidian.md', 'security.md',

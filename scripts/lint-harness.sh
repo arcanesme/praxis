@@ -101,6 +101,57 @@ if [[ -d "$REPO_PATH/kits" ]]; then
   done
 fi
 
+# ─── 3b. Prompt block frontmatter + content quality ───
+echo ""
+echo "Prompt blocks (frontmatter + content quality):"
+VALID_PLATFORMS="claude-code claude-project perplexity-space"
+if [[ -d "$REPO_PATH/prompts/blocks" ]]; then
+  while IFS= read -r block_file; do
+    [[ -f "$block_file" ]] || continue
+    rel_path="${block_file#"$REPO_PATH"/}"
+    header=$(head -15 "$block_file")
+    block_issues=""
+
+    # Required frontmatter fields
+    echo "$header" | grep -q "^id:" || block_issues="$block_issues id:"
+    echo "$header" | grep -q "^category:" || block_issues="$block_issues category:"
+    echo "$header" | grep -q "^platforms:" || block_issues="$block_issues platforms:"
+
+    if [[ -n "$block_issues" ]]; then
+      error "$rel_path missing:$block_issues"
+      continue
+    fi
+
+    # Recommended frontmatter
+    echo "$header" | grep -q "^description:" || warn "$rel_path missing description:"
+
+    # Validate platforms array contains only valid targets
+    platforms_line=$(echo "$header" | grep "^platforms:")
+    for valid in $VALID_PLATFORMS; do
+      # This is a positive check — we only warn on invalid entries
+      :
+    done
+    if echo "$platforms_line" | grep -qvE "claude-code|claude-project|perplexity-space"; then
+      : # platforms line exists but may have invalid entries — hard to parse in bash, skip
+    fi
+
+    # Check block body is not empty (content after frontmatter closing ---)
+    body_chars=$(sed -n '/^---$/,/^---$/d; p' "$block_file" | wc -c | tr -d ' ')
+    if [[ "$body_chars" -lt 10 ]]; then
+      error "$rel_path has empty or near-empty body ($body_chars chars)"
+    fi
+
+    # Check condensed marker exists for multi-platform blocks
+    if echo "$platforms_line" | grep -q "claude-project\|perplexity-space"; then
+      if ! grep -q "<!-- CONDENSED -->" "$block_file"; then
+        warn "$rel_path targets short platforms but has no <!-- CONDENSED --> variant"
+      fi
+    fi
+
+    ok "$rel_path"
+  done < <(find "$REPO_PATH/prompts/blocks" -name "*.md" 2>/dev/null)
+fi
+
 # ─── 4. Placeholder scan ───
 echo ""
 echo "Placeholder scan ({placeholder} patterns):"

@@ -10,10 +10,13 @@
     "base/",
     "kits/",
     "templates/",
-    "scripts/"
+    "scripts/",
+    "prompts/"
   ],
   "scripts": {
-    "test": "node --check bin/praxis.js && bash scripts/test-harness.sh"
+    "test": "node --check bin/praxis.js && node --check bin/prompt-compile.js && node --check bin/prompt-blocks.js && bash scripts/test-harness.sh",
+    "compile-prompts": "node bin/prompt-compile.js --all",
+    "list-blocks": "node bin/prompt-blocks.js"
   },
   "repository": {
     "type": "git",
@@ -28,6 +31,9 @@
   ],
   "author": "arcanesme",
   "license": "MIT",
+  "dependencies": {
+    "js-yaml": "4.1.1"
+  },
   "engines": {
     "node": ">=18"
   }

@@ -1,0 +1,13 @@
+project: maximus
+description: Maximus Federal Deal Solution Architect — multi-role workspace for capture, proposal, and technical architecture
+mode: standalone
+profile: null
+version: "9.1"
+
+knowledge_files:
+  - file: references/maturity-questions.md
+    description: 1,000+ assessment questions across all 11 framework sections
+  - file: references/phase-maturity-matrix.md
+    description: Per-section, per-phase GREEN/YELLOW/RED scoring criteria and gate definitions
+  - file: references/proposal-writing-standards.md
+    description: BLUF, FBP, grammar rules, banned phrases, document-type rules, SA checklist

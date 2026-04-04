@@ -1,0 +1,34 @@
+project: {{project_name}}
+description: {{project_description}}
+mode: compiled
+version: "1.0"
+
+# Target platforms
+platforms:
+  - claude-project
+  - perplexity-space
+  # - claude-code
+
+# Block composition (alternative to referencing a global profile)
+# Set profile to a named profile OR leave null and declare blocks directly
+profile: null
+blocks:
+  identity: []
+  domains: []
+  behaviors: []
+  formats: []
+  context: []
+
+# Research domains for Perplexity Spaces
+research_domains: []
+
+# Knowledge files to upload alongside the system prompt
+knowledge_files: []
+
+# Claude Code extras (only needed if claude-code is in platforms)
+claude_code:
+  tech_stack: ""
+  commands: ""
+  git_identity: ""
+  git_email: ""
+  extra_notes: ""

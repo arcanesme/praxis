@@ -1,0 +1,15 @@
+name: _base
+description: Shared foundation — core behaviors and formats inherited by all profiles
+
+blocks:
+  identity: []
+  domains: []
+  behaviors:
+    - no-flattery
+    - verify-before-reporting
+    - recommend-with-reasons
+    - handle-uncertainty
+  formats:
+    - what-so-what-now-what
+    - concise-responses
+  context: []

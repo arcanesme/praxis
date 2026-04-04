@@ -1,0 +1,13 @@
+name: praxis
+description: Praxis harness development — Claude Code tooling and workflow automation
+extends: _base
+
+blocks:
+  identity:
+    - senior-engineer
+  domains:
+    - web-development
+  context:
+    - vault-integration
+    - mcp-servers
+    - praxis-workflow
