@@ -256,6 +256,16 @@ generated_by: px-prompt
 ## Knowledge Interaction Rules
 [How to use reference files, when to cite, quote-before-answer]
 
+## Reasoning Approach
+Think step-by-step through complex problems. Break work into clear phases:
+1. **Understand** — Restate the question to confirm what's being asked
+2. **Research** — Check knowledge files and sources before forming an answer
+3. **Analyze** — Evaluate options, weigh tradeoffs, identify risks
+4. **Recommend** — Present a clear recommendation with rationale
+5. **Verify** — Self-check: does the answer address the actual question? Are claims sourced?
+
+For multi-step tasks, complete each step fully before moving to the next. Do not skip ahead or assume intermediate results. Show your reasoning when the logic matters — hide it when the answer is straightforward.
+
 ## Quality Controls
 ### Source Verification
 - Cross-reference claims against uploaded knowledge files before presenting as fact
@@ -274,7 +284,9 @@ generated_by: px-prompt
 - Every recommendation includes rationale and tradeoffs
 - Tables for comparisons, not paragraphs
 - Structured outputs: use headers, bullets, numbered steps — not walls of text
-- Self-check: before delivering, verify your response answers the specific question asked
+- Lead with the answer, then the reasoning — not the other way around
+- Every deliverable has a clear structure: BLUF (bottom line), body (evidence/analysis), next steps (actions)
+- Self-check before delivering: Does this answer the specific question? Are all claims sourced? Is the structure scannable?
 
 ## When Uncertain
 State uncertainty explicitly. Ask one clarifying question rather than guessing.
@@ -357,7 +369,7 @@ Read the full `system-prompt.md` as source.
 
 **Target:** `space-instructions-perplexity.md` | **Budget:** under 4,000 chars
 
-**Include:** identity, domain expertise, research domains, source priority, answer format, key frameworks (by name only), accuracy standards, anti-hallucination rules
+**Include:** identity, domain expertise, research domains, source priority, answer format, key frameworks (by name only), reasoning approach, accuracy standards, anti-hallucination rules
 **Exclude:** internal templates, scoring matrices, reference file content, deployment details, full tables
 
 **Output format:**
@@ -367,7 +379,14 @@ Read the full `system-prompt.md` as source.
 ## Research Domains
 ## Source Priority
 ## How to Answer
+## Reasoning Approach
 ## Quality & Accuracy Standards
+```
+
+**Mandatory reasoning section for Perplexity outputs:**
+```markdown
+## Reasoning Approach
+Think step-by-step: Understand the question → search sources → analyze findings → recommend with rationale → verify claims are sourced. Lead with the answer, then the evidence. For complex questions, break into numbered steps and complete each fully before the next.
 ```
 
 **Mandatory quality section for Perplexity outputs:**
@@ -379,6 +398,8 @@ Read the full `system-prompt.md` as source.
 - When information may be outdated (>12 months), note the publication date
 - If you cannot find reliable sources, state that clearly rather than speculating
 - Distinguish verified facts from analytical inferences
+- Lead with the bottom line, then supporting evidence
+- Structure every response: answer first, reasoning second, sources third
 ```
 
 **Perplexity guardrails:**
@@ -946,12 +967,16 @@ Determine which platforms are targets from `prompt-config.yaml`.
 1. Read `system-prompt.md` (standalone) or `project-instructions-claude-desktop.md` (compiled)
 2. Copy content to clipboard: `cat <file> | pbcopy`
 3. Print: "Copied to clipboard. Paste at: claude.ai/projects → Set project instructions"
-4. If `references/` has files: "Upload these knowledge files: <list>"
+4. List knowledge files to upload: all `.md` files from `references/` AND `knowledge/`
+5. Print upload instructions: "Upload these as project knowledge files (drag & drop):"
 
 **For Perplexity Spaces:**
 1. Read `space-instructions-perplexity.md`
 2. Copy content to clipboard: `cat <file> | pbcopy`
 3. Print: "Copied to clipboard. Paste at: perplexity.ai → Space Settings → Answer Instructions"
+4. List knowledge files to upload as Space sources: all `.md` files from `references/` AND `knowledge/`
+5. Print: "Upload these as Space sources (Add Sources → Files):"
+6. **Same knowledge files work for both Claude Projects and Perplexity Spaces** — upload the same set to both
 
 **For Claude Code:**
 1. If project has a `repo_root` in vars: `cp CLAUDE.md <repo_root>/CLAUDE.md`
@@ -963,18 +988,27 @@ Determine which platforms are targets from `prompt-config.yaml`.
 Since clipboard can only hold one thing, deploy sequentially:
 
 ```
-DEPLOY: <project-name>
+DEPLOY: dha-tricare
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 [1/3] Claude Projects
   → Copied system-prompt.md to clipboard (5,824 chars)
-  → Paste at: claude.ai/projects
-  → Upload 3 knowledge files from references/
+  → Paste at: claude.ai/projects → Set project instructions
+
+  Upload these as project knowledge files:
+    references/dha-tricare-intel.md      (deal intelligence)
+    knowledge/deal-context.md            (deal context)
+    knowledge/maximus-corporate.md       (corporate reference)
   Press Enter when done...
 
 [2/3] Perplexity Spaces
-  → Copied space-instructions-perplexity.md to clipboard (3,976 chars)
-  → Paste at: perplexity.ai → Space Settings
+  → Copied space-instructions-perplexity.md to clipboard (3,965 chars)
+  → Paste at: perplexity.ai → Space Settings → Answer Instructions
+
+  Upload these as Space sources (Add Sources → Files):
+    references/dha-tricare-intel.md      (deal intelligence)
+    knowledge/deal-context.md            (deal context)
+    knowledge/maximus-corporate.md       (corporate reference)
   Press Enter when done...
 
 [3/3] Claude Code
@@ -983,6 +1017,7 @@ DEPLOY: <project-name>
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 DEPLOYED to 3 platforms.
+Knowledge files uploaded to BOTH Claude Projects and Perplexity Spaces.
 ```
 
 ---
