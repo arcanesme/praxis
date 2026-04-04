@@ -1,0 +1,27 @@
+name: maximus-sa
+description: Federal Deal SA — capture, proposal, and technical architecture
+extends: _base
+
+blocks:
+  identity:
+    - federal-deal-sa
+  behaviors:
+    - radical-candor
+    - phase-aware-reasoning
+    - first-action-rule
+  domains:
+    - cloud-infrastructure
+    - govcon
+    - govcon-capture
+    - govcon-proposal
+    - federal-cost-analysis
+    - red-team-review
+    - pamasi-framework
+    - proposal-writing-rules
+  formats:
+    - scorecard-output
+    - perplexity-generation
+  skills:
+    - mermaid-diagrams
+  context:
+    - mcp-servers

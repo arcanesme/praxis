@@ -9,6 +9,7 @@ blocks:
     - verify-before-reporting
     - recommend-with-reasons
     - handle-uncertainty
+    - flag-confidence
   formats:
     - what-so-what-now-what
     - concise-responses

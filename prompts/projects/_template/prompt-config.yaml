@@ -17,6 +17,7 @@ blocks:
   domains: []
   behaviors: []
   formats: []
+  skills: []
   context: []
 
 # Research domains for Perplexity Spaces
@@ -24,6 +25,9 @@ research_domains: []
 
 # Knowledge files to upload alongside the system prompt
 knowledge_files: []
+
+# Knowledge packs — rendered from templates at compile time
+knowledge_packs: []
 
 # Claude Code extras (only needed if claude-code is in platforms)
 claude_code:

@@ -3,7 +3,8 @@
   "version": "2.17.0",
   "description": "Layered Claude Code harness — workflow discipline, AI-Kits, persistent vault integration",
   "bin": {
-    "praxis-harness": "./bin/praxis.js"
+    "praxis-harness": "./bin/praxis.js",
+    "prompt-knowledge": "./bin/prompt-knowledge.js"
   },
   "files": [
     "bin/",

@@ -384,6 +384,86 @@ function uninstall() {
   console.log('');
 }
 
+// ── Scaffold ────────────────────────────────────────────────
+
+function scaffold() {
+  const subCmd = process.argv[3];
+  if (subCmd !== 'new') {
+    fail('Usage: praxis scaffold new <project-name> [--profile <name>] [--description "<text>"]');
+    process.exit(1);
+  }
+
+  const projectName = process.argv[4];
+  if (!projectName || projectName.startsWith('--')) {
+    fail('Specify a project name: praxis scaffold new <project-name>');
+    process.exit(1);
+  }
+
+  const PROJECTS_DIR = path.join(PKG_DIR, 'prompts', 'projects');
+  const TEMPLATE_DIR = path.join(PROJECTS_DIR, '_template');
+  const projectDir = path.join(PROJECTS_DIR, projectName);
+
+  if (fs.existsSync(projectDir)) {
+    fail(`Project already exists: ${projectDir}`);
+    process.exit(1);
+  }
+
+  // Parse flags
+  const args = process.argv.slice(5);
+  let profileName = '_base';
+  let description = '';
+  for (let i = 0; i < args.length; i++) {
+    if (args[i] === '--profile' && args[i + 1]) { profileName = args[++i]; }
+    if (args[i] === '--description' && args[i + 1]) { description = args[++i]; }
+  }
+
+  header(`Scaffolding project: ${projectName}`);
+
+  // Create project directory structure
+  fs.mkdirSync(path.join(projectDir, 'references'), { recursive: true });
+  fs.mkdirSync(path.join(projectDir, 'knowledge'), { recursive: true });
+
+  // Read template config
+  const templatePath = path.join(TEMPLATE_DIR, 'prompt-config.yaml');
+  if (!fs.existsSync(templatePath)) {
+    fail(`Template not found: ${templatePath}`);
+    process.exit(1);
+  }
+  let configContent = fs.readFileSync(templatePath, 'utf8');
+  configContent = configContent.replace('{{project_name}}', projectName);
+  configContent = configContent.replace('{{project_description}}', description);
+
+  // Set profile if not null
+  if (profileName !== '_base') {
+    configContent = configContent.replace('profile: null', `profile: ${profileName}`);
+  } else {
+    configContent = configContent.replace('profile: null', 'profile: _base');
+  }
+
+  fs.writeFileSync(path.join(projectDir, 'prompt-config.yaml'), configContent, 'utf8');
+
+  ok(`Created ${projectDir}/prompt-config.yaml`);
+  ok(`Created ${projectDir}/references/`);
+  ok(`Created ${projectDir}/knowledge/`);
+  dim(`Profile: ${profileName}`);
+  if (description) dim(`Description: ${description}`);
+
+  // Preview compile
+  console.log('');
+  dim('Preview compiled output:');
+  const result = spawnSync('node', [
+    path.join(PKG_DIR, 'bin', 'prompt-compile.js'),
+    projectName, '--preview',
+  ], { stdio: 'inherit', cwd: PKG_DIR });
+
+  console.log('');
+  header('Next steps');
+  dim(`1. Edit prompts/projects/${projectName}/prompt-config.yaml`);
+  dim(`2. Add reference files to prompts/projects/${projectName}/references/`);
+  dim(`3. Run: node bin/prompt-compile.js ${projectName}`);
+  console.log('');
+}
+
 // ── Help ─────────────────────────────────────────────────────
 
 function printHelp() {
@@ -397,6 +477,7 @@ Commands:
   update      Re-copy from latest npm package version
   health      Verify install integrity
   uninstall   Remove Praxis-owned files from ~/.claude/
+  scaffold    Scaffold a new prompt project
 
 Flags:
   --help, -h      Show this help
@@ -407,7 +488,7 @@ Flags:
 // ── Main ─────────────────────────────────────────────────────
 
 const arg = process.argv[2] || 'install';
-const commands = { install, update, health, uninstall };
+const commands = { install, update, health, uninstall, scaffold };
 
 if (arg === '--help' || arg === '-h') { printHelp(); }
 else if (arg === '--version' || arg === '-v') { console.log(VERSION); }

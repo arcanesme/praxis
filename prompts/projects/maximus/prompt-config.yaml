@@ -1,8 +1,11 @@
 project: maximus
-description: Maximus Federal Deal Solution Architect — multi-role workspace for capture, proposal, and technical architecture
-mode: standalone
-profile: null
-version: "9.1"
+description: Federal Deal Solution Architect — multi-role workspace for capture, proposal, and technical architecture
+mode: compiled
+profile: maximus-sa
+version: "10.0"
+
+vars:
+  company_name: "Maximus"
 
 knowledge_files:
   - file: references/maturity-questions.md
@@ -11,3 +14,56 @@ knowledge_files:
     description: Per-section, per-phase GREEN/YELLOW/RED scoring criteria and gate definitions
   - file: references/proposal-writing-standards.md
     description: BLUF, FBP, grammar rules, banned phrases, document-type rules, SA checklist
+  - file: references/maximus-corporate.md
+    description: Corporate facts, vehicles, accelerators, partnerships
+
+knowledge_packs:
+  - template: corporate-reference
+    output: maximus-corporate.md
+    targets: [claude-project, perplexity-space]
+    vars:
+      company_name: "Maximus Inc."
+      legal_name: "Maximus Inc."
+      ticker: "MMS (NYSE)"
+      hq: "Tysons, Virginia"
+      ceo: "Bruce Caswell"
+      uei: "RBGHRKKXVQ83"
+      cage_code: "7N773"
+      revenue: "~$5.31B (FY2024)"
+      backlog: "~$16.2B"
+      key_vehicles: "OASIS+, GSA MAS"
+      mission_threads: |
+        | Asset | Description |
+        |-------|-------------|
+        | TXM | Total Experience Management — FedRAMP-authorized omnichannel CX platform |
+        | ITSM&M | IT Service Management & Modernization thread |
+        | Clinical | Clinical services delivery thread |
+        | AI/ML Accelerator | Pre-built AI/ML capabilities |
+        | CX Accelerator | Citizen experience tooling |
+      key_partnerships: |
+        | Partner | Integration |
+        |---------|-------------|
+        | AWS | Strategic collaboration; Bedrock, Lex, Textract |
+        | Salesforce | Agentforce AI platform integration with TXM |
+        | Bingli | AI-powered diagnostic reasoning (clinical) |
+
+overrides:
+  claude_code_append:
+    commands: |
+      prompt-compile maximus --diff
+      prompt-knowledge maximus --diff
+  claude_project_append:
+    quality_gates: |
+      Before any analytical output: confirm customer, mission, and capture phase.
+      Every claim must satisfy FBP (Feature, Benefit, Proof).
+      Every scorecard must include PAMASI stage and phase verdict.
+    additional_context: |
+      ## Maximus Corporate Context
+      Upload `maximus-corporate.md` from the references/ directory as a project knowledge file.
+  perplexity_space_append:
+    research_domains: |
+      - Federal acquisition pipeline (SAM.gov, FPDS, USASpending)
+      - Agency strategic plans, IG/GAO reports, budget justifications
+      - Competitive intelligence (10-K filings, GovConWire, contract awards)
+      - Technology readiness and vendor landscape
+      - Maximus past performance and contract history
