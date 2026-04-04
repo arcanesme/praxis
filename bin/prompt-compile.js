@@ -8,7 +8,8 @@ const yaml = require('js-yaml');
 const {
   TARGETS,
   PROMPTS_DIR,
-  CLIENTS_DIR,
+  WORK_DIR,
+  PERSONAL_DIR,
   loadPraxisConfig,
   loadProfile,
   mergeProfiles,
