@@ -152,7 +152,7 @@ Run for bid/no-bid decisions. Score each dimension 0–10.
 | 1 | **Strategic Fit** | Aligns with Maximus growth strategy, core mission areas, and platform investment roadmap | Peripheral fit; adjacent to core | Outside core mission areas or platforms |
 | 2 | **Competitive Position** | Pwin >50%; incumbent or coach; clear differentiation | Pwin 30–50%; chasing but positioned | Pwin <30%; no access; strong incumbent |
 | 3 | **Past Performance** | 2+ directly relevant contracts, Exceptional/Very Good CPARS | 1 relevant contract; analogous only | No relevant PP; significant gap |
-| 4 | **Solution Readiness** | Platform fits with <20% customization; TRL 7–9 | Moderate customization required | New build required; key components below TRL 6 |
+| 4 | **Solution Readiness** | TXM, Clinical, or ITSM&M fits with <20% customization; TRL 7–9 | Moderate customization required | New build required; key components below TRL 6 |
 | 5 | **Customer Relationship** | Active coach; COR/PM-level access; direct shaping engagement | Warm contacts but no coach | Cold; no agency access |
 | 6 | **Financial Attractiveness** | Value >$50M; margin >10%; B&P ROI >10:1 | Value $10–50M or margin 7–10% | Value <$10M or margin <7% or B&P ROI <5:1 |
 | 7 | **Risk Profile** | Low risk across all categories; mitigations identified | Moderate risk with clear mitigation | High unmitigated risk in ≥2 categories |
@@ -200,7 +200,7 @@ Every win theme follows Feature → Benefit → Proof. Full FBP rules in `propos
 1. **Customer Intel**: Mission, pain points, strategic priorities, leadership, IG/GAO findings
 2. **Opportunity Intel**: Contract type, vehicle, value, timeline, set-aside, NAICS
 3. **Competitive Intel**: Incumbent, competitors, strengths/weaknesses, protest history
-4. **Self-Intel**: Past performance at this agency, capabilities, vehicle access
+4. **Maximus Self-Intel**: Past performance at this agency, capabilities, vehicle access
 
 ## Glossary
 
@@ -537,7 +537,7 @@ PROCESS (Repeatable Steps — "What specific steps?")
 ### Color Class Definitions
 
 ```
-classDef company fill:#1a5276,stroke:#154360,color:#fff
+classDef maximus fill:#1a5276,stroke:#154360,color:#fff
 classDef customer fill:#2e86c1,stroke:#2874a6,color:#fff
 classDef external fill:#85929e,stroke:#707b7c,color:#fff
 classDef highlight fill:#e67e22,stroke:#ca6f1e,color:#fff
@@ -600,6 +600,39 @@ prompt-knowledge maximus --diff
 ## MCP Servers
 Available: context7 (live library docs), github (PRs/issues), perplexity (web search).
 Before implementing with any external library: use Context7 first. Training data has a cutoff — Context7 does not.
+
+## Important Notes
+## Maximus Corporate Reference
+
+| Attribute | Value |
+|-----------|-------|
+| Legal Name | Maximus Inc. |
+| Ticker | MMS (NYSE) |
+| HQ | Tysons, Virginia |
+| CEO | Bruce Caswell |
+| UEI | RBGHRKKXVQ83 |
+| CAGE Code | 7N773 |
+| FY2024 Revenue | ~$5.31B |
+| Backlog | ~$16.2B |
+| Key Vehicles | OASIS+, GSA MAS |
+
+### Mission Threads & Accelerators
+
+| Asset | Description |
+|-------|-------------|
+| TXM | Total Experience Management — FedRAMP-authorized omnichannel CX platform |
+| ITSM&M | IT Service Management & Modernization thread |
+| Clinical | Clinical services delivery thread |
+| AI/ML Accelerator | Pre-built AI/ML capabilities |
+| CX Accelerator | Citizen experience tooling |
+
+### Key Partnerships
+
+| Partner | Integration |
+|---------|-------------|
+| AWS | Strategic collaboration; Bedrock, Lex, Textract |
+| Salesforce | Agentforce AI platform integration with TXM |
+| Bingli | AI-powered diagnostic reasoning (clinical) |
 
 ## Verification
 - Before marking any task complete, run the test suite

@@ -16,7 +16,7 @@ Run for bid/no-bid decisions. Score each dimension 0–10.
 | 1 | **Strategic Fit** | Aligns with Maximus growth strategy, core mission areas, and platform investment roadmap | Peripheral fit; adjacent to core | Outside core mission areas or platforms |
 | 2 | **Competitive Position** | Pwin >50%; incumbent or coach; clear differentiation | Pwin 30–50%; chasing but positioned | Pwin <30%; no access; strong incumbent |
 | 3 | **Past Performance** | 2+ directly relevant contracts, Exceptional/Very Good CPARS | 1 relevant contract; analogous only | No relevant PP; significant gap |
-| 4 | **Solution Readiness** | Platform fits with <20% customization; TRL 7–9 | Moderate customization required | New build required; key components below TRL 6 |
+| 4 | **Solution Readiness** | TXM, Clinical, or ITSM&M fits with <20% customization; TRL 7–9 | Moderate customization required | New build required; key components below TRL 6 |
 | 5 | **Customer Relationship** | Active coach; COR/PM-level access; direct shaping engagement | Warm contacts but no coach | Cold; no agency access |
 | 6 | **Financial Attractiveness** | Value >$50M; margin >10%; B&P ROI >10:1 | Value $10–50M or margin 7–10% | Value <$10M or margin <7% or B&P ROI <5:1 |
 | 7 | **Risk Profile** | Low risk across all categories; mitigations identified | Moderate risk with clear mitigation | High unmitigated risk in ≥2 categories |
@@ -64,7 +64,7 @@ Every win theme follows Feature → Benefit → Proof. Full FBP rules in `propos
 1. **Customer Intel**: Mission, pain points, strategic priorities, leadership, IG/GAO findings
 2. **Opportunity Intel**: Contract type, vehicle, value, timeline, set-aside, NAICS
 3. **Competitive Intel**: Incumbent, competitors, strengths/weaknesses, protest history
-4. **Self-Intel**: Past performance at this agency, capabilities, vehicle access
+4. **Maximus Self-Intel**: Past performance at this agency, capabilities, vehicle access
 
 ## Glossary
 

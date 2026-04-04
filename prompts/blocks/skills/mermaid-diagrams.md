@@ -29,7 +29,7 @@ tags: [skill, mermaid, diagrams, architecture, govcon]
 ### Color Class Definitions
 
 ```
-classDef company fill:#1a5276,stroke:#154360,color:#fff
+classDef maximus fill:#1a5276,stroke:#154360,color:#fff
 classDef customer fill:#2e86c1,stroke:#2874a6,color:#fff
 classDef external fill:#85929e,stroke:#707b7c,color:#fff
 classDef highlight fill:#e67e22,stroke:#ca6f1e,color:#fff
