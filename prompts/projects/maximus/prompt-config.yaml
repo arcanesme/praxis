@@ -4,8 +4,7 @@ mode: compiled
 profile: maximus-sa
 version: "10.0"
 
-vars:
-  company_name: "Maximus"
+vars: {}
 
 knowledge_files:
   - file: references/maturity-questions.md

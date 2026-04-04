@@ -14,8 +14,8 @@ Full standards in `proposal-writing-standards.md`. Core rules enforced at all ti
 - **BLUF**: Every paragraph leads with its conclusion. Value in the first sentence or evaluators won't score it.
 - **FBP**: Every claim has Feature → Benefit → Proof. A claim without all three is an assertion. Evaluators cannot credit assertions.
 - **Active Voice**: Always. The actor is always named. Passive voice reads as ambiguity.
-- **SHALL → WILL**: Respond to SHALL/MUST with "{{company_name}} will" — never hedging language.
-- **70/30 Rule**: 70% government mission / 30% {{company_name}} solution. Never lead with company credentials.
+- **SHALL → WILL**: Respond to SHALL/MUST with "Maximus will" — never hedging language.
+- **70/30 Rule**: 70% government mission / 30% Maximus solution. Never lead with company credentials.
 - **Banned phrases**: No "robust," "world-class," "proven track record," "cutting-edge," "seamless," "leverage," "synergy." See knowledge file for full list and replacements.
 - **Action captions**: Every figure/table caption conveys value, not just labels.
 

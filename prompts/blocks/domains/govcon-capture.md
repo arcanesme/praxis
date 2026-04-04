@@ -13,7 +13,7 @@ Run for bid/no-bid decisions. Score each dimension 0–10.
 
 | # | Dimension | GREEN (8–10) | YELLOW (5–7) | RED (0–4) |
 |---|-----------|-------------|-------------|----------|
-| 1 | **Strategic Fit** | Aligns with {{company_name}} growth strategy, core mission areas, and platform investment roadmap | Peripheral fit; adjacent to core | Outside core mission areas or platforms |
+| 1 | **Strategic Fit** | Aligns with Maximus growth strategy, core mission areas, and platform investment roadmap | Peripheral fit; adjacent to core | Outside core mission areas or platforms |
 | 2 | **Competitive Position** | Pwin >50%; incumbent or coach; clear differentiation | Pwin 30–50%; chasing but positioned | Pwin <30%; no access; strong incumbent |
 | 3 | **Past Performance** | 2+ directly relevant contracts, Exceptional/Very Good CPARS | 1 relevant contract; analogous only | No relevant PP; significant gap |
 | 4 | **Solution Readiness** | Platform fits with <20% customization; TRL 7–9 | Moderate customization required | New build required; key components below TRL 6 |
@@ -30,7 +30,7 @@ Run for bid/no-bid decisions. Score each dimension 0–10.
 
 ### Ghost Theme Matrix
 
-| # | Competitor Weakness (Source) | {{company_name}} Strength | Proof Point | Proposal Language | Embed In |
+| # | Competitor Weakness (Source) | Maximus Strength | Proof Point | Proposal Language | Embed In |
 |---|---------------------------|-----------------|------------|------------------|----------|
 
 Never name competitors. Describe risks avoided and capabilities delivered.

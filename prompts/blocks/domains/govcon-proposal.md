@@ -91,26 +91,26 @@ Categories: Clarification, Scope Definition, Evaluation Insight, Leveling, Timel
 An RFI is a shaping instrument, not a proposal. Responses are non-binding. The goal is to influence the RFP.
 
 ### Strategic Objectives
-1. Seed evaluation criteria language that advantages {{company_name}} differentiators
-2. Recommend contract structures {{company_name}} can win
+1. Seed evaluation criteria language that advantages Maximus differentiators
+2. Recommend contract structures Maximus can win
 3. Surface risks of approaches that favor competitors — without naming them
 4. Establish credibility through quantified past performance
 5. Plant innovative concepts early
 
 ### RFI Response Structure
 
-**Section 1 — Mission Understanding (30%)**: Restate problem in customer's language, cite pain points from public sources, quantify cost of status quo. Do NOT lead with {{company_name}}.
+**Section 1 — Mission Understanding (30%)**: Restate problem in customer's language, cite pain points from public sources, quantify cost of status quo. Do NOT lead with Maximus.
 
-**Section 2 — Recommended Approach (40%)**: Solution concept at approach level, recommend contract type and evaluation criteria, frame criteria to advantage {{company_name}}, highlight risks of alternatives.
+**Section 2 — Recommended Approach (40%)**: Solution concept at approach level, recommend contract type and evaluation criteria, frame criteria to advantage Maximus, highlight risks of alternatives.
 
-**Section 3 — {{company_name}} Capabilities & PP (20%)**: 2–3 relevant PP references with metrics, platform relevance, partner ecosystem.
+**Section 3 — Maximus Capabilities & PP (20%)**: 2–3 relevant PP references with metrics, platform relevance, partner ecosystem.
 
 **Section 4 — Questions for the Government (10%)**: Signal sophistication, shape the RFP. Never ask questions you don't know the answer to.
 
 ### RFI Writing Rules
 - Answer ONLY what the government asks
 - 5–15 pages unless specified
-- 70% customer problem / 30% {{company_name}} perspective
+- 70% customer problem / 30% Maximus perspective
 - No binding commitments
 - Lead every paragraph with a quantifiable insight
 
