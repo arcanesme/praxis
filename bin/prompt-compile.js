@@ -8,11 +8,16 @@ const yaml = require('js-yaml');
 const {
   TARGETS,
   PROMPTS_DIR,
+  CLIENTS_DIR,
   loadPraxisConfig,
   loadProfile,
   mergeProfiles,
   loadBlocks,
   applyOverrides,
+  loadClientConfig,
+  discoverAllDeals,
+  resolveProject,
+  mergeClientDealConfig,
 } = require('../lib/loader');
 
 const {
@@ -24,6 +29,29 @@ const {
 } = require('../lib/assemblers');
 
 const PROJECTS_DIR = path.join(PROMPTS_DIR, 'projects');
+
+/** Discover all compilable projects — clients hierarchy + legacy flat projects. */
+function discoverAllProjects() {
+  const results = [];
+
+  // New hierarchy: clients/*/deals/*/
+  for (const entry of discoverAllDeals()) {
+    results.push({ name: entry.displayName, dir: entry.dealDir, client: entry.client, deal: entry.deal, clientDir: entry.clientDir });
+  }
+
+  // Legacy: projects/*/  (skip _template, skip projects that also exist in clients)
+  if (fs.existsSync(PROJECTS_DIR)) {
+    const dealNames = new Set(results.map((r) => r.deal));
+    const legacyDirs = fs.readdirSync(PROJECTS_DIR)
+      .filter((d) => d !== '_template' && fs.statSync(path.join(PROJECTS_DIR, d)).isDirectory())
+      .filter((d) => !dealNames.has(d));
+
+    for (const name of legacyDirs) {
+      results.push({ name, dir: path.join(PROJECTS_DIR, name), client: null, deal: name, clientDir: null });
+    }
+  }
+  return results;
+}
 
 const CHAR_BUDGETS = {
   'claude-code': Infinity,
@@ -121,15 +149,35 @@ function validateStandalone(projectName, projectDir, projectConfig) {
 }
 
 /** Compile a project. Returns { mode, results[] } for summary table. */
-function compileProject(projectName, targets) {
-  const projectDir = path.join(PROJECTS_DIR, projectName);
-  const configPath = path.join(projectDir, 'prompt-config.yaml');
+function compileProject(projectName, targets, projectDirOverride, clientDirOverride) {
+  // Resolve project path — supports "client/deal", "deal", or direct dir override
+  let projectDir;
+  let clientDir = clientDirOverride || null;
+  if (projectDirOverride) {
+    projectDir = projectDirOverride;
+  } else {
+    const resolved = resolveProject(projectName);
+    if (!resolved.dealDir || !fs.existsSync(resolved.dealDir)) {
+      fail(`Project not found: ${projectName}\nRun /px-prompt <project-name> to create one.`);
+    }
+    projectDir = resolved.dealDir;
+    clientDir = resolved.clientDir;
+  }
 
+  const configPath = path.join(projectDir, 'prompt-config.yaml');
   if (!fs.existsSync(configPath)) {
     fail(`Project config not found: ${configPath}\nRun /px-prompt <project-name> to create one.`);
   }
 
-  const projectConfig = yaml.load(fs.readFileSync(configPath, 'utf8'));
+  let projectConfig = yaml.load(fs.readFileSync(configPath, 'utf8'));
+
+  // Merge client config if in hierarchy
+  if (clientDir) {
+    const clientConfig = loadClientConfig(clientDir);
+    if (clientConfig) {
+      projectConfig = mergeClientDealConfig(clientConfig, projectConfig);
+    }
+  }
 
   if (projectConfig.mode === 'standalone') {
     return validateStandalone(projectName, projectDir, projectConfig);
@@ -249,30 +297,28 @@ function main() {
 
   // --list mode: show all projects
   if (args.includes('--list')) {
-    const projectDirs = fs.readdirSync(PROJECTS_DIR)
-      .filter((d) => d !== '_template' && fs.statSync(path.join(PROJECTS_DIR, d)).isDirectory());
-    if (projectDirs.length === 0) {
+    const allProjects = discoverAllProjects();
+    if (allProjects.length === 0) {
       console.log('No projects found.');
       process.exit(0);
     }
-    console.log(`${'Project'.padEnd(20)} ${'Mode'.padEnd(12)} ${'System Prompt'.padEnd(15)} ${'Claude Desktop'.padEnd(15)} ${'Perplexity'.padEnd(15)} ${'CLAUDE.md'.padEnd(12)} Refs`);
-    console.log('-'.repeat(95));
-    for (const name of projectDirs) {
-      const dir = path.join(PROJECTS_DIR, name);
-      const cfgPath = path.join(dir, 'prompt-config.yaml');
+    console.log(`${'Project'.padEnd(28)} ${'Mode'.padEnd(12)} ${'System Prompt'.padEnd(15)} ${'Claude Desktop'.padEnd(15)} ${'Perplexity'.padEnd(15)} ${'CLAUDE.md'.padEnd(12)} Refs`);
+    console.log('-'.repeat(105));
+    for (const proj of allProjects) {
+      const cfgPath = path.join(proj.dir, 'prompt-config.yaml');
       const cfg = fs.existsSync(cfgPath) ? yaml.load(fs.readFileSync(cfgPath, 'utf8')) : {};
       const mode = cfg.mode || 'compiled';
       const fileStatus = (f) => {
-        const p = path.join(dir, f);
+        const p = path.join(proj.dir, f);
         if (!fs.existsSync(p)) return '—';
         return `${fs.readFileSync(p, 'utf8').length} chars`;
       };
-      const refsDir = path.join(dir, 'references');
+      const refsDir = path.join(proj.dir, 'references');
       const refCount = fs.existsSync(refsDir)
         ? fs.readdirSync(refsDir).filter((f) => f.endsWith('.md')).length
         : 0;
       console.log(
-        `${name.padEnd(20)} ${mode.padEnd(12)} ${fileStatus('system-prompt.md').padEnd(15)} ${fileStatus('project-instructions-claude-desktop.md').padEnd(15)} ${fileStatus('space-instructions-perplexity.md').padEnd(15)} ${fileStatus('CLAUDE.md').padEnd(12)} ${refCount}`
+        `${proj.name.padEnd(28)} ${mode.padEnd(12)} ${fileStatus('system-prompt.md').padEnd(15)} ${fileStatus('project-instructions-claude-desktop.md').padEnd(15)} ${fileStatus('space-instructions-perplexity.md').padEnd(15)} ${fileStatus('CLAUDE.md').padEnd(12)} ${refCount}`
       );
     }
     process.exit(0);
@@ -280,9 +326,8 @@ function main() {
 
   // --dashboard mode: rich project index with staleness and budgets
   if (args.includes('--dashboard')) {
-    const projectDirs = fs.readdirSync(PROJECTS_DIR)
-      .filter((d) => d !== '_template' && fs.statSync(path.join(PROJECTS_DIR, d)).isDirectory());
-    if (projectDirs.length === 0) {
+    const allProjects = discoverAllProjects();
+    if (allProjects.length === 0) {
       console.log('No projects found.');
       process.exit(0);
     }
@@ -291,36 +336,34 @@ function main() {
     const now = Date.now();
 
     console.log('\n\x1b[1mPROMPT ENGINE DASHBOARD\x1b[0m');
-    console.log('\x1b[90m' + '━'.repeat(100) + '\x1b[0m');
+    console.log('\x1b[90m' + '━'.repeat(110) + '\x1b[0m');
     console.log(
-      `${'Project'.padEnd(16)} ${'Mode'.padEnd(12)} ${'Perplexity'.padEnd(14)} ${'Claude Proj'.padEnd(14)} ${'CLAUDE.md'.padEnd(14)} ${'Refs'.padEnd(6)} ${'Updated'.padEnd(12)} Stale?`
+      `${'Project'.padEnd(24)} ${'Mode'.padEnd(12)} ${'Perplexity'.padEnd(14)} ${'Claude Proj'.padEnd(14)} ${'CLAUDE.md'.padEnd(14)} ${'Refs'.padEnd(6)} ${'Updated'.padEnd(12)} Stale?`
     );
-    console.log('\x1b[90m' + '─'.repeat(100) + '\x1b[0m');
+    console.log('\x1b[90m' + '─'.repeat(110) + '\x1b[0m');
 
-    for (const name of projectDirs) {
-      const dir = path.join(PROJECTS_DIR, name);
-      const cfgPath = path.join(dir, 'prompt-config.yaml');
+    for (const proj of allProjects) {
+      const cfgPath = path.join(proj.dir, 'prompt-config.yaml');
       const cfg = fs.existsSync(cfgPath) ? yaml.load(fs.readFileSync(cfgPath, 'utf8')) : {};
       const mode = cfg.mode || 'compiled';
 
       const fileBudget = (f, budget) => {
-        const p = path.join(dir, f);
+        const p = path.join(proj.dir, f);
         if (!fs.existsSync(p)) return '\x1b[90m—\x1b[0m';
         const chars = fs.readFileSync(p, 'utf8').length;
         const icon = chars > budget ? '\x1b[33m⚠\x1b[0m' : '\x1b[32m✓\x1b[0m';
         return `${chars} ${budget < Infinity ? icon : ''}`;
       };
 
-      const refsDir = path.join(dir, 'references');
+      const refsDir = path.join(proj.dir, 'references');
       const refCount = fs.existsSync(refsDir)
         ? fs.readdirSync(refsDir).filter((f) => f.endsWith('.md')).length
         : 0;
 
-      // Find most recent file modification in project dir
       let latestMtime = 0;
-      const allFiles = fs.readdirSync(dir).filter((f) => f.endsWith('.md') || f.endsWith('.yaml'));
+      const allFiles = fs.readdirSync(proj.dir).filter((f) => f.endsWith('.md') || f.endsWith('.yaml'));
       for (const f of allFiles) {
-        const stat = fs.statSync(path.join(dir, f));
+        const stat = fs.statSync(path.join(proj.dir, f));
         if (stat.mtimeMs > latestMtime) latestMtime = stat.mtimeMs;
       }
       const updated = latestMtime > 0 ? new Date(latestMtime).toISOString().slice(0, 10) : '—';
@@ -328,11 +371,11 @@ function main() {
       const stale = daysSince > STALE_DAYS ? '\x1b[31mYes\x1b[0m' : '\x1b[32mNo\x1b[0m';
 
       console.log(
-        `${name.padEnd(16)} ${mode.padEnd(12)} ${fileBudget('space-instructions-perplexity.md', CHAR_BUDGETS['perplexity-space']).padEnd(23)} ${fileBudget('project-instructions-claude-desktop.md', CHAR_BUDGETS['claude-project']).padEnd(23)} ${fileBudget('CLAUDE.md', Infinity).padEnd(23)} ${String(refCount).padEnd(6)} ${updated.padEnd(12)} ${stale}`
+        `${proj.name.padEnd(24)} ${mode.padEnd(12)} ${fileBudget('space-instructions-perplexity.md', CHAR_BUDGETS['perplexity-space']).padEnd(23)} ${fileBudget('project-instructions-claude-desktop.md', CHAR_BUDGETS['claude-project']).padEnd(23)} ${fileBudget('CLAUDE.md', Infinity).padEnd(23)} ${String(refCount).padEnd(6)} ${updated.padEnd(12)} ${stale}`
       );
     }
 
-    console.log('\x1b[90m' + '━'.repeat(100) + '\x1b[0m');
+    console.log('\x1b[90m' + '━'.repeat(110) + '\x1b[0m');
     console.log('\x1b[90mStaleness: >30 days since last file change. Budgets: ✓ under, ⚠ over.\x1b[0m\n');
     process.exit(0);
   }
@@ -367,16 +410,15 @@ function main() {
   }
 
   if (args.includes('--all') || isSync) {
-    const projectDirs = fs.readdirSync(PROJECTS_DIR)
-      .filter((d) => d !== '_template' && fs.statSync(path.join(PROJECTS_DIR, d)).isDirectory());
+    const allProjects = discoverAllProjects();
 
-    if (projectDirs.length === 0) {
-      fail('No projects found in prompts/projects/');
+    if (allProjects.length === 0) {
+      fail('No projects found.');
     }
 
     const allResults = [];
-    for (const projectName of projectDirs) {
-      const result = compileProject(projectName, targets);
+    for (const proj of allProjects) {
+      const result = compileProject(proj.name, targets, proj.dir, proj.clientDir);
       if (result) allResults.push(result);
     }
 

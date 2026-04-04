@@ -1,20 +1,14 @@
-project: maximus
-description: Federal Deal Solution Architect — multi-role workspace for capture, proposal, and technical architecture
-mode: compiled
+client: maximus
+description: Maximus Federal — capture, proposal, and technical architecture
 profile: maximus-sa
-version: "10.0"
 
 vars: {}
 
-knowledge_files:
-  - file: references/maturity-questions.md
-    description: 1,000+ assessment questions across all 11 framework sections
-  - file: references/phase-maturity-matrix.md
-    description: Per-section, per-phase GREEN/YELLOW/RED scoring criteria and gate definitions
-  - file: references/proposal-writing-standards.md
-    description: BLUF, FBP, grammar rules, banned phrases, document-type rules, SA checklist
-  - file: references/maximus-corporate.md
-    description: Corporate facts, vehicles, accelerators, partnerships
+shared_references:
+  - references/maturity-questions.md
+  - references/phase-maturity-matrix.md
+  - references/proposal-writing-standards.md
+  - references/maximus-corporate.md
 
 knowledge_packs:
   - template: corporate-reference
@@ -80,21 +74,8 @@ overrides:
       | AWS | Strategic collaboration; Bedrock, Lex, Textract |
       | Salesforce | Agentforce AI platform integration with TXM |
       | Bingli | AI-powered diagnostic reasoning (clinical) |
-    commands: |
-      prompt-compile maximus --diff
-      prompt-knowledge maximus --diff
   claude_project_append:
     quality_gates: |
       Before any analytical output: confirm customer, mission, and capture phase.
       Every claim must satisfy FBP (Feature, Benefit, Proof).
       Every scorecard must include PAMASI stage and phase verdict.
-    additional_context: |
-      ## Maximus Corporate Context
-      Upload `maximus-corporate.md` from the references/ directory as a project knowledge file.
-  perplexity_space_append:
-    research_domains: |
-      - Federal acquisition pipeline (SAM.gov, FPDS, USASpending)
-      - Agency strategic plans, IG/GAO reports, budget justifications
-      - Competitive intelligence (10-K filings, GovConWire, contract awards)
-      - Technology readiness and vendor landscape
-      - Maximus past performance and contract history

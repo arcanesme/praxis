@@ -1,0 +1,41 @@
+deal: dha-tricare
+client: maximus
+description: "Maximus capture — DHA TRICARE managed care support and health IT services"
+mode: compiled
+version: "1.0"
+deal_type: new-start
+capture_phase: Shaping
+
+platforms:
+  - claude-project
+  - perplexity-space
+  - claude-code
+
+vars: {}
+
+knowledge_files:
+  - file: references/dha-tricare-intel.md
+    description: Deal intelligence — DHA TRICARE contract landscape, incumbents, agency mission context
+
+knowledge_packs:
+  - template: deal-context
+    output: deal-context.md
+    targets: [claude-project, perplexity-space]
+    vars:
+      agency: "Defense Health Agency (DHA)"
+      program_name: "TRICARE Managed Care Support / Health IT Services"
+      incumbents: "Humana Government Business (East, $70.9B), TriWest Healthcare Alliance (West, $65.1B), Leidos (MHS GENESIS, $6.9B)"
+      contract_vehicle: "Full & open competition"
+      naics: "524114"
+      set_aside: "None"
+      period_of_performance: "T-5 active through ~2032. T-6 recompete expected ~2031."
+      key_personnel: "[RESEARCH NEEDED]"
+
+overrides:
+  perplexity_space_append:
+    research_domains: |
+      - DHA TRICARE T-5/T-6 contract developments (SAM.gov, USASpending, FPDS)
+      - DHA strategic plan, IG/GAO findings, congressional oversight
+      - TRICARE beneficiary experience, claims processing, provider networks
+      - MHS GENESIS modernization and cloud migration
+      - Maximus federal health IT and CX past performance

@@ -12,11 +12,10 @@ const fs = require('fs');
 const path = require('path');
 const yaml = require('js-yaml');
 const { interpolate, findUnresolved } = require('../lib/assemblers');
-const { parseFrontmatter, loadPraxisConfig } = require('../lib/loader');
+const { parseFrontmatter, loadPraxisConfig, resolveProject, loadClientConfig, mergeClientDealConfig } = require('../lib/loader');
 
 const PKG_DIR = path.resolve(__dirname, '..');
 const TEMPLATES_DIR = path.join(PKG_DIR, 'prompts', 'templates', 'knowledge');
-const PROJECTS_DIR = path.join(PKG_DIR, 'prompts', 'projects');
 
 function fail(msg) {
   console.error(`\x1b[31mERROR:\x1b[0m ${msg}`);
@@ -68,19 +67,32 @@ function main() {
 
   if (!projectName) fail('Specify a project name.');
 
-  const projectDir = path.join(PROJECTS_DIR, projectName);
+  const resolved = resolveProject(projectName);
+  if (!resolved.dealDir || !fs.existsSync(resolved.dealDir)) {
+    fail(`Project not found: ${projectName}`);
+  }
+  const projectDir = resolved.dealDir;
   const configPath = path.join(projectDir, 'prompt-config.yaml');
 
   if (!fs.existsSync(configPath)) {
     fail(`Project config not found: ${configPath}`);
   }
 
-  const projectConfig = yaml.load(fs.readFileSync(configPath, 'utf8'));
+  let projectConfig = yaml.load(fs.readFileSync(configPath, 'utf8'));
+
+  // Merge client config if in hierarchy
+  if (resolved.clientDir) {
+    const clientConfig = loadClientConfig(resolved.clientDir);
+    if (clientConfig) {
+      projectConfig = mergeClientDealConfig(clientConfig, projectConfig);
+    }
+  }
+
   const praxisConfig = loadPraxisConfig();
   const globalVars = {
     ...praxisConfig,
     ...(projectConfig.vars || {}),
-    project: projectConfig.project || projectName,
+    project: projectConfig.project || projectConfig.deal || projectName,
   };
 
   const packs = projectConfig.knowledge_packs || [];
