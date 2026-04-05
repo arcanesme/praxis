@@ -4,7 +4,7 @@ set -euo pipefail
 # ════════════════════════════════════════════════════════════════
 #  Praxis — Harness Test Suite
 #  Functional tests beyond what lint-harness.sh covers:
-#  shellcheck, JSON validation, cross-skill refs, hook wiring
+#  ShellCheck, JSON validation, cross-skill refs, hook wiring
 # ════════════════════════════════════════════════════════════════
 
 REPO_PATH="${1:-$(cd "$(dirname "$0")/.." && pwd)}"
@@ -42,7 +42,7 @@ echo "ShellCheck:"
 
 if command -v shellcheck &>/dev/null; then
   while IFS= read -r -d '' script; do
-    name=$(echo "$script" | sed "s|$REPO_PATH/||")
+    name="${script//$REPO_PATH\//}"
     if shellcheck -S warning "$script" &>/dev/null; then
       ok "$name"
     else
@@ -62,7 +62,7 @@ for json_file in \
   "$REPO_PATH/templates/claude-progress.json" \
   "$REPO_PATH/package.json"; do
   if [[ -f "$json_file" ]]; then
-    name=$(echo "$json_file" | sed "s|$REPO_PATH/||")
+    name="${json_file//$REPO_PATH\//}"
     if jq . "$json_file" >/dev/null 2>&1; then
       ok "$name"
     else
@@ -157,7 +157,7 @@ fi
 echo ""
 echo "Quality hooks:"
 
-for hook in file-guard.sh; do
+for hook in file-guard.sh secret-scan.sh credential-guard.sh; do
   if [[ -f "$REPO_PATH/base/hooks/$hook" ]]; then
     ok "hooks/$hook exists"
     if [[ -x "$REPO_PATH/base/hooks/$hook" ]]; then
@@ -196,7 +196,7 @@ echo "Config directory:"
 
 if [[ -d "$REPO_PATH/base/configs" ]]; then
   ok "base/configs/ exists"
-  for config_dir in linters; do
+  for config_dir in linters ci; do
     if [[ -d "$REPO_PATH/base/configs/$config_dir" ]]; then
       ok "base/configs/$config_dir/ exists"
     else

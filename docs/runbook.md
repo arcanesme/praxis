@@ -110,7 +110,7 @@ claude mcp add server-name npx -- -y @scope/package@latest
 **Cause**: Obsidian CLI not enabled, or Obsidian not installed.
 
 **Fix**:
-1. Install Obsidian from https://obsidian.md
+1. Install Obsidian from <https://obsidian.md>
 2. Open Obsidian > Settings > General > Command line interface (toggle on)
 3. Verify: `obsidian --help`
 

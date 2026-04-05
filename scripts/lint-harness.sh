@@ -186,8 +186,8 @@ echo ""
 echo "Rules registry (CLAUDE.md references vs disk):"
 if [[ -f "$REPO_PATH/base/CLAUDE.md" ]]; then
   # Extract rule filenames from CLAUDE.md registry tables
-  rule_refs=$(grep -oE '~/.claude/rules/[a-zA-Z0-9_-]+\.md' "$REPO_PATH/base/CLAUDE.md" \
-    | sed 's|~/.claude/rules/||' | sort -u)
+  rule_refs=$(grep -oE "$HOME/.claude/rules/[a-zA-Z0-9_-]+\.md|~/.claude/rules/[a-zA-Z0-9_-]+\.md" "$REPO_PATH/base/CLAUDE.md" \
+    | sed "s|$HOME/.claude/rules/||;s|~/.claude/rules/||" | sort -u)
   for rule_file in $rule_refs; do
     if [[ -f "$REPO_PATH/base/rules/$rule_file" ]]; then
       ok "rules/$rule_file exists"

@@ -47,7 +47,7 @@ BLOCKED_PATHS=(
 )
 
 # Expand ~ in commands for matching
-EXPANDED_CMD=$(echo "$COMMAND" | sed "s|~|$HOME|g")
+EXPANDED_CMD="${COMMAND//\~/$HOME}"
 
 for blocked in "${BLOCKED_PATHS[@]}"; do
   if echo "$EXPANDED_CMD" | grep -qF "$blocked"; then

@@ -28,6 +28,7 @@ removal_condition: >
 # Web Designer Kit
 
 ## Purpose
+
 Chain design skills into a phased workflow for building production websites.
 From design system initialization through component construction to
 accessibility audit and final lint.
@@ -35,7 +36,7 @@ accessibility audit and final lint.
 ## Skills Chain
 
 | # | Phase | Skills | What It Provides |
-|---|-------|--------|-----------------|
+| --- | --- | --- | --- |
 | 1 | Design System Init | UI/UX Pro Max, Design System Patterns | Style direction, palette, typography, 3-tier token hierarchy |
 | 2 | Component Build | frontend-design, shadcn-ui, 21st.dev MCP | Responsive grid, component primitives, production marketplace |
 | 3 | Audit | web-accessibility, UI Skills (baseline + motion) | WCAG compliance, ARIA, visual polish, animation performance |
@@ -44,6 +45,7 @@ accessibility audit and final lint.
 ## Workflow Integration
 
 This kit operates WITHIN the Praxis workflow:
+
 - **Praxis** structures the work (discuss → plan → execute → verify → simplify → ship)
 - **This kit** adds domain-specific design rules and skill chain
 
@@ -59,7 +61,7 @@ Verify with `/kit:web-designer` after install.
 ## MCP Servers
 
 | Server | Purpose | Registration |
-|--------|---------|-------------|
+| --- | --- | --- |
 | 21st-magic | Production component marketplace | `claude mcp add 21st-magic npx -- -y @21st-dev/magic@latest` |
 
 MCP servers persist globally once registered. Kit deactivation does not unregister them.

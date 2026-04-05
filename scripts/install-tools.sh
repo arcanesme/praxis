@@ -5,6 +5,7 @@ set -euo pipefail
 
 INSTALL_GO=false
 INSTALL_TF=false
+# shellcheck disable=SC2034  # INSTALL_CORE reserved for future --core logic
 INSTALL_CORE=true
 
 for arg in "$@"; do

@@ -10,12 +10,15 @@ source: agent
 # Plan: Title
 
 ## Objective
+
 One sentence.
 
 ## Context
+
 Why this work is happening now.
 
 ## Milestones
+
 - [ ] Milestone 1 — date
 - [ ] Milestone 2 — date | depends_on: Milestone 1
 - [ ] Milestone 3 — date | depends_on: Milestone 2 | checkpoint: decision
@@ -24,14 +27,17 @@ Why this work is happening now.
 ## Steps
 
 ### Milestone 1
+
 1. Step
 2. Step
 
 ### Milestone 2
+
 1. Step
 2. Step
 
 ## Done When
+
 - [ ] Specific verifiable check
 
 ## Boundaries

@@ -70,12 +70,10 @@ jq -n \
     vault: { current_plan: $current_plan, loop_position: $loop_position },
     recent_commits: $recent_commits,
     files_changed_summary: $files_changed
-  }' > "$STAGING_FILE" 2>/dev/null
-
-if [[ $? -ne 0 ]]; then
+  }' > "$STAGING_FILE" 2>/dev/null || {
   # Fallback: minimal valid JSON if jq fails
   echo '{"error":"jq failed to build staging JSON"}' > "$STAGING_FILE"
-fi
+}
 
 echo "Session data staged: $STAGING_FILE" >&2
 

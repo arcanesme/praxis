@@ -118,7 +118,7 @@ Add one row to `base/CLAUDE.md` in the AI-Kit Registry table:
 The `kits/infrastructure/` kit demonstrates a real kit with planned skills,
 domain-specific rules, and commands — but no npm dependencies.
 
-### Directory Structure
+### Example Kit Layout
 
 ```
 kits/infrastructure/

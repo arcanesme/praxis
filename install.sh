@@ -143,6 +143,7 @@ VAULT_BACKEND=""
 # ─── Check existing config ───
 if [[ -f "$CONFIG_FILE" ]]; then
   EXISTING_VAULT=$(jq -r '.vault_path // empty' "$CONFIG_FILE" 2>/dev/null)
+  # shellcheck disable=SC2034  # EXISTING_BACKEND reserved for vault re-config prompts
   EXISTING_BACKEND=$(jq -r '.vault_backend // empty' "$CONFIG_FILE" 2>/dev/null)
   if [[ -n "$EXISTING_VAULT" && -d "$EXISTING_VAULT" ]]; then
     echo -e "  Existing vault: ${BOLD}$EXISTING_VAULT${NC}"
@@ -421,7 +422,7 @@ fi
 
 mkdir -p "$HOME/bin"
 if [[ ":$PATH:" != *":$HOME/bin:"* ]]; then
-  warn "~/bin is not in your PATH. Add to your shell profile:"
+  warn "$HOME/bin is not in your PATH. Add to your shell profile:"
   echo '    export PATH="$HOME/bin:$PATH"'
 fi
 

@@ -7,6 +7,7 @@ source: agent
 # Session Note — YYYY-MM-DD
 
 ## Summary
+
 - Bullet 1
 - Bullet 2
 - Bullet 3

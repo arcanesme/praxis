@@ -1,0 +1,20 @@
+# ShellCheck configuration for Praxis
+# Suppress info-level codes that are stylistic, not correctness
+
+# SC1091: Not following sourced file (can't resolve relative paths in CI)
+disable=SC1091
+
+# SC2016: Expressions don't expand in single quotes (intentional in many cases)
+disable=SC2016
+
+# SC2028: echo may not expand escape sequences (we use printf where needed)
+disable=SC2028
+
+# SC2162: read without -r (acceptable for interactive prompts)
+disable=SC2162
+
+# SC2317: Command appears unreachable (functions called indirectly)
+disable=SC2317
+
+# SC2329: Function never invoked (library functions sourced by other scripts)
+disable=SC2329
