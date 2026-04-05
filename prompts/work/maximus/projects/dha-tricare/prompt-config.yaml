@@ -9,7 +9,6 @@ capture_phase: Shaping
 platforms:
   - claude-project
   - perplexity-space
-  - claude-code
 
 vars: {}
 

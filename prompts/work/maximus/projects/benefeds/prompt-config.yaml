@@ -30,27 +30,18 @@ knowledge_packs:
     vars:
       agency: "Office of Personnel Management (OPM)"
       program_name: "BENEFEDS — Federal Employee Benefits Enrollment & Premium Administration"
-      incumbent: "FedPoint Systems LLC (wholly owned by John Hancock Life & Health Insurance)"
-      contract_value: "$500M ceiling (2023-2026)"
+      key_personnel: "[RESEARCH NEEDED]"
+      contract_vehicle: "Full and open competition (conventional procurement)"
+      period_of_performance: "Jan 2023 – Dec 2026 (recompete expected post-2026)"
       naics: "518210, 524292, 541512"
-      set_aside: "Full and open competition"
-      deal_type: "recompete"
-      capture_phase: "Shaping"
-      key_programs: "FEDVIP (dental/vision), FSAFEDS (flex spending), FLTCIP (long-term care)"
-      enrollment_scale: "1M+ transactions during annual open season, 1,000+ seasonal staff"
-
-  - template: corporate-reference
-    output: maximus-corporate.md
-    targets: [claude-project, perplexity-space]
-    vars:
-      company_name: "Maximus Inc."
+      set_aside: "None — full and open"
+      incumbents: "FedPoint Systems LLC (wholly owned by John Hancock Life & Health Insurance)"
 
 overrides:
   perplexity_space_append:
     research_domains: |
-      - OPM BENEFEDS contract history, modifications, and performance (USASpending, FPDS, SAM.gov)
-      - FedPoint Systems LLC federal performance, ATO certifications, service metrics
-      - OPM strategic plan, IG/GAO findings on FEHB fraud, congressional oversight hearings
-      - OPM technology modernization: IT Strategic Plan 2023-2026, customer experience initiatives
-      - Maximus past performance and existing relationships at OPM (retirement services contract)
-      - Federal benefits enrollment platform trends: digital transformation, fraud prevention, seasonal surge staffing
+      - OPM BENEFEDS contract history and performance (SAM.gov, FPDS)
+      - FedPoint federal performance and ATO certifications
+      - OPM strategic plan, GAO findings, FEHB fraud oversight
+      - Maximus past performance at OPM
+      - Benefits enrollment: digital transformation, fraud prevention

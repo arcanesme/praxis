@@ -57,7 +57,7 @@ function discoverAllProjects() {
 
 const CHAR_BUDGETS = {
   'claude-code': Infinity,
-  'claude-project': 2500,
+  'claude-project': 5000,
   'perplexity-space': 4000,
 };
 
@@ -90,7 +90,6 @@ function validateStandalone(projectName, projectDir, projectConfig) {
   const inventory = [
     { file: 'system-prompt.md', budget: 5000, required: true, label: 'System Prompt (Source)' },
     { file: 'space-instructions-perplexity.md', budget: CHAR_BUDGETS['perplexity-space'], required: false, label: 'Perplexity Space' },
-    { file: 'CLAUDE.md', budget: Infinity, required: false, label: 'Claude Code' },
   ];
 
   const results = [];

@@ -42,7 +42,7 @@ Platform outputs use suffixed filenames so users can distinguish them at a glanc
 | Platform | Output Filename | Budget | When |
 |----------|----------------|--------|------|
 | Claude Projects | `system-prompt.md` | 5,000 chars | Standalone projects |
-| Claude Projects | `project-instructions-claude-desktop.md` | 2,500 chars | Compiled projects (compiler output) |
+| Claude Projects | `project-instructions-claude-desktop.md` | 5,000 chars | Compiled projects (compiler output) |
 | Perplexity Spaces | `space-instructions-perplexity.md` | 4,000 chars | All projects |
 
 Each project has exactly **2 output files** — one for Claude Projects, one for Perplexity Spaces.
@@ -510,7 +510,7 @@ Check each file against these criteria:
 
 **Budget checks:**
 - `system-prompt.md` under 5,000 chars? (standalone)
-- `project-instructions-claude-desktop.md` under 2,500 chars? (compiled)
+- `project-instructions-claude-desktop.md` under 5,000 chars? (compiled)
 - `space-instructions-perplexity.md` under 4,000 chars?
 
 **Currency checks (via Perplexity):**

@@ -2,18 +2,29 @@
 
 | Attribute | Value |
 |-----------|-------|
-| Legal Name | {{legal_name}} |
-| Ticker | {{ticker}} |
-| HQ | {{hq}} |
-| CEO | {{ceo}} |
-| UEI | {{uei}} |
-| CAGE Code | {{cage_code}} |
-| Revenue | {{revenue}} |
-| Backlog | {{backlog}} |
-| Key Vehicles | {{key_vehicles}} |
+| Legal Name | Maximus Inc. |
+| Ticker | MMS (NYSE) |
+| HQ | Tysons, Virginia |
+| CEO | Bruce Caswell |
+| UEI | RBGHRKKXVQ83 |
+| CAGE Code | 7N773 |
+| Revenue | ~$5.31B (FY2024) |
+| Backlog | ~$16.2B |
+| Key Vehicles | OASIS+, GSA MAS |
 
 ## Mission Threads & Accelerators
-{{mission_threads}}
+| Asset | Description |
+|-------|-------------|
+| TXM | Total Experience Management — FedRAMP-authorized omnichannel CX platform |
+| ITSM&M | IT Service Management & Modernization thread |
+| Clinical | Clinical services delivery thread |
+| AI/ML Accelerator | Pre-built AI/ML capabilities |
+| CX Accelerator | Citizen experience tooling |
+
 
 ## Key Partnerships
-{{key_partnerships}}
+| Partner | Integration |
+|---------|-------------|
+| AWS | Strategic collaboration; Bedrock, Lex, Textract |
+| Salesforce | Agentforce AI platform integration with TXM |
+| Bingli | AI-powered diagnostic reasoning (clinical) |

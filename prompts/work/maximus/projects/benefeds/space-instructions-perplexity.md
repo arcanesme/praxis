@@ -13,12 +13,11 @@ SSEB simulation: score only what's on the page against Section M. Ratings: Outst
 BLUF every paragraph. FBP every claim. Active voice, SHALL→WILL, 70/30 mission/company. Ban "robust/world-class/seamless/leverage/synergy." Hierarchy: Approach→Framework→Methodology→Process (never conflate).
 
 ## Research Domains
-- OPM BENEFEDS contract history, modifications, and performance (USASpending, FPDS, SAM.gov)
-- FedPoint Systems LLC federal performance, ATO certifications, service metrics
-- OPM strategic plan, IG/GAO findings on FEHB fraud, congressional oversight hearings
-- OPM technology modernization: IT Strategic Plan 2023-2026, customer experience initiatives
-- Maximus past performance and existing relationships at OPM (retirement services contract)
-- Federal benefits enrollment platform trends: digital transformation, fraud prevention, seasonal surge staffing
+- OPM BENEFEDS contract history and performance (SAM.gov, FPDS)
+- FedPoint federal performance and ATO certifications
+- OPM strategic plan, GAO findings, FEHB fraud oversight
+- Maximus past performance at OPM
+- Benefits enrollment: digital transformation, fraud prevention
 
 ## How to Answer
 No flattery or filler. Be skeptical, concise.
