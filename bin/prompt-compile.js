@@ -213,7 +213,7 @@ function compileProject(projectName, targets, projectDirOverride, clientDirOverr
 
   const outputNames = {
     'claude-code': 'CLAUDE.md',
-    'claude-project': 'project-instructions-claude-desktop.md',
+    'claude-project': 'system-prompt.md',
     'perplexity-space': 'space-instructions-perplexity.md',
   };
 
@@ -302,8 +302,8 @@ function main() {
       console.log('No projects found.');
       process.exit(0);
     }
-    console.log(`${'Project'.padEnd(28)} ${'Mode'.padEnd(12)} ${'System Prompt'.padEnd(15)} ${'Claude Desktop'.padEnd(15)} ${'Perplexity'.padEnd(15)} Refs`);
-    console.log('-'.repeat(105));
+    console.log(`${'Project'.padEnd(28)} ${'Mode'.padEnd(12)} ${'System Prompt'.padEnd(15)} ${'Perplexity'.padEnd(15)} Refs`);
+    console.log('-'.repeat(85));
     for (const proj of allProjects) {
       const cfgPath = path.join(proj.dir, 'prompt-config.yaml');
       const cfg = fs.existsSync(cfgPath) ? yaml.load(fs.readFileSync(cfgPath, 'utf8')) : {};
@@ -318,7 +318,7 @@ function main() {
         ? fs.readdirSync(refsDir).filter((f) => f.endsWith('.md')).length
         : 0;
       console.log(
-        `${proj.name.padEnd(28)} ${mode.padEnd(12)} ${fileStatus('system-prompt.md').padEnd(15)} ${fileStatus('project-instructions-claude-desktop.md').padEnd(15)} ${fileStatus('space-instructions-perplexity.md').padEnd(15)} ${refCount}`
+        `${proj.name.padEnd(28)} ${mode.padEnd(12)} ${fileStatus('system-prompt.md').padEnd(15)} ${fileStatus('space-instructions-perplexity.md').padEnd(15)} ${refCount}`
       );
     }
     process.exit(0);
@@ -338,7 +338,7 @@ function main() {
     console.log('\n\x1b[1mPROMPT ENGINE DASHBOARD\x1b[0m');
     console.log('\x1b[90m' + '━'.repeat(110) + '\x1b[0m');
     console.log(
-      `${'Project'.padEnd(24)} ${'Mode'.padEnd(12)} ${'Claude Proj'.padEnd(14)} ${'Perplexity'.padEnd(14)} ${'Refs'.padEnd(6)} ${'Updated'.padEnd(12)} Stale?`
+      `${'Project'.padEnd(24)} ${'Mode'.padEnd(12)} ${'System Prompt'.padEnd(14)} ${'Perplexity'.padEnd(14)} ${'Refs'.padEnd(6)} ${'Updated'.padEnd(12)} Stale?`
     );
     console.log('\x1b[90m' + '─'.repeat(110) + '\x1b[0m');
 
@@ -371,7 +371,7 @@ function main() {
       const stale = daysSince > STALE_DAYS ? '\x1b[31mYes\x1b[0m' : '\x1b[32mNo\x1b[0m';
 
       console.log(
-        `${proj.name.padEnd(24)} ${mode.padEnd(12)} ${fileBudget('project-instructions-claude-desktop.md', CHAR_BUDGETS['claude-project']).padEnd(23)} ${fileBudget('space-instructions-perplexity.md', CHAR_BUDGETS['perplexity-space']).padEnd(23)} ${String(refCount).padEnd(6)} ${updated.padEnd(12)} ${stale}`
+        `${proj.name.padEnd(24)} ${mode.padEnd(12)} ${fileBudget('system-prompt.md', CHAR_BUDGETS['claude-project']).padEnd(23)} ${fileBudget('space-instructions-perplexity.md', CHAR_BUDGETS['perplexity-space']).padEnd(23)} ${String(refCount).padEnd(6)} ${updated.padEnd(12)} ${stale}`
       );
     }
 
