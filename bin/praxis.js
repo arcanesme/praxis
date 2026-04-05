@@ -390,13 +390,11 @@ function scaffold() {
   const subCmd = process.argv[3];
   if (subCmd !== 'new') {
     fail('Usage: praxis scaffold new <project-name> [--profile <name>] [--description "<text>"]');
-    process.exit(1);
   }
 
   const projectName = process.argv[4];
   if (!projectName || projectName.startsWith('--')) {
     fail('Specify a project name: praxis scaffold new <project-name>');
-    process.exit(1);
   }
 
   const PROJECTS_DIR = path.join(PKG_DIR, 'prompts', 'projects');
@@ -405,7 +403,6 @@ function scaffold() {
 
   if (fs.existsSync(projectDir)) {
     fail(`Project already exists: ${projectDir}`);
-    process.exit(1);
   }
 
   // Parse flags
@@ -427,18 +424,12 @@ function scaffold() {
   const templatePath = path.join(TEMPLATE_DIR, 'prompt-config.yaml');
   if (!fs.existsSync(templatePath)) {
     fail(`Template not found: ${templatePath}`);
-    process.exit(1);
   }
   let configContent = fs.readFileSync(templatePath, 'utf8');
   configContent = configContent.replace('{{project_name}}', projectName);
   configContent = configContent.replace('{{project_description}}', description);
 
-  // Set profile if not null
-  if (profileName !== '_base') {
-    configContent = configContent.replace('profile: null', `profile: ${profileName}`);
-  } else {
-    configContent = configContent.replace('profile: null', 'profile: _base');
-  }
+  configContent = configContent.replace('profile: null', `profile: ${profileName}`);
 
   fs.writeFileSync(path.join(projectDir, 'prompt-config.yaml'), configContent, 'utf8');
 
@@ -451,7 +442,7 @@ function scaffold() {
   // Preview compile
   console.log('');
   dim('Preview compiled output:');
-  const result = spawnSync('node', [
+  spawnSync('node', [
     path.join(PKG_DIR, 'bin', 'prompt-compile.js'),
     projectName, '--preview',
   ], { stdio: 'inherit', cwd: PKG_DIR });

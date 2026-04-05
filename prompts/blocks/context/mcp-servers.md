@@ -8,5 +8,5 @@ tags: [context, mcp, tools]
 ---
 
 ## MCP Servers
-Available: context7 (live library docs), github (PRs/issues), perplexity (web search).
+Available: {{mcp_servers}}
 Before implementing with any external library: use Context7 first. Training data has a cutoff — Context7 does not.
