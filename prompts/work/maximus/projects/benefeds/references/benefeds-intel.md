@@ -35,12 +35,14 @@ confidence: HIGH (SAM.gov + FPDS + FedPoint press releases)
 
 ## Agency Mission Context
 - OPM FY 2022-2026 Strategic Plan Goal 2: transform organizational capacity
-- OPM IT Strategic Plan 2023-2026: modernize digital presence, enhance customer experience, address legacy tech debt
-- GAO findings: up to $1B annually in FEHB payments to ineligible family members — weak fraud controls
-- Congressional oversight (House 2023): criticized OPM for weak FEHB fraud management
+- OPM IT modernization: eOPF cloud migration complete (442M files), Online Retirement Application live (97K+ apps, 38-day avg vs 94 paper), mainframe cloud migration starting FY2026
+- OIG identified $430M in FY2025 improper/fraudulent FEHB/PSHB payments — ML + generative AI deployed for detection, 935 debarments in FY2025
+- FEHB Protection Act of 2025 mandates family member eligibility audits
+- $57M returned to trust funds FY2022-2025, 69 convictions, $1.4B referred to DOJ
 - FLTCIP suspended due to long-term care market volatility
-- Executive Order 14058: improve federal customer experience
-- Premium trends: FEHB +7.7% (2024), FEDVIP dental +1.4%, vision +1.1%
+- Premium trends: FEHB +12.3% for 2026 (second year of double-digit hikes), FEDVIP dental +1.4%, vision +1.1%
+- Net loss of 220,000 federal employees in 2025 — affects benefits administration volume
+- HR Shared Service Center launched for USAJOBS/USA Staffing services
 
 ## Maximus Positioning
 - Awarded OPM customer experience/retirement services contract
@@ -50,12 +52,14 @@ confidence: HIGH (SAM.gov + FPDS + FedPoint press releases)
 - Positioned to compete on recompete when current contract expires Dec 2026
 
 ## Key Considerations
-- Contract expires Dec 2026 — recompete timing is NOW for shaping
+- Contract expires Dec 2026 — no pre-solicitation or recompete announcement yet (as of Apr 2026)
 - FedPoint is deeply entrenched (20+ year incumbent, John Hancock parent)
 - 100+ performance metrics = high barrier to entry, but also documented requirements
 - FLTCIP suspension reduces scope complexity for a challenger
-- OPM prioritizing customer experience and fraud reduction — Maximus strengths
+- OPM deploying AI/ML for fraud detection — Maximus AI/ML Accelerator is a differentiator
+- FEHB Protection Act of 2025 creates new audit requirements — enrollment platform implications
 - 1,000+ seasonal staff surge = Maximus BPO core competency
+- Net loss of 220,000 federal employees in 2025 may reduce enrollment volume
 
 ## Research Gaps
 - Specific CPARS ratings for FedPoint [RESEARCH NEEDED]

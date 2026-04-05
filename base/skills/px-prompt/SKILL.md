@@ -709,7 +709,7 @@ Write to `prompts/projects/<deal-name>/references/<deal-name>-intel.md`
    - Profile: `maximus-sa`
    - `deal_type`: from `--type` flag or auto-detected from research (incumbent found → recompete, none → new-start)
    - `capture_phase`: initial phase based on deal type (see template table above)
-   - `knowledge_packs`: deal-context + corporate-reference, vars populated from research
+   - `knowledge_packs`: corporate-reference (vars from client config)
    - `overrides.perplexity_space_append.research_domains`: **deal-specific** research domains (see 7f)
 3. Write deal intel to `references/<deal-name>-intel.md`
 4. Compile: `node bin/prompt-compile.js <deal-name>`
@@ -738,7 +738,7 @@ Files created:
   ✓ system-prompt.md (2,480 chars) — compiled from profile
   ✓ space-instructions-perplexity.md (3,976 chars) — deal-specific research domains
   ✓ references/irs-masterfile-intel.md
-  ✓ knowledge/deal-context.md
+  ✓ knowledge/maximus-corporate.md
   ✓ knowledge/maximus-corporate.md
 
 [Deploy] [Advance phase] [Edit intel] [Re-research]
@@ -955,7 +955,6 @@ DEPLOY: dha-tricare
 
   Upload these as project knowledge files:
     references/dha-tricare-intel.md      (deal intelligence)
-    knowledge/deal-context.md            (deal context)
     knowledge/maximus-corporate.md       (corporate reference)
   Press Enter when done...
 
@@ -965,7 +964,6 @@ DEPLOY: dha-tricare
 
   Upload these as Space sources (Add Sources → Files):
     references/dha-tricare-intel.md      (deal intelligence)
-    knowledge/deal-context.md            (deal context)
     knowledge/maximus-corporate.md       (corporate reference)
   Press Enter when done...
 

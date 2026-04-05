@@ -3,7 +3,7 @@ client: maximus
 description: OPM BeneFeds — federal benefits enrollment and premium administration platform recompete
 mode: compiled
 profile: maximus-sa
-version: "1.0"
+version: "1.1"
 deal_type: recompete
 capture_phase: Shaping
 
@@ -23,19 +23,7 @@ knowledge_files:
   - file: references/benefeds-intel.md
     description: "Deal intelligence — contract data, incumbent, agency context, Maximus positioning"
 
-knowledge_packs:
-  - template: deal-context
-    output: deal-context.md
-    targets: [claude-project, perplexity-space]
-    vars:
-      agency: "Office of Personnel Management (OPM)"
-      program_name: "BENEFEDS — Federal Employee Benefits Enrollment & Premium Administration"
-      key_personnel: "[RESEARCH NEEDED]"
-      contract_vehicle: "Full and open competition (conventional procurement)"
-      period_of_performance: "Jan 2023 – Dec 2026 (recompete expected post-2026)"
-      naics: "518210, 524292, 541512"
-      set_aside: "None — full and open"
-      incumbents: "FedPoint Systems LLC (wholly owned by John Hancock Life & Health Insurance)"
+knowledge_packs: []
 
 overrides:
   perplexity_space_append:
