@@ -1,28 +1,5 @@
 {
   "config": {
-    // Line length — disabled for documentation-heavy project
-    "MD013": false,
-    // Blank lines around headings — skills use compact heading→list pattern
-    "MD022": false,
-    // Blank lines around fenced code — skills embed code blocks inline
-    "MD031": false,
-    // Blank lines around lists — skills use compact heading→list pattern
-    "MD032": false,
-    // Emphasis as heading — skills use **Step N** pattern intentionally
-    "MD036": false,
-    // Spaces inside emphasis — false positives in table/list contexts
-    "MD037": false,
-    // Fenced code language — bare ``` used for template placeholders
-    "MD040": false,
-    // First line heading — files with YAML frontmatter start with ---
-    "MD041": false,
-    // Table column style — mixed table styles across skills are acceptable
-    "MD060": false,
-    // Multiple H1 — kit rules use frontmatter-style comment headers
-    "MD025": false,
-    // Inline HTML — skills use <name> template placeholders
-    "MD033": false,
-    // Trailing punctuation in heading — acceptable in skills
-    "MD026": false
+    "extends": "./.markdownlint.jsonc"
   }
 }

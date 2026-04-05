@@ -1,0 +1,5 @@
+{
+  "extends": "../../.markdownlint.jsonc",
+  // Skills use **Step N — title** as pseudo-headings intentionally
+  "MD036": false
+}

@@ -16,8 +16,5 @@ disable=SC2162
 # SC2317: Command appears unreachable (functions called indirectly)
 disable=SC2317
 
-# SC2015: A && B || C is not if-then-else (intentional fire-and-forget pattern)
-disable=SC2015
-
 # SC2329: Function never invoked (library functions sourced by other scripts)
 disable=SC2329

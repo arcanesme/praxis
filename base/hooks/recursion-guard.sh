@@ -62,6 +62,7 @@ COUNT=$(jq -r --arg cat "$CATEGORY" --arg key "$KEY_HASH" \
   '.[$cat][$key] // 0' "$STATE_FILE" 2>/dev/null || echo "0")
 COUNT=$((COUNT + 1))
 
+# shellcheck disable=SC2015  # intentional: if jq or mv fails, fall through silently
 jq --arg cat "$CATEGORY" --arg key "$KEY_HASH" --argjson count "$COUNT" \
   '.[$cat][$key] = $count' "$STATE_FILE" > "${STATE_FILE}.tmp" 2>/dev/null \
   && mv "${STATE_FILE}.tmp" "$STATE_FILE" 2>/dev/null || true

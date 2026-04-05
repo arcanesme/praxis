@@ -98,12 +98,16 @@ if command -v code &>/dev/null; then
     davidanson.vscode-markdownlint
   )
   for ext in "${CORE_EXTENSIONS[@]}"; do
+    # shellcheck disable=SC2015  # intentional: print ✓ on success, ✗ on failure
     code --install-extension "$ext" --force 2>/dev/null && printf "  ✓ %s\n" "$ext" || printf "  ✗ %s\n" "$ext"
   done
 
   # Stack-conditional extensions
+  # shellcheck disable=SC2015  # intentional fire-and-forget
   $INSTALL_GO && code --install-extension golang.go --force 2>/dev/null && echo "  ✓ golang.go" || true
+  # shellcheck disable=SC2015  # intentional fire-and-forget
   $INSTALL_TF && code --install-extension hashicorp.terraform --force 2>/dev/null && echo "  ✓ hashicorp.terraform" || true
+  # shellcheck disable=SC2015  # intentional fire-and-forget
   command -v docker &>/dev/null && code --install-extension exiasr.hadolint --force 2>/dev/null && echo "  ✓ exiasr.hadolint" || true
 else
   echo ""
