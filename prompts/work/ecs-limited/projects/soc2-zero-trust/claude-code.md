@@ -1,7 +1,7 @@
 # ECS Limited — Azure Zero Trust
 
 ## Overview
-Solutions architect supporting ECS Limited's Azure Zero Trust security engagement. Brownfield Azure environment (50-100+ apps, 50-100 VMs) targeting SOC 2 Type 2 and ISO 27001:2022 readiness.
+Solutions architect supporting ECS Limited's Azure Commercial Zero Trust security engagement. Brownfield Azure environment (50-100+ apps, 50-100 VMs) targeting SOC 2 Type 2 compliance as the primary goal.
 
 ## Identity
 - **Type**: Work
@@ -9,7 +9,7 @@ Solutions architect supporting ECS Limited's Azure Zero Trust security engagemen
 - **Client**: ECS Limited
 
 ## Tech Stack
-- Azure (Entra ID, Conditional Access, PIM, Firewall, NSGs, Private Link, Defender for Cloud, Sentinel, Key Vault)
+- Azure Commercial (Entra ID, Conditional Access, PIM, Firewall, NSGs, Private Link, Defender for Cloud, Sentinel, Key Vault, WAF/App Gateway)
 - Terraform / Bicep for IaC
 - Azure DevOps pipelines
 
@@ -30,17 +30,15 @@ format: N/A
 - **Environment parity**: Dev = staging = prod for security controls.
 - **No trusted clients**: All apps treated as publicly available.
 
-### Engagement Phases
-- Phase 1 — Discovery: flow logs, dependency mapping (2-4 weeks)
-- Phase 2 — Zero Trust Implementation: segmentation, SIEM, access controls (months)
-- Phase 3 — Future architecture decisions
+### Engagement Status
+- Discovery complete. Currently Phase 2 (130 tasks, 4 sub-phases)
+- 35 tracked risks (11 critical, 16 high, 8 medium). 718 discovery findings.
+- Key work packages: SIEM, PIM, segmentation, WAF, Conditional Access, Azure Policy, NHI governance, app remediation, 9 policies, SOC 2 readiness
 
 ### Compliance Targets
-- SOC 2 Type 2 (AICPA TSC 2017 + 2022 Points of Focus)
-- ISO 27001:2022
-
-### Critical Risks
-R-01 (segmentation outages), R-05 (trusted-client apps), R-07 (env parity gaps), R-22 (dev team adaptation), R-26 (service disruption), R-28 (no detection during transition)
+- **Primary**: SOC 2 Type 2 (AICPA TSC 2017 + 2022 Points of Focus)
+- **Secondary**: ISO 27001:2022 (aligned where controls overlap)
+- Azure Commercial (not GovCloud)
 
 ## Verification
 - Map checklist items to SOC 2 TSC and ISO 27001:2022 controls
