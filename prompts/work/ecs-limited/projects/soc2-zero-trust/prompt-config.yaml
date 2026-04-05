@@ -1,0 +1,21 @@
+name: ecs-limited
+description: SOC 2 compliance and Zero Trust architecture for Azure
+mode: standalone
+role: solutions-architect
+platforms:
+  - claude-projects
+  - perplexity-spaces
+domains:
+  - soc2-compliance
+  - zero-trust-azure
+  - azure-security
+research_domains:
+  - SOC 2 compliance frameworks and AICPA Trust Services Criteria
+  - Zero Trust architecture for Microsoft Azure (Entra ID, Conditional Access)
+  - Azure security best practices and continuous compliance automation
+knowledge_files:
+  - references/soc2-compliance.md
+  - references/zero-trust-azure.md
+version: "1.0"
+created: 2026-04-05
+last_updated: 2026-04-05
