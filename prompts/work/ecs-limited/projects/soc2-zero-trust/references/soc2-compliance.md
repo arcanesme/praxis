@@ -2,7 +2,10 @@
 domain: soc2-compliance
 generated: 2026-04-05
 refreshed: 2026-04-05
-source: perplexity-research
+domain: soc2-compliance
+generated: 2026-04-05
+refreshed: 2026-04-05
+---
 ---
 
 # SOC 2 Compliance — Reference Guide

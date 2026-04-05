@@ -90,6 +90,7 @@ function validateStandalone(projectName, projectDir, projectConfig) {
   const inventory = [
     { file: 'system-prompt.md', budget: 5000, required: true, label: 'System Prompt (Source)' },
     { file: 'space-instructions-perplexity.md', budget: CHAR_BUDGETS['perplexity-space'], required: false, label: 'Perplexity Space' },
+    { file: 'claude-code.md', budget: CHAR_BUDGETS['claude-code'], required: false, label: 'Claude Code' },
   ];
 
   const results = [];
@@ -212,7 +213,7 @@ function compileProject(projectName, targets, projectDirOverride, clientDirOverr
   };
 
   const outputNames = {
-    'claude-code': 'CLAUDE.md',
+    'claude-code': 'claude-code.md',
     'claude-project': 'system-prompt.md',
     'perplexity-space': 'space-instructions-perplexity.md',
   };
@@ -305,8 +306,8 @@ function main() {
       console.log('No projects found.');
       process.exit(0);
     }
-    console.log(`${'Project'.padEnd(28)} ${'Mode'.padEnd(12)} ${'System Prompt'.padEnd(15)} ${'Perplexity'.padEnd(15)} Refs`);
-    console.log('-'.repeat(85));
+    console.log(`${'Project'.padEnd(28)} ${'Mode'.padEnd(12)} ${'System Prompt'.padEnd(15)} ${'Perplexity'.padEnd(15)} ${'Claude Code'.padEnd(15)} Refs`);
+    console.log('-'.repeat(100));
     for (const proj of allProjects) {
       const cfgPath = path.join(proj.dir, 'prompt-config.yaml');
       const cfg = fs.existsSync(cfgPath) ? yaml.load(fs.readFileSync(cfgPath, 'utf8')) : {};
@@ -321,7 +322,7 @@ function main() {
         ? fs.readdirSync(refsDir).filter((f) => f.endsWith('.md')).length
         : 0;
       console.log(
-        `${proj.name.padEnd(28)} ${mode.padEnd(12)} ${fileStatus('system-prompt.md').padEnd(15)} ${fileStatus('space-instructions-perplexity.md').padEnd(15)} ${refCount}`
+        `${proj.name.padEnd(28)} ${mode.padEnd(12)} ${fileStatus('system-prompt.md').padEnd(15)} ${fileStatus('space-instructions-perplexity.md').padEnd(15)} ${fileStatus('claude-code.md').padEnd(15)} ${refCount}`
       );
     }
     process.exit(0);
