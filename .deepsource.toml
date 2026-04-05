@@ -11,3 +11,7 @@ enabled = true
 [[analyzers]]
 name = "secrets"
 enabled = true
+
+[[analyzers]]
+name = "sca"
+enabled = true
