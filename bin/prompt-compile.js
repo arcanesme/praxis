@@ -220,6 +220,9 @@ function compileProject(projectName, targets, projectDirOverride, clientDirOverr
   const results = [];
 
   for (const target of targets) {
+    if (!targetAssemblers[target]) {
+      fail(`Unknown target: ${target}. Valid targets: ${Object.keys(targetAssemblers).join(', ')}`);
+    }
     const blocks = loadBlocks(profile, target, warn);
     let output = targetAssemblers[target](blocks, projectConfig, vars);
 
