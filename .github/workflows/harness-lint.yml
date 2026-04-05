@@ -13,7 +13,7 @@ jobs:
     name: Shell lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Shell syntax check
         run: |
@@ -38,7 +38,7 @@ jobs:
     name: JS syntax check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: Node syntax check
         run: node --check bin/praxis.js
 
@@ -46,8 +46,8 @@ jobs:
     name: Markdown lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-      - uses: DavidAnson/markdownlint-cli2-action@05f32210e84442804257b2a6f20d6e0aaf85e4da # v19.0.0
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: DavidAnson/markdownlint-cli2-action@ce4853d43830c74c1753b39f3cf40f71c2031eb9 # v23.0.0
         with:
           globs: |
             docs/**/*.md
@@ -60,6 +60,6 @@ jobs:
     name: Harness lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: Run harness lint
         run: bash scripts/lint-harness.sh .

@@ -1,0 +1,10 @@
+# Default owner for everything
+* @arcanesme
+
+# Workflow files require explicit review
+.github/ @arcanesme
+
+# Core harness
+bin/ @arcanesme
+lib/ @arcanesme
+base/ @arcanesme
