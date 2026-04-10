@@ -78,7 +78,7 @@ echo "Hook wiring (settings-hooks.json → scripts exist):"
 HOOKS_JSON="$REPO_PATH/base/hooks/settings-hooks.json"
 if [[ -f "$HOOKS_JSON" ]]; then
   # Extract all .sh filenames referenced in hook commands
-  hook_scripts=$(jq -r '.. | .command? // empty' "$HOOKS_JSON" 2>/dev/null | grep -oE '[a-z-]+\.sh' || true)
+  hook_scripts=$(jq -r '.. | .command? // empty' "$HOOKS_JSON" 2>/dev/null | grep -oE '[A-Za-z0-9._-]+\.sh' || true)
   for script in $hook_scripts; do
     if [[ -f "$REPO_PATH/base/hooks/$script" ]]; then
       ok "hooks/$script exists"

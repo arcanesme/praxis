@@ -3,8 +3,10 @@ set -euo pipefail
 
 CLAUDE_DIR="$HOME/.claude"
 CONFIG_FILE="$CLAUDE_DIR/praxis.config.json"
+SETTINGS_FILE="$CLAUDE_DIR/settings.json"
 
 PRAXIS_DIR="$(cd "$(dirname "$0")" && pwd)"
+HOOKS_CONFIG="$PRAXIS_DIR/base/hooks/settings-hooks.json"
 source "$PRAXIS_DIR/base/lib/output.sh"
 
 echo ""
@@ -50,12 +52,19 @@ fi
 
 RULES_REMOVED=0
 if [[ -d "$CLAUDE_DIR/rules" ]]; then
-  while IFS= read -r -d '' link; do
-    rm "$link"
-    RULES_REMOVED=$((RULES_REMOVED + 1))
-  done < <(find "$CLAUDE_DIR/rules" -type l -print0 2>/dev/null)
+  for rule in "$PRAXIS_DIR"/base/rules/*.md; do
+    [[ -f "$rule" ]] || continue
+    fname=$(basename "$rule")
+    target="$CLAUDE_DIR/rules/$fname"
+    if [[ -L "$target" || "$fname" == "profile.md" || "$fname" == "git-workflow.md" ]]; then
+      if [[ -e "$target" || -L "$target" ]]; then
+        rm -f "$target"
+        RULES_REMOVED=$((RULES_REMOVED + 1))
+      fi
+    fi
+  done
 fi
-echo -e "  ${GREEN}✓${NC} $RULES_REMOVED rule symlinks"
+echo -e "  ${GREEN}✓${NC} $RULES_REMOVED Praxis rule files"
 
 CMDS_REMOVED=0
 if [[ -d "$CLAUDE_DIR/commands" ]]; then
@@ -68,12 +77,66 @@ echo -e "  ${GREEN}✓${NC} $CMDS_REMOVED command symlinks"
 
 SKILLS_REMOVED=0
 if [[ -d "$CLAUDE_DIR/skills" ]]; then
-  while IFS= read -r -d '' link; do
-    rm "$link"
-    SKILLS_REMOVED=$((SKILLS_REMOVED + 1))
-  done < <(find "$CLAUDE_DIR/skills" -maxdepth 1 -type l -print0 2>/dev/null)
+  for skill_dir in "$PRAXIS_DIR"/base/skills/*/; do
+    [[ -d "$skill_dir" ]] || continue
+    skill_name=$(basename "$skill_dir")
+    target="$CLAUDE_DIR/skills/$skill_name"
+    if [[ -L "$target" ]]; then
+      rm "$target"
+      SKILLS_REMOVED=$((SKILLS_REMOVED + 1))
+    fi
+  done
 fi
 echo -e "  ${GREEN}✓${NC} $SKILLS_REMOVED skill symlinks"
+
+HOOKS_REMOVED=0
+if [[ -d "$CLAUDE_DIR/hooks" ]]; then
+  for hook in "$PRAXIS_DIR"/base/hooks/*.sh; do
+    [[ -f "$hook" ]] || continue
+    fname=$(basename "$hook")
+    target="$CLAUDE_DIR/hooks/$fname"
+    if [[ -L "$target" ]]; then
+      rm "$target"
+      HOOKS_REMOVED=$((HOOKS_REMOVED + 1))
+    fi
+  done
+fi
+echo -e "  ${GREEN}✓${NC} $HOOKS_REMOVED hook symlinks"
+
+if [[ -L "$CLAUDE_DIR/configs" ]]; then
+  rm "$CLAUDE_DIR/configs"
+  echo -e "  ${GREEN}✓${NC} configs/"
+fi
+
+if [[ -f "$SETTINGS_FILE" && -f "$HOOKS_CONFIG" ]]; then
+  if jq --slurpfile praxis "$HOOKS_CONFIG" '
+      ($praxis[0].hooks | [.. | .command? // empty] | map(select(length > 0))) as $commands
+      | if (.hooks | type) == "object" then
+          .hooks |= with_entries(
+          .value |= (
+              map(
+                if (.hooks | type) == "array" then
+                  .hooks |= map(select(.command as $cmd | ($commands | index($cmd) | not)))
+                else
+                  .
+                end
+              )
+              | map(select(((.hooks // []) | length) > 0))
+            )
+          )
+          | .hooks |= with_entries(select(.value | length > 0))
+          | if (.hooks | length) == 0 then del(.hooks) else . end
+        else
+          .
+        end
+    ' "$SETTINGS_FILE" > "$SETTINGS_FILE.tmp"; then
+    mv "$SETTINGS_FILE.tmp" "$SETTINGS_FILE"
+    echo -e "  ${GREEN}✓${NC} settings.json hook entries"
+  else
+    rm -f "$SETTINGS_FILE.tmp"
+    echo -e "  ${YELLOW}⚠${NC} Could not clean Praxis hooks from settings.json"
+  fi
+fi
 
 rm "$CONFIG_FILE"
 echo -e "  ${GREEN}✓${NC} praxis.config.json"

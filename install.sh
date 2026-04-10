@@ -379,8 +379,30 @@ HOOKS_CONFIG="$PRAXIS_DIR/base/hooks/settings-hooks.json"
 SETTINGS_FILE="$CLAUDE_DIR/settings.json"
 if [[ -f "$HOOKS_CONFIG" ]]; then
   if [[ -f "$SETTINGS_FILE" ]]; then
-    # Merge hooks key into existing settings (preserves other settings)
-    jq -s '.[0] * .[1]' "$SETTINGS_FILE" "$HOOKS_CONFIG" > "${SETTINGS_FILE}.tmp" \
+    # Merge hooks without clobbering existing user-defined hook arrays
+    jq -s '
+      def hook_identity($entry):
+        {
+          matcher: ($entry.matcher // ""),
+          hooks: (($entry.hooks // []) | map({
+            type: (.type // ""),
+            command: (.command // "")
+          }))
+        };
+      def uniq_hook_entries:
+        reduce .[] as $entry
+          ([]; if any(.[]; hook_identity(.) == hook_identity($entry)) then . else . + [$entry] end);
+      def merge_hook_maps($existing; $incoming):
+        ([($existing | keys_unsorted[]?), ($incoming | keys_unsorted[]?)] | unique) as $events
+        | reduce $events[] as $event
+            ({};
+              .[$event] = (($existing[$event] // []) + ($incoming[$event] // []) | uniq_hook_entries)
+            );
+      .[0] as $base
+      | .[1] as $incoming
+      | ($base * ($incoming | del(.hooks)))
+      | .hooks = merge_hook_maps(($base.hooks // {}); ($incoming.hooks // {}))
+    ' "$SETTINGS_FILE" "$HOOKS_CONFIG" > "${SETTINGS_FILE}.tmp" \
       && mv "${SETTINGS_FILE}.tmp" "$SETTINGS_FILE"
     ok "Hook configuration merged into settings.json"
   else

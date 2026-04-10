@@ -31,6 +31,122 @@ function copyFile(src, dest) {
   fs.cpSync(src, dest, { force: true });
 }
 
+function isPlainObject(value) {
+  return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
+}
+
+function hookEntryKey(entry) {
+  return JSON.stringify({
+    matcher: entry?.matcher || '',
+    hooks: Array.isArray(entry?.hooks)
+      ? entry.hooks.map((hook) => ({
+          type: hook?.type || '',
+          command: hook?.command || '',
+        }))
+      : [],
+  });
+}
+
+function dedupeHookEntries(entries) {
+  const seen = new Set();
+  const deduped = [];
+
+  for (const entry of entries) {
+    const key = hookEntryKey(entry);
+    if (seen.has(key)) continue;
+    seen.add(key);
+    deduped.push(entry);
+  }
+
+  return deduped;
+}
+
+function mergeHookSettings(existingHooks = {}, incomingHooks = {}) {
+  const merged = { ...existingHooks };
+  const hookEvents = new Set([
+    ...Object.keys(existingHooks || {}),
+    ...Object.keys(incomingHooks || {}),
+  ]);
+
+  for (const hookEvent of hookEvents) {
+    merged[hookEvent] = dedupeHookEntries([
+      ...(existingHooks[hookEvent] || []),
+      ...(incomingHooks[hookEvent] || []),
+    ]);
+  }
+
+  return merged;
+}
+
+function mergeSettings(existing, incoming) {
+  const merged = { ...existing };
+
+  for (const [key, value] of Object.entries(incoming)) {
+    if (key === 'hooks') {
+      merged.hooks = mergeHookSettings(existing.hooks || {}, value || {});
+    } else if (isPlainObject(value) && isPlainObject(existing[key])) {
+      merged[key] = mergeSettings(existing[key], value);
+    } else {
+      merged[key] = value;
+    }
+  }
+
+  return merged;
+}
+
+function extractHookCommands(config) {
+  const commands = new Set();
+
+  for (const hookEntries of Object.values(config?.hooks || {})) {
+    for (const entry of hookEntries || []) {
+      for (const hook of entry?.hooks || []) {
+        if (hook?.command) commands.add(hook.command);
+      }
+    }
+  }
+
+  return commands;
+}
+
+function prunePraxisHooksFromSettings(settings, hooksConfig) {
+  if (!isPlainObject(settings) || !isPlainObject(settings.hooks)) return settings;
+
+  const praxisCommands = extractHookCommands(hooksConfig);
+  if (praxisCommands.size === 0) return settings;
+
+  const nextHooks = {};
+
+  for (const [hookEvent, entries] of Object.entries(settings.hooks)) {
+    if (!Array.isArray(entries)) {
+      nextHooks[hookEvent] = entries;
+      continue;
+    }
+
+    const keptEntries = entries
+      .map((entry) => {
+        if (!Array.isArray(entry?.hooks)) return entry;
+
+        const keptHooks = entry.hooks.filter((hook) => !praxisCommands.has(hook?.command));
+        if (keptHooks.length === 0) return null;
+        return { ...entry, hooks: keptHooks };
+      })
+      .filter(Boolean);
+
+    if (keptEntries.length > 0) {
+      nextHooks[hookEvent] = keptEntries;
+    }
+  }
+
+  const nextSettings = { ...settings };
+  if (Object.keys(nextHooks).length > 0) {
+    nextSettings.hooks = nextHooks;
+  } else {
+    delete nextSettings.hooks;
+  }
+
+  return nextSettings;
+}
+
 // ── Install ──────────────────────────────────────────────────
 
 async function install() {
@@ -113,14 +229,7 @@ async function install() {
           fail('settings.json has invalid JSON — backed up to ' + backupPath);
         }
       }
-      // Deep merge: preserve existing keys, overlay hooks
-      for (const [key, value] of Object.entries(hooksCfg)) {
-        if (typeof value === 'object' && !Array.isArray(value) && settings[key] && typeof settings[key] === 'object') {
-          settings[key] = { ...settings[key], ...value };
-        } else {
-          settings[key] = value;
-        }
-      }
+      settings = mergeSettings(settings, hooksCfg);
       fs.writeFileSync(settingsFile, JSON.stringify(settings, null, 2) + '\n');
       ok('hooks configuration merged into settings.json');
     }
@@ -314,6 +423,8 @@ function health() {
 
 function uninstall() {
   header('Uninstalling Praxis Harness');
+  const hooksConfig = path.join(PKG_DIR, 'base', 'hooks', 'settings-hooks.json');
+  const settingsFile = path.join(CLAUDE_DIR, 'settings.json');
 
   // Remove CLAUDE.md
   const claudeMd = path.join(CLAUDE_DIR, 'CLAUDE.md');
@@ -369,6 +480,26 @@ function uninstall() {
   if (fs.existsSync(kitsTarget)) {
     fs.rmSync(kitsTarget, { recursive: true, force: true });
     ok('kits removed');
+  }
+
+  // Remove prompts
+  const promptsTarget = path.join(CLAUDE_DIR, 'prompts');
+  if (fs.existsSync(promptsTarget)) {
+    fs.rmSync(promptsTarget, { recursive: true, force: true });
+    ok('prompt library removed');
+  }
+
+  // Remove Praxis hook commands from settings.json while preserving user hooks
+  if (fs.existsSync(settingsFile) && fs.existsSync(hooksConfig)) {
+    try {
+      const settings = JSON.parse(fs.readFileSync(settingsFile, 'utf8'));
+      const hooksCfg = JSON.parse(fs.readFileSync(hooksConfig, 'utf8'));
+      const pruned = prunePraxisHooksFromSettings(settings, hooksCfg);
+      fs.writeFileSync(settingsFile, JSON.stringify(pruned, null, 2) + '\n');
+      ok('Praxis hook configuration removed from settings.json');
+    } catch (err) {
+      fail('could not clean settings.json: ' + err.message);
+    }
   }
 
   // Remove legacy commands directory

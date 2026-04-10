@@ -61,6 +61,15 @@ const CHAR_BUDGETS = {
   'perplexity-space': 4500,
 };
 
+function resolveConfiguredTargets(projectConfig) {
+  if (!Array.isArray(projectConfig.platforms) || projectConfig.platforms.length === 0) {
+    return DEFAULT_TARGETS;
+  }
+
+  const configuredTargets = projectConfig.platforms.filter((target) => ALL_TARGETS.includes(target));
+  return configuredTargets.length > 0 ? configuredTargets : DEFAULT_TARGETS;
+}
+
 // Global flags set by CLI parser
 let PREVIEW_MODE = false;
 let DIFF_MODE = false;
@@ -150,7 +159,7 @@ function validateStandalone(projectName, projectDir, projectConfig) {
 }
 
 /** Compile a project. Returns { mode, results[] } for summary table. */
-function compileProject(projectName, targets, projectDirOverride, clientDirOverride) {
+function compileProject(projectName, requestedTargets, projectDirOverride, clientDirOverride) {
   // Resolve project path — supports "client/deal", "deal", or direct dir override
   let projectDir;
   let clientDir = clientDirOverride || null;
@@ -183,6 +192,8 @@ function compileProject(projectName, targets, projectDirOverride, clientDirOverr
   if (projectConfig.mode === 'standalone') {
     return validateStandalone(projectName, projectDir, projectConfig);
   }
+
+  const targets = requestedTargets || resolveConfiguredTargets(projectConfig);
 
   const praxisConfig = loadPraxisConfig();
 
@@ -391,13 +402,13 @@ function main() {
 
   // Parse --target flag
   const targetIdx = args.indexOf('--target');
-  let targets = DEFAULT_TARGETS;
+  let requestedTargets = null;
   if (targetIdx !== -1 && args[targetIdx + 1]) {
     const targetArg = args[targetIdx + 1];
     if (ALL_TARGETS.includes(targetArg)) {
-      targets = [targetArg];
+      requestedTargets = [targetArg];
     } else if (targetArg === 'all') {
-      targets = ALL_TARGETS;
+      requestedTargets = ALL_TARGETS;
     } else {
       fail(`Unknown target: ${targetArg}. Use: ${ALL_TARGETS.join(', ')}, all`);
     }
@@ -424,13 +435,13 @@ function main() {
 
     const allResults = [];
     for (const proj of allProjects) {
-      const result = compileProject(proj.name, targets, proj.dir, proj.clientDir);
+      const result = compileProject(proj.name, requestedTargets, proj.dir, proj.clientDir);
       if (result) allResults.push(result);
     }
 
     printSummaryTable(allResults);
   } else if (projectArg) {
-    compileProject(projectArg, targets);
+    compileProject(projectArg, requestedTargets);
   } else {
     fail('Specify a project name or use --all / --sync');
   }
