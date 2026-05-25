@@ -83,7 +83,10 @@ fi
 if [[ "$PLATFORM" == "darwin" ]]; then
   if ! command -v brew &>/dev/null; then
     echo "  Installing Homebrew..."
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    BREW_INSTALL_SCRIPT=$(mktemp)
+    curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh -o "$BREW_INSTALL_SCRIPT"
+    /bin/bash "$BREW_INSTALL_SCRIPT"
+    rm -f "$BREW_INSTALL_SCRIPT"
     if [[ -f /opt/homebrew/bin/brew ]]; then
       export HOMEBREW_PREFIX="/opt/homebrew"
       export HOMEBREW_CELLAR="/opt/homebrew/Cellar"
