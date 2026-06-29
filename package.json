@@ -34,7 +34,7 @@
   "author": "arcanesme",
   "license": "MIT",
   "dependencies": {
-    "js-yaml": "4.1.1"
+    "js-yaml": "5.2.0"
   },
   "engines": {
     "node": ">=18"
